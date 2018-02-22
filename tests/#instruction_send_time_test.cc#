@@ -26,11 +26,7 @@ int main () {
 
   initialise_robot();
 
-<<<<<<< HEAD
   int n_repetitions = 4000;
-=======
-  int n_repetitions = 100;
->>>>>>> 7913212e3ad394c203dc66f76474b4af774dec81
 
   stopwatch watch;
   watch.start();
