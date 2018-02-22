@@ -16,5 +16,12 @@ int main () {
     rlink.command(WRITE_PORT_1, val);
     delay(delay_time);
   }
+  
+  if (rlink.any_errs()) {
+	  rlink.print_errs(" ");
+	  return -1;
+  } else {
+	  cout << "No Errors" << endl;
+  }
   return 0;                          // Test succesful
 }
