@@ -1,0 +1,17 @@
+[project]
+name=connection_test
+base_path=/homes/bkm28/idp_shared/Common/integrated_development_project/tests
+make_in_base_path=true
+description=1B IDP
+run_cmd=./connection_test
+ 
+[files]
+current_page=1
+FILE_NAME_0=0;C++;0;16;1;1;0;connection_test.cc;0
+ 
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+indent_mode=2
