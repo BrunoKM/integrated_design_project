@@ -3,6 +3,7 @@ using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
 #include <stopwatch.h>
+#include <robot_delay.h>
 #define ROBOT_NUM 50   // The id number for wifi card
 robot_link rlink;      // datatype for the robot link
 
@@ -22,25 +23,14 @@ bool initialise_robot (void) {
 }
 
 int main () {
-  int val;
-
   initialise_robot();
+  int val;
+  int delay_time = 500;
 
-  int n_repetitions = 4000;
-
-  stopwatch watch;
-  watch.start();
-  for (int i = 0; i < n_repetitions; i++) {
-    val = rlink.request (TEST_INSTRUCTION); // send test instruction
-    if (val != TEST_INSTRUCTION_RESULT) {
-      cout << "Test failed (bad value returned)" << endl;
-      return -1;        // Finish with error
-    }
+  for (int i=0; i < 8; i++) {
+    val = 1 << i;
+    rlink.command(WRITE_PORT_1, val);
+    delay(delay_time);
   }
-  float total_time = watch.stop();
-  float instruction_time = total_time / n_repetitions;
-  cout << "Total time of test: " << total_time << "per " << n_repetitions << "iterations\n"
-  << "Time taken per instruction: " << instruction_time << endl; // Print the results
-
   return 0;                          // Test succesful
 }
