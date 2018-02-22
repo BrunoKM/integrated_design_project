@@ -8,10 +8,8 @@ robot_link rlink;      // datatype for the robot link
 int main () {
   int val;
   #ifdef __arm__
-    cout << "Running code on MICROCONTROLLER"
     if (!rlink.initialise ("127.0.0.1")) {          // setup for local hardware
   #else
-    cout << "Running code REMOTELY"
     if (!rlink.initialise (ROBOT_NUM)) {            // setup the link
   #endif
     cout << "Cannot initialise link" << endl;
