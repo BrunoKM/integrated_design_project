@@ -16,7 +16,8 @@ int main () {
     rlink.command(WRITE_PORT_1, val);
     delay(delay_time);
   }
-  
+
+  // Print any errors
   if (rlink.any_errs()) {
 	  rlink.print_errs(" ");
 	  return -1;
