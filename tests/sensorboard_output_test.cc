@@ -23,6 +23,7 @@ int main () {
 	  return -1;
   } else {
 	  cout << "No Errors" << endl;
+      cout << "Done" << endl;
   }
   return 0;                          // Test succesful
 }
