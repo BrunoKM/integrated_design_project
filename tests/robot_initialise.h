@@ -4,7 +4,7 @@
 
 #include <robot_link.h>
 
-bool initialise_robot(void);
+void initialise_robot(void);
 extern robot_link rlink;
 
 #endif

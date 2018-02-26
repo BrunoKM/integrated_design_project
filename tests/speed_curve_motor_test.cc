@@ -18,9 +18,12 @@ int main () {
   const int max_cmd_speed = 127; // int corresponding to max speed cmd
   const int num_test_speeds = 10; // Number of different speeds to test
   // int num_tests = 2; // Number of tests per speed
-  const float test_time = 5000; // Duration in seconds of each test
+  const float test_time = 15000; // Duration in seconds of each test
   int motor_cmd_speeds[num_test_speeds];
   float angular_speeds[num_test_speeds];
+  
+  cout << "Conducting " << num_test_speeds
+  << " each for the test duration of " << test_time/1000 << " ms" << endl;
 
   // The readings at cmd_speed = 0 will yield 0 angular speeds.
   motor_cmd_speeds[0] = 0;
@@ -43,6 +46,7 @@ int main () {
 
     rlink.command(MOTOR_1_GO, cmd_speed); //Initiate the motor movement
     delay(test_time);
+    rlink.command(MOTOR_1_GO, 0);
 
     // Let the user input test results:
     int n_rotations;
@@ -62,7 +66,16 @@ int main () {
 
   // Write the results to a file
   ofstream fout;
-  fout.open("motor_speed_test_results.txt");
+  
+  string which_motor;
+  cout << "Which motor is being tested? (A, B, C): " << endl;
+  cin >> which_motor;
+  
+  string filename = "motor_";
+  filename += which_motor;
+  filename += "_speed_test_results.txt";
+  
+  fout.open(filename.c_str());
   if (fout) { // file opened successfully
     for (int i = 0; i < num_test_speeds; i++) {
       fout << motor_cmd_speeds[i] << " " << angular_speeds[i] << endl;

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
-    motor_num = 1 # Enter which motor to produce the graph for!
+    motor_num = "A" # Enter which motor to produce the graph for!
     filename = "motor_" + motor_num + "_speed_test_results.txt"
     results = np.loadtxt(filename)
     plt.xlabel("'Motor speed' command")
