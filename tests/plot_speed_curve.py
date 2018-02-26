@@ -14,6 +14,7 @@ if __name__ == '__main__':
     plt.ylabel("Actual motor speed (rpm)")
     plt.grid()
     plt.scatter(results[:, 0], results[:, 1], label='Measurements')
-    plt.show()
+    
     out_name = "motor_" + motor_num + "_speed_graph.png"
     plt.savefig(out_name)
+    plt.show()
