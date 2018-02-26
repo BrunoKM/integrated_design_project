@@ -10,7 +10,7 @@ using namespace std;
 int main () {
   initialise_robot();
   int val;
-  float test_time = 5000; //test for test_time ms
+  float test_time = 10000; //test for test_time ms
   stopwatch watch;
 
   rlink.command(WRITE_PORT_1, 0xFF); // Write 11111111 to activate all 8 inputs
@@ -18,7 +18,7 @@ int main () {
   watch.start();
   // Allow user to set different at the input and display them
   while (watch.read() < test_time) {
-    val = rlink.request(READ_PORT_1)
+    val = rlink.request(READ_PORT_1);
     bitset<8> val_bit(val);
     cout << "\rCurrent input reads: " << val_bit << flush;
   }
