@@ -11,19 +11,17 @@ using namespace std;
 #include "robot_initialise.h"
 
 int main () {
-  initialise_robot();
+  if (!initialise_robot()) {
+	  cout << "Couldn't initialise, stop testing" << endl;
+	}
 
-  const float test_time = 2000; // Duration in seconds of each test
+  const float test_time = 1500; // Duration in seconds of each test
   const int cmd_speed = 127;
 
-  for (int i = 0; i < 4; i++) {
-    cout << "Currently testing motor: " << i;
+  for (int i = 1; i <= 4; i++) {
+    cout << "Currently testing motor: " << i << endl;
     switch(i) {
-      case 0:
-        rlink.command(MOTOR_0_GO, cmd_speed);
-        delay(test_time);
-        rlink.command(MOTOR_0_GO, 0);
-        break;
+      
       case 1:
         rlink.command(MOTOR_1_GO, cmd_speed);
         delay(test_time);
@@ -39,4 +37,11 @@ int main () {
         delay(test_time);
         rlink.command(MOTOR_3_GO, 0);
         break;
+      case 4:
+        rlink.command(MOTOR_4_GO, cmd_speed);
+        delay(test_time);
+        rlink.command(MOTOR_4_GO, 0);
+        break;
+	}
   }
+}

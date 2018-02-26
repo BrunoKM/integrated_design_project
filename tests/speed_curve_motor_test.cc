@@ -7,6 +7,7 @@ using namespace std;
 #include <stopwatch.h>
 #include <robot_delay.h>
 #include <bitset>
+#include <fstream>
 #include <string>
 #include "robot_initialise.h"
 
@@ -32,9 +33,10 @@ int main () {
 
     // Prompt the user to make sure he has equipment set up for the test
     string user_response;
-    while (user_response != "yes"):
+    while (user_response != "yes") {
       cout << "> Are you ready to continue testing? (Enter 'yes'): " << endl;
       cin >>  user_response;
+    }
 
     cout << "Test " << i << " out of " << num_test_speeds << " initiating." << endl;
     cout << "Motor command speed is: " << cmd_speed << endl;
@@ -62,14 +64,14 @@ int main () {
   ofstream fout;
   fout.open("motor_speed_test_results.txt");
   if (fout) { // file opened successfully
-    for (int i = 0; i < num_test_speeds; i = i ++) {
-      fout << motor_cmd_speeds[i] << ’ ’ << angular_speeds[i] << endl;
+    for (int i = 0; i < num_test_speeds; i++) {
+      fout << motor_cmd_speeds[i] << " " << angular_speeds[i] << endl;
     }
   } else { // file did not open successfully
     cout << "Could not open text file for writing. Print to cout instead" << endl;
     // Instead, print results to terminal so that all is not lost
-    for (int i = 0; i < num_test_speeds; i = i ++) {
-      cout << motor_cmd_speeds[i] << ’ ’ << angular_speeds[i] << endl;
+    for (int i = 0; i < num_test_speeds; i++) {
+      cout << motor_cmd_speeds[i] << " " << angular_speeds[i] << endl;
     }
   }
 
