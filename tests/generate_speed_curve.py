@@ -41,4 +41,3 @@ if __name__ == '__main__':
     with open(out_name, "w") as out_file:
         for cmd_speed in cmd_speeds:
             out_file.write(cmd_speed + " " + angular_speeds[cmd_speed])
-            
