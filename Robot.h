@@ -8,35 +8,52 @@
 #define ROBOT_H
 
 #include <string>
+#include <vector>
+#include "components.h"
+#include "line_following.h"
 
-class Robot
-{
-  public:
-    string position[2];
-    // Array holding the current position information. It holds two characters
-    // corresponding to the two junctions that the robot is currently in-between.
-    // To see which character corresponds to which junction, see the picture at
-    // the end of this section.
+struct Egg {
+  const int size;
+  const char colour;
+}
 
-    int direction;
-    Rough direction the robot is facing. Can be 0, 90, 180, 270.
-    Directions defined in the picture below (clockwise).
+class Eggs {
+public:
+  vector eggs;
+  void add_egg(Egg egg);
+  void clear();
+}
 
-Eggs recycling_eggs - the recycling eggs combination on the robot. The Eggs class is defined later on in this section.
+class Robot {
+private:
+  Eggs recycling_eggs;
+  Eggs delivery_eggs;
+  int baskets_delivered;
+  string delivery_zone;
 
-Eggs delivery_eggs - the delivery eggs combination on the robot.
+  Reservoir reservoir;
+  Scoop scoop;
+  LEDs leds;
+  Line_Following line_following;
 
-int baskets_delivered - number of baskets delivered.
+  void scoop();
+  int sort_egg(bool large_egg);
+  Egg classify_egg(bool large_egg);
+  void update_onboard_eggs(Egg egg, int reservoir);
+public:
+  Robot();
 
-string delivery_zone - either "d1" or "d2".
+  string position[2];
+  int direction; // Either 0, 90, 180 or 270
 
-Reservoir reservoir
-
-Scoop scoop
-
-LEDs leds
-
-Line_Following line_following
+  // Methods
+  void input_restart_parameters(int baskets_delivered, string delivery_zone);
+  void move(string a, string b);
+  void align_for_pickup();
+  void pick_up_eggs(int num_to_recycle);
+  void pick_up_all_eggs();
+  void deliver_basket();
+  void recycle_eggs();
 }
 
 #endif
