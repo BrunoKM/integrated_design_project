@@ -1,24 +1,7 @@
 #include "components.h"
 
 
-class PCB1 : public PCB {
-private:
-  // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
-  int persistent_microswitch_bits[2] = {0, 1};
-  // Instantaneous microswitches; do not have to be reset in software (read only).
-  int inst_microswitch_bits[3] = {2, 3, 4};
-  // Scoop actuator control (write only)
-  int scoop_actuator_bit = 5;
-  // LEDs to signal colour detection (write only)
-  int leds_bits[2] = {6, 7};
-  int default_write;
-public:
-  PCB1(int port);
-  void read_initialise();
-};
-
-PCB1::PCB1(int port) : port(port) {
-  initialise_write_default();
+PCB::PCB(int port) : port(port) {
 
   // Assign the right write, read instructions:
   switch (port) {
@@ -55,34 +38,78 @@ PCB1::PCB1(int port) : port(port) {
       read_instruction = READ_PORT_7;
       break;
   }
-  read_initialise();
+}
+
+void PCB::command_write_default() {
+  rlink.command(write_instruction, write_default);
+}
+
+void PCB::read_state() {
+  int state;
+  state = rlink.request(read_instruction);
+  return state
+}
+
+int PCB1::init_line_sensor_mask() {
+  for (int i = 0; i < num_line_sensors; i++) {
+    line_sensor_mask = line_sensor_mask bitor (1 << line_sensor_bits[i]);
+  }
 }
 
 void PCB1::initialise_write_default() {
   write_default = 0;
+  // The default values for line sensors are 1:
+  write_default = write_default bitor line_sensor_mask;
+  // The default value for IR LED is 0
+  // The default for IR Input sensor i 1;
+  write_default = write_default bitor (1 << ir_input_bit);
+  // The default value for scoop is 0
+  // The default value for leds is 0
+};
+
+PCB1::PCB1(int port): PCB(port) {
+  init_line_sensor_mask();
+  initialise_write_default();
+  read_initialise();
+}
+
+int PCB1::read_line_sensors() {
+   // Returns the int value (binary) of the line sensors reading
+   int sensor_reading = read_state() bitand line_sensor_mask;
+   return sensor_reading;
+}
+
+int PCB1::read_ir_input() {
+  int ir_reading = read_state() bitand (1 << ir_input_bit);
+  return ir_reading;
+}
+
+PCB2::PCB2(int port): PCB(port) {
+  initialise_write_default();
+  read_initialise();
+}
+
+void PCB2::initialise_write_default() {
+  write_default = 0;
   // The default values for persistent microswitches are 0
   // The default values for instantaneous microswitches have to be 1 (to allow for reading)
   // Have to alter write default:
-  for (int i; i < num_inst_microswitches; i++) {
+  for (int i = 0; i < num_inst_microswitches; i++) {
     write_default = write_default bitor (1 << inst_microswitch_bits[i]);
   }
   // The default value for scoop is 0
   // The default value for leds is 0
 };
 
-void PCB1::read_initialise() {
+void PCB2::read_initialise() {
   command_write_default();
 }
 
-void reset_microswitches() {
+void PCB2::reset_microswitches() {
   command_write_default();
 }
 
-void PCB1::command_write_default() {
-  rlink.command(write_instruction, write_default);
-}
-
-void write_leds(int led0_val, int led1_val) {
+void PCB2::write_leds(int led0_val, int led1_val) {
   int led0_byte_val = led0_val << leds_bits[0];
   int led1_byte_val = led1_val << leds_bits[1];
   int write_byte = write_default bitor led0_byte_val bitor led1_byte_val;
@@ -90,10 +117,9 @@ void write_leds(int led0_val, int led1_val) {
   rlink.command(write_instruction, write_byte);
 }
 
-// Wrappers for command_write_default:
-void read_initialise();
-void reset_microswitches();
-void write_scoop(int scoop_val);
+void write_scoop(int scoop_val) {
+  // TODO: finish this
+}
 
 
 class LEDs {
