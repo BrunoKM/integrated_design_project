@@ -1,29 +1,40 @@
 // Defines several classes for each major component of the Robot which offer
 // methods that hide the implementation of the tasks each of the components
 // is expected to execute.
+
+// Also defines all the pin allocations for the PCB.
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
+#include <robot_link>
 #include "robot_initialise.h"
 
 class PCB {
 private:
   int port;
-
+  request_instruction read_instruction;
+  command_instruction write_instruction;
 };
 
 class PCB1 : public PCB {
 private:
-  int address; // Define the pcb address here
-  int inst_microswitch_bits[2] = 
-  int inst_microswitch_bits(2)
-  : Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
-Bit 2 - 4 : Instantaneous microswitches; do not have to be reset in software (read only).
-Bit 5 : Scoop actuator control (write only)
-Bit 6 - 7 : LEDs to signal colour detection (write only)
+  // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
+  const int num_persistent_microswitches = 2;
+  const int persistent_microswitch_bits[num_persistent_microswitches] = {0, 1};
+  // Instantaneous microswitches; do not have to be reset in software (read only).
+  const int num_inst_microswitches = 3;
+  const int inst_microswitch_bits[num_inst_microswitches] = {2, 3, 4};
+  // Scoop actuator control (write only)
+  const int scoop_actuator_bit = 5;
+  // LEDs to signal colour detection (write only)
+  const int num_leds = 2;
+  const int leds_bits[num_leds] = {6, 7};
+  int write_default; // used for and'ing with the values to be sent to write'able bits.
+  void initialise_write_default();
 public:
-  PCB1();
-}
+  PCB1(int port);
+  void read_initialise();
+};
 
 
 class LEDs {
