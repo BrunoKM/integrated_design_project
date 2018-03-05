@@ -16,6 +16,6 @@ public:
   void drive_forward(float speed);
   void drive_backward(float speed);
   float get_current_speed();
-}
+};
 
 #endif

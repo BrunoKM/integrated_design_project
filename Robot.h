@@ -15,14 +15,14 @@
 struct Egg {
   const int size;
   const char colour;
-}
+};
 
 class Eggs {
 public:
   vector eggs;
   void add_egg(Egg egg);
   void clear();
-}
+};
 
 class Robot {
 private:
@@ -54,6 +54,6 @@ public:
   void pick_up_all_eggs();
   void deliver_basket();
   void recycle_eggs();
-}
+};
 
 #endif
