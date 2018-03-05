@@ -71,8 +71,30 @@ void PCB1::initialise_write_default() {
 };
 
 void PCB1::read_initialise() {
+  command_write_default();
+}
+
+void reset_microswitches() {
+  command_write_default();
+}
+
+void PCB1::command_write_default() {
   rlink.command(write_instruction, write_default);
 }
+
+void write_leds(int led0_val, int led1_val) {
+  int led0_byte_val = led0_val << leds_bits[0];
+  int led1_byte_val = led1_val << leds_bits[1];
+  int write_byte = write_default bitor led0_byte_val bitor led1_byte_val;
+
+  rlink.command(write_instruction, write_byte);
+}
+
+// Wrappers for command_write_default:
+void read_initialise();
+void reset_microswitches();
+void write_scoop(int scoop_val);
+
 
 class LEDs {
 private:

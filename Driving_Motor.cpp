@@ -1,7 +1,7 @@
 #include <robot_link>
 #include "Driving_Motor.h"
 
-Driving_Motor::Driving_Motor (int motor_num, float speed_cal_factor, int orient):
+Driving_Motor::Driving_Motor (int motor_number, float speed_cal_factor, int orientation):
 motor_number(motor_num), speed_calibration_factor(speed_cal_factor), orientation(orient)
 {
 

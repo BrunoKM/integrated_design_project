@@ -12,7 +12,7 @@ private:
   void go_command(int speed_cmd);
   int request_speed_command();
 public:
-  Driving_Motor(int motor_num, float speed_cal_factor, int orient);
+  Driving_Motor(int motor_number, float speed_cal_factor, int orientation);
   void drive_forward(float speed);
   void drive_backward(float speed);
   float get_current_speed();

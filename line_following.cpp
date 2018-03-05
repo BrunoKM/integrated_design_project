@@ -2,12 +2,13 @@
 #include "line_following.h"
 
 
+Line_Following::Line_Following(): current_speed(0) {
 
-Line_Following::Line_Following(){}
+}
 
-void Line_Following::follow_line(float speed, float ramp, int num_intersections_to_ignore,
+void Line_Following::follow_line(float speed, float ramp, float speed_delta, int num_intersections_to_ignore,
                                  bool keep_driving_after_last) {
-// Follows the line until a certain number of intersections has been passed
+  
 };
 
 void Line_Following::align_with_intersection() {
@@ -65,6 +66,3 @@ Line_Sensors::Line_Sensors(int address){}
 Line_Sensor_Reading Line_Sensors::read_sensor_input() {
 
 };
-
-
-
