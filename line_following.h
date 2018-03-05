@@ -2,23 +2,26 @@
 #ifndef LINE_FOLLOWING_H
 #define LINE_FOLLLOWING_H
 #include "Driving_Motor.h"
+#include "robot_initialise.h"
 
 class Line_Following {
 private:
+
+    float current_speed;
+    float current_ramp;
+    char direction; // either f or b
+    char back_last_to_the; // either l or r
+    char front_last_to_the; // either l or r
+    Driving_Motor left_motor;
+    Driving_Motor right_motor;
+
+    // Methods
     int is_on_the_line(); // return 1 if true, 0 if false, 2 if intersection encountered
     int wiggle_to_line(); // return 1 if successful, 0 if failed
     int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
 
 public:
     Line_Following();
-
-    Driving_Motor left_motor;
-    Driving_Motor right_motor;
-    float current_speed;
-    float current_ramp;
-    char direction; // either f or b
-    char back_last_to_the; // either l or r
-    char front_last_to_the; // either l or r
 
     // Methods
     void follow_line(float speed, float ramp, int num_intersections_to_ignore, bool keep_driving_after_last);
@@ -30,12 +33,10 @@ public:
 
 
 class Line_Sensor_Reading {
-
-private:
-    int sensor_reading;
-
 public:
     Line_Sensor_Reading();
+
+    int sensor_reading;
 
     // Sensor readings return 1 or 0
     int front_left();
