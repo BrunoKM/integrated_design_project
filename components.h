@@ -28,14 +28,12 @@ class PCB1 : public PCB {
 private:
   // Line following sensors (read only)
   const int num_line_sensors = 4;
-  const int line_sensor_bits[num_line_sensors] = {0, 1, 2, 3};
-  int line_sensor_mask;
+  const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
   //  IR LED for beacon communication (write only)
-  const int ir_led_bit = 4;
+  const int ir_led_bit = 1 << 4;
   //  IR Phototransistor for beacon communication (read only)
-  const int ir_input_bit = 5;
+  const int ir_input_bit = 1 << 5;
 
-  int init_line_sensor_mask();
 public:
   PCB1(int port);
   void read_initialise();
@@ -70,20 +68,20 @@ public:
 
 
 struct Line_Sensor_Reading {
-  int front_left;
-  int front_right;
-  int back_left;
-  int back_right;
+  bool front_left;
+  bool front_right;
+  bool back_left;
+  bool back_right;
 }
 
 class Line_Sensors {
 private:
   PCB1 pcb;
   // Define the order of line sensors connections:
-  int front_left_bit = 1 << 0;
-  int front_right_bit = 1 << 1;
-  int back_left_bit = 1 << 2;
-  int back_right_bit = 1 << 3;
+  const int front_left_bit = 1 << 0;
+  const int front_right_bit = 1 << 1;
+  const int back_left_bit = 1 << 2;
+  const int back_right_bit = 1 << 3;
 public:
   Line_Sensors(PCB1 pcb) : pcb(pcb){};
   Line_Sensor_Reading get_sensor_reading();

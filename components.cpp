@@ -1,6 +1,8 @@
 #include "components.h"
 
 
+
+
 PCB::PCB(int port) : port(port) {
 
   // Assign the right write, read instructions:
@@ -50,21 +52,16 @@ void PCB::read_state() {
   return state
 }
 
-int PCB1::init_line_sensor_mask() {
-  for (int i = 0; i < num_line_sensors; i++) {
-    line_sensor_mask = line_sensor_mask bitor (1 << line_sensor_bits[i]);
-  }
-}
 
 void PCB1::initialise_write_default() {
   write_default = 0;
+
   // The default values for line sensors are 1:
-  write_default = write_default bitor line_sensor_mask;
+  write_default = write_default bitor line_sensor_bits;
   // The default value for IR LED is 0
-  // The default for IR Input sensor i 1;
-  write_default = write_default bitor (1 << ir_input_bit);
-  // The default value for scoop is 0
-  // The default value for leds is 0
+
+  // The default for IR Input sensor i 1:
+  write_default = write_default bitor ir_input_bit;
 };
 
 PCB1::PCB1(int port): PCB(port) {
@@ -75,14 +72,47 @@ PCB1::PCB1(int port): PCB(port) {
 
 int PCB1::read_line_sensors() {
    // Returns the int value (binary) of the line sensors reading
-   int sensor_reading = read_state() bitand line_sensor_mask;
+   int sensor_reading = read_state() bitand line_sensor_bits;
    return sensor_reading;
 }
 
 int PCB1::read_ir_input() {
-  int ir_reading = read_state() bitand (1 << ir_input_bit);
-  return ir_reading;
+  int ir_reading = read_state();
+  if ((ir_reading bitand ir_input_bit) > 0) {
+    return 1;
+  } else {
+  return 0;
+  }
 }
+
+Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
+  int sensor_state = pcb.read_line_sensors();
+  Line_Sensor_Reading reading;
+  // Assign to each value of the reading:
+  if (reading bitand front_left_bit) {
+    reading.front_left = true;
+  } else {
+    reading.front_left = false;
+  }
+  if (reading bitand front_left_bit) {
+    reading.front_left = true;
+  } else {
+    reading.front_left = false;
+  }
+  if (reading bitand front_left_bit) {
+    reading.front_left = true;
+  } else {
+    reading.front_left = false;
+  }
+  if (reading bitand front_left_bit) {
+    reading.front_left = true;
+  } else {
+    reading.front_left = false;
+  }
+  return reading
+}
+
+
 
 PCB2::PCB2(int port): PCB(port) {
   initialise_write_default();
@@ -117,21 +147,21 @@ void PCB2::write_leds(int led0_val, int led1_val) {
   rlink.command(write_instruction, write_byte);
 }
 
-void write_scoop(int scoop_val) {
+void PCB2::write_scoop(int scoop_val) {
   // TODO: finish this
 }
 
 
-class LEDs {
-private:
-  const int leds_port;
-  const int led1_pin;
-  const int led2_pin;
-public:
-  LEDs(int ledsport, int led1_pin, int led2_pin);
-  void off();
-  void display_egg(Egg egg);
-};
+// class LEDs {
+// private:
+//   const int leds_port;
+//   const int led1_pin;
+//   const int led2_pin;
+// public:
+//   LEDs(int ledsport, int led1_pin, int led2_pin);
+//   void off();
+//   void display_egg(Egg egg);
+// };
 
 LEDs::LEDs(int leds_port, int led1_pin, int led2_pin):
 port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {

@@ -11,10 +11,10 @@ int main () {
   // Set parameters for the test
   float speed = 0.5; // Set speed of motors in range 0-1
   float ramp = 0.5; // Set acceleration of motors in range 0-1
-  float speed_delta = 0.1; // NOT SURE WHAT THIS IS???
+  float speed_delta = 0.1;
   int num_intersections_to_ignore = 0;
   bool keep_driving_after_last = 1; // Decides whether to stop motors when the final intersection is reached
-  
+
   follow_line(speed, ramp, speed_delta,
               num_intersections_to_ignore, keep_driving_after_last);
 

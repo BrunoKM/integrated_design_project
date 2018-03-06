@@ -8,15 +8,23 @@ motor_number(motor_num), speed_calibration_factor(speed_cal_factor), orientation
 }
 
 
-void Driving_Motor::drive_forward(float speed) {
-  int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
-  if (orientation == -1) speed_cmd += 128;
-  go_command(speed_cmd);
-}
-void Driving_Motor::drive_backward(float speed) {
-  int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
-  if (orientation == 1) speed_cmd += 128;
-  go_command(speed_cmd);
+void Driving_Motor::drive(float speed) {
+  // Only send command if the speed is different from requested speed (saves time)
+  if (speed != requested_speed) {
+    int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
+    if (speed >= 0) {
+      // If direction is forward:
+      if (orientation == -1) speed_cmd += 128;
+      go_command(speed_cmd);
+    } else {
+      // If direction is backwards:
+      speed_cmd *= (-1);
+      if (orientation == 1) speed_cmd += 128;
+      go_command(speed_cmd);
+    }
+    requested_speed = speed;
+  }
+
 }
 
 float get_current_speed() {
