@@ -124,9 +124,7 @@ void PCB2::initialise_write_default() {
   // The default values for persistent microswitches are 0
   // The default values for instantaneous microswitches have to be 1 (to allow for reading)
   // Have to alter write default:
-  for (int i = 0; i < num_inst_microswitches; i++) {
-    write_default = write_default bitor (1 << inst_microswitch_bits[i]);
-  }
+  write_default = write_default bitor inst_microswitch_bits;
   // The default value for scoop is 0
   // The default value for leds is 0
 };
@@ -139,10 +137,10 @@ void PCB2::reset_microswitches() {
   command_write_default();
 }
 
-void PCB2::write_leds(int led0_val, int led1_val) {
-  int led0_byte_val = led0_val << leds_bits[0];
-  int led1_byte_val = led1_val << leds_bits[1];
-  int write_byte = write_default bitor led0_byte_val bitor led1_byte_val;
+void PCB2::write_leds(int led1_val, int led2_val) {
+  int led1_byte_val = led1_bit * led1_val;
+  int led2_byte_val = led2_bit * led2_val;
+  int write_byte = write_default bitor led1_byte_val bitor led2_byte_val;
 
   rlink.command(write_instruction, write_byte);
 }

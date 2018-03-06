@@ -47,15 +47,15 @@ class PCB2 : public PCB {
 private:
   // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
   static const int num_persistent_microswitches = 2;
-  static const int persistent_microswitch_bits[num_persistent_microswitches] = {0, 1};
+  static const int persistent_microswitch_bits = (1 << 0) + (1 << 1);
   // Instantaneous microswitches; do not have to be reset in software (read only).
   static const int num_inst_microswitches = 3;
-  static const int inst_microswitch_bits[num_inst_microswitches] = {2, 3, 4};
+  static const int inst_microswitch_bits = (1 << 2) + (1 << 3) + (1 << 4);
   // Scoop actuator control (write only)
-  static const int scoop_actuator_bit = 5;
+  static const int scoop_actuator_bit = 1 << 5;
   // LEDs to signal colour detection (write only)
-  static const int num_leds = 2;
-  static const int leds_bits[num_leds] = {6, 7};
+  static const int led1_bit = (1 << 6);
+  static const int led2_bit = (1 << 7);
 
 public:
   PCB2(int port);
