@@ -55,7 +55,7 @@ void Driving_Motor::go_command(int speed_cmd) {
   }
 }
 
-int request_speed_command() {
+int Driving_Motor::request_speed_command() {
   switch(motor_number) {
     int measured_speed;
     case 1:

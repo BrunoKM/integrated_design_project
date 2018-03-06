@@ -6,7 +6,8 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#include <robot_link>
+#include <robot_link.h>
+#include <robot_instr.h>
 #include "robot_initialise.h"
 
 
@@ -87,6 +88,16 @@ public:
   Line_Sensor_Reading get_sensor_reading();
 }
 
+// A master class to rule them all
+class Components {
+private:
+  // TODO: Add the rest of the necessary classes
+  Line_Sensors line_sensors;
+  PCB1 pcb1;
+public:
+  Components(int pcb1_port): pcb(pcb1_port), line_sensors(pcb1) {};
+
+}
 
 // TODO: Finish class LEDs
 class LEDs {

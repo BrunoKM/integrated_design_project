@@ -1,3 +1,5 @@
+// Go until first intersection and align with it.
+
 #include <iostream>
 using namespace std;
 #include <robot_instr.h>

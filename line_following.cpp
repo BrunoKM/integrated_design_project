@@ -20,7 +20,6 @@ line_sensors(line_sensors) {
 
 // TODO: Potentially have integral control
 // TODO: Add '11' reading counter to be more certain of junctions
-// TODO: probably encapsulate the reduced speed assignment
 void Line_Following::follow_line_until_intersection(float speed, float ramp, float speed_delta) {
   // Assumes motors already started
   float reduced_speed = speed - speed * speed_delta;
@@ -188,6 +187,13 @@ void Line_Following::align_after_turn(float alignment_speed) {
     } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
       std::cout << "An unexpected detection of junction occured" << std::endl;
     }
+  }
+}
+
+void Line_Following::set_ramp(int ramp_time) {
+  if (current_ramp_time != ramp_time) {
+    rlink.command(RAMP_TIME, ramp_time);
+    current_ramp_time = ramp_time;
   }
 }
 
