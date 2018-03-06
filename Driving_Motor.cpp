@@ -1,22 +1,30 @@
 #include <robot_link>
 #include "Driving_Motor.h"
 
-Driving_Motor::Driving_Motor (int motor_num, float speed_cal_factor, int orient):
+Driving_Motor::Driving_Motor (int motor_number, float speed_cal_factor, int orientation):
 motor_number(motor_num), speed_calibration_factor(speed_cal_factor), orientation(orient)
 {
 
 }
 
 
-void Driving_Motor::drive_forward(float speed) {
-  int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
-  if (orientation == -1) speed_cmd += 128;
-  go_command(speed_cmd);
-}
-void Driving_Motor::drive_backward(float speed) {
-  int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
-  if (orientation == 1) speed_cmd += 128;
-  go_command(speed_cmd);
+void Driving_Motor::drive(float speed) {
+  // Only send command if the speed is different from requested speed (saves time)
+  if (speed != requested_speed) {
+    int speed_cmd = int((speed * speed_calibration_factor) * 127.0);
+    if (speed >= 0) {
+      // If direction is forward:
+      if (orientation == -1) speed_cmd += 128;
+      go_command(speed_cmd);
+    } else {
+      // If direction is backwards:
+      speed_cmd *= (-1);
+      if (orientation == 1) speed_cmd += 128;
+      go_command(speed_cmd);
+    }
+    requested_speed = speed;
+  }
+
 }
 
 float get_current_speed() {
@@ -47,7 +55,7 @@ void Driving_Motor::go_command(int speed_cmd) {
   }
 }
 
-int request_speed_command() {
+int Driving_Motor::request_speed_command() {
   switch(motor_number) {
     int measured_speed;
     case 1:
