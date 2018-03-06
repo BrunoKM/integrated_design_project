@@ -12,7 +12,7 @@
 
 
 class PCB {
-private:
+protected:
   int port;
   request_instruction read_instruction;
   command_instruction write_instruction;
@@ -34,9 +34,10 @@ private:
   static const int ir_led_bit = 1 << 4;
   //  IR Phototransistor for beacon communication (read only)
   static const int ir_input_bit = 1 << 5;
-
+  
+  void initialise_write_default();
 public:
-  PCB1(int port);
+  PCB1(int &port);
   void read_initialise();
   int read_line_sensors(); // The int value (binary) of the line sensors reading
   int read_ir_input();
@@ -56,6 +57,8 @@ private:
   // LEDs to signal colour detection (write only)
   static const int led1_bit = (1 << 6);
   static const int led2_bit = (1 << 7);
+  
+  void initialise_write_default();
 
 public:
   PCB2(int port);
@@ -65,6 +68,7 @@ public:
   void reset_microswitches();
 
   void write_scoop(int scoop_val);
+  
 };
 
 
@@ -84,7 +88,7 @@ private:
   static const int back_left_bit = 1 << 2;
   static const int back_right_bit = 1 << 3;
 public:
-  Line_Sensors(PCB1 &pcb1) : pcb(pcb1){};
+  Line_Sensors(PCB1 &pcb1) : pcb1(pcb1){};
   Line_Sensor_Reading get_sensor_reading();
 };
 
@@ -96,7 +100,7 @@ private:
 public:
   Line_Sensors line_sensors;
 
-  Components(int pcb1_port): pcb1(pcb1_port), line_sensors(pcb1) {};
+  Components(int pcb1_port): pcb1(PCB1(pcb1_port)), line_sensors(pcb1) {};
 
 };
 

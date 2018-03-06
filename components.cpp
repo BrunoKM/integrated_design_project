@@ -46,10 +46,10 @@ void PCB::command_write_default() {
   rlink.command(write_instruction, write_default);
 }
 
-void PCB::read_state() {
+int PCB::read_state() {
   int state;
   state = rlink.request(read_instruction);
-  return state
+  return state;
 }
 
 
@@ -65,7 +65,6 @@ void PCB1::initialise_write_default() {
 };
 
 PCB1::PCB1(int& port): PCB(port) {
-  init_line_sensor_mask();
   initialise_write_default();
   read_initialise();
 }
@@ -85,31 +84,35 @@ int PCB1::read_ir_input() {
   }
 }
 
+void PCB1::read_initialise() {
+  command_write_default();
+}
+
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
-  int sensor_state = pcb.read_line_sensors();
+  int sensor_state = pcb1.read_line_sensors();
   Line_Sensor_Reading reading;
   // Assign to each value of the reading:
-  if (reading bitand front_left_bit) {
+  if (sensor_state bitand front_left_bit) {
     reading.front_left = true;
   } else {
     reading.front_left = false;
   }
-  if (reading bitand front_left_bit) {
-    reading.front_left = true;
+  if (sensor_state bitand front_right_bit) {
+    reading.front_right = true;
   } else {
-    reading.front_left = false;
+    reading.front_right = false;
   }
-  if (reading bitand front_left_bit) {
-    reading.front_left = true;
+  if (sensor_state bitand back_left_bit) {
+    reading.back_left = true;
   } else {
-    reading.front_left = false;
+    reading.back_left = false;
   }
-  if (reading bitand front_left_bit) {
-    reading.front_left = true;
+  if (sensor_state bitand back_right_bit) {
+    reading.back_right = true;
   } else {
-    reading.front_left = false;
+    reading.back_right = false;
   }
-  return reading
+  return reading;
 }
 
 

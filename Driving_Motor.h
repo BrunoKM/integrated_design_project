@@ -8,7 +8,7 @@ private:
   const int motor_number;
   const float speed_calibration_factor;
   float orientation;
-  int requested_speed;
+  float requested_speed;
 
   void go_command(int speed_cmd);
   int request_speed_command();
