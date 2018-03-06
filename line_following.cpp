@@ -13,7 +13,7 @@ const float TURN_ALIGN_SPEED_FRAC = 0.1 // Fraction of speed to apply to align w
 const int NUM_TO_CONFIRM_ALIGNMENT = 4 // Number of iterations to confirm that robot is on the line
 
 
-Line_Following::Line_Following(Line_Sensors line_sensors): current_speed(0),
+Line_Following::Line_Following(Line_Sensors &line_sensors): current_speed(0),
 line_sensors(line_sensors) {
 
 }
@@ -101,7 +101,7 @@ void Line_Following::align_with_intersection(int time_duration) {
   // Stop the motors
   left_motor.drive(0);
   right_motor.drive(0);
-};
+}
 
 
 void Line_Following::turn(int degrees, float speed) {

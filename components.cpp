@@ -64,7 +64,7 @@ void PCB1::initialise_write_default() {
   write_default = write_default bitor ir_input_bit;
 };
 
-PCB1::PCB1(int port): PCB(port) {
+PCB1::PCB1(int& port): PCB(port) {
   init_line_sensor_mask();
   initialise_write_default();
   read_initialise();
@@ -163,10 +163,10 @@ void PCB2::write_scoop(int scoop_val) {
 //   void display_egg(Egg egg);
 // };
 
-LEDs::LEDs(int leds_port, int led1_pin, int led2_pin):
-port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {
-
-}
-
-LEDs::off() {
-}
+// LEDs::LEDs(int leds_port, int led1_pin, int led2_pin):
+// port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {
+//
+// }
+//
+// LEDs::off() {
+// }

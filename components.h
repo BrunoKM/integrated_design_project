@@ -28,12 +28,12 @@ public:
 class PCB1 : public PCB {
 private:
   // Line following sensors (read only)
-  const int num_line_sensors = 4;
-  const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
+  static const int num_line_sensors = 4;
+  static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
   //  IR LED for beacon communication (write only)
-  const int ir_led_bit = 1 << 4;
+  static const int ir_led_bit = 1 << 4;
   //  IR Phototransistor for beacon communication (read only)
-  const int ir_input_bit = 1 << 5;
+  static const int ir_input_bit = 1 << 5;
 
 public:
   PCB1(int port);
@@ -42,20 +42,20 @@ public:
   int read_ir_input();
 };
 
-
+// TODO: Change to the same format as PCB1
 class PCB2 : public PCB {
 private:
   // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
-  const int num_persistent_microswitches = 2;
-  const int persistent_microswitch_bits[num_persistent_microswitches] = {0, 1};
+  static const int num_persistent_microswitches = 2;
+  static const int persistent_microswitch_bits[num_persistent_microswitches] = {0, 1};
   // Instantaneous microswitches; do not have to be reset in software (read only).
-  const int num_inst_microswitches = 3;
-  const int inst_microswitch_bits[num_inst_microswitches] = {2, 3, 4};
+  static const int num_inst_microswitches = 3;
+  static const int inst_microswitch_bits[num_inst_microswitches] = {2, 3, 4};
   // Scoop actuator control (write only)
-  const int scoop_actuator_bit = 5;
+  static const int scoop_actuator_bit = 5;
   // LEDs to signal colour detection (write only)
-  const int num_leds = 2;
-  const int leds_bits[num_leds] = {6, 7};
+  static const int num_leds = 2;
+  static const int leds_bits[num_leds] = {6, 7};
 
 public:
   PCB2(int port);
@@ -73,42 +73,43 @@ struct Line_Sensor_Reading {
   bool front_right;
   bool back_left;
   bool back_right;
-}
+};
 
 class Line_Sensors {
 private:
-  PCB1 pcb;
+  PCB1 pcb1;
   // Define the order of line sensors connections:
-  const int front_left_bit = 1 << 0;
-  const int front_right_bit = 1 << 1;
-  const int back_left_bit = 1 << 2;
-  const int back_right_bit = 1 << 3;
+  static const int front_left_bit = 1 << 0;
+  static const int front_right_bit = 1 << 1;
+  static const int back_left_bit = 1 << 2;
+  static const int back_right_bit = 1 << 3;
 public:
-  Line_Sensors(PCB1 pcb) : pcb(pcb){};
+  Line_Sensors(PCB1 &pcb1) : pcb(pcb1){};
   Line_Sensor_Reading get_sensor_reading();
-}
+};
 
 // A master class to rule them all
 class Components {
 private:
   // TODO: Add the rest of the necessary classes
-  Line_Sensors line_sensors;
   PCB1 pcb1;
 public:
-  Components(int pcb1_port): pcb(pcb1_port), line_sensors(pcb1) {};
+  Line_Sensors line_sensors;
 
-}
+  Components(int pcb1_port): pcb1(pcb1_port), line_sensors(pcb1) {};
+
+};
 
 // TODO: Finish class LEDs
-class LEDs {
-private:
-  const int led1_pin;
-  const int led2_pin;
-public:
-  LEDs(int led1_pin, int led2_pin);
-  void off();
-  void display_egg(Egg egg);
-};
+// class LEDs {
+// private:
+//   const int led1_pin;
+//   const int led2_pin;
+// public:
+//   LEDs(int led1_pin, int led2_pin);
+//   void off();
+//   void display_egg(Egg egg);
+// };
 
 // TODO: Finnish classes below.
 // class Scoop {
