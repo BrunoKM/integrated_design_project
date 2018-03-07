@@ -88,6 +88,48 @@ void PCB1::read_initialise() {
   command_write_default();
 }
 
+
+
+PCB2::PCB2(int port): PCB(port) {
+  initialise_write_default();
+  read_initialise();
+}
+
+void PCB2::initialise_write_default() {
+  write_default = 0;
+  // The default values for persistent microswitches are 0
+  // The default values for instantaneous microswitches have to be 1 (to allow for reading)
+  // Have to alter write default:
+  write_default = write_default bitor inst_microswitch_bits;
+  // The default value for scoop is 0
+  // The default value for leds is 0
+};
+
+void PCB2::read_initialise() {
+  command_write_default();
+}
+
+void PCB2::reset_microswitches() {
+  command_write_default();
+}
+
+int PCB2::read_microswitches() {
+  int switches_reading = read_state() bitand (inst_microswitch_bits bitor persistent_microswitch_bits);
+  return switches_reading;
+}
+
+void PCB2::write_leds(int led1_val, int led2_val) {
+  int led1_byte_val = led1_bit * led1_val;
+  int led2_byte_val = led2_bit * led2_val;
+  int write_byte = write_default bitor led1_byte_val bitor led2_byte_val;
+
+  rlink.command(write_instruction, write_byte);
+}
+
+void PCB2::write_scoop(int scoop_val) {
+  // TODO: finish this
+}
+
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
   int sensor_state = pcb1.read_line_sensors();
   Line_Sensor_Reading reading;
@@ -116,40 +158,18 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 }
 
 
-
-PCB2::PCB2(int port): PCB(port) {
-  initialise_write_default();
-  read_initialise();
-}
-
-void PCB2::initialise_write_default() {
-  write_default = 0;
-  // The default values for persistent microswitches are 0
-  // The default values for instantaneous microswitches have to be 1 (to allow for reading)
-  // Have to alter write default:
-  write_default = write_default bitor inst_microswitch_bits;
-  // The default value for scoop is 0
-  // The default value for leds is 0
-};
-
-void PCB2::read_initialise() {
-  command_write_default();
-}
-
-void PCB2::reset_microswitches() {
-  command_write_default();
-}
-
-void PCB2::write_leds(int led1_val, int led2_val) {
-  int led1_byte_val = led1_bit * led1_val;
-  int led2_byte_val = led2_bit * led2_val;
-  int write_byte = write_default bitor led1_byte_val bitor led2_byte_val;
-
-  rlink.command(write_instruction, write_byte);
-}
-
-void PCB2::write_scoop(int scoop_val) {
-  // TODO: finish this
+void Microswitches::update_state() {
+  int state = pcb2.read_microswitches();
+  if (state bitand front_switch_bit) {
+    front_state = true;
+  } else {
+    front_state = false;
+  }
+  if (state bitand rear_switch_bit) {
+    rear_state = true;
+  } else {
+    rear_state = false;
+  }
 }
 
 

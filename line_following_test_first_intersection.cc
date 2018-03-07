@@ -24,11 +24,11 @@ int main () {
 
   float speed_delta = 0.5;
   int num_intersections_to_ignore = 0;
-  bool keep_driving_after_last = false; // Decides whether to stop motors when the final intersection is reached
-  
-  lf.follow_line(speed, ramp, speed_delta,
+  bool keep_driving_after_last = true; // Decides whether to stop motors when the final intersection is reached
+
+  lf.follow_line(speed, speed_delta,
               num_intersections_to_ignore, keep_driving_after_last);
-  lf.align_with_intersection(1080, speed, speed_delta);
+  lf.align_with_intersection(speed, speed_delta);
 
   cout << "Finished" << endl;
 

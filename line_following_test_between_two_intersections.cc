@@ -31,13 +31,13 @@ int main () {
   bool keep_driving_after_last = 1; // Decides whether to stop motors when the final intersection is reached
 
   for (int i = 0; i < num_repetitions; i++) {
-    lf.follow_line(speed, ramp, speed_delta,
+    lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
-    lf.align_with_intersection(1080, speed, speed_delta);
+    lf.align_with_intersection(speed, speed_delta);
     lf.turn(180, turn_speed);
-    lf.follow_line(speed, ramp, speed_delta,
+    lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
-    lf.align_with_intersection(1080, speed, speed_delta);
+    lf.align_with_intersection(speed, speed_delta);
     lf.turn(-180, turn_speed);
   }
 

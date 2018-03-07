@@ -18,21 +18,21 @@ const int NUM_TO_CONFIRM_ALIGNMENT = 4; // Number of iterations to confirm that 
 
 // TODO: Potentially have integral control
 // TODO: Add '11' reading counter to be more certain of junctions
-void Line_Following::follow_line_until_intersection(float speed, float ramp, float speed_delta) {
+void Line_Following::follow_line_until_intersection(float speed, float speed_delta) {
   // Assumes motors already started
   float reduced_speed = speed - speed * speed_delta;
   bool intersection_detected = false;
-  
+
   Line_Sensor_Reading reading;
 
   while (intersection_detected == false) {
     reading = line_sensors.get_sensor_reading();
-    
+
     #ifdef DEBUG2
     std::cout << "\rLine Sensors reading: " << reading.front_left << " "
     << reading.front_right << std::flush;
     #endif
-    
+
     if ((reading.front_left == 1) and (reading.front_right == 0)) {
       // Need to go more towards left
       left_motor.drive(reduced_speed);
@@ -59,7 +59,7 @@ void Line_Following::follow_line_until_intersection(float speed, float ramp, flo
   return;
 }
 
-void Line_Following::follow_line(float speed, float ramp, float speed_delta, int num_intersections_to_ignore,
+void Line_Following::follow_line(float speed, float speed_delta, int num_intersections_to_ignore,
                                  bool keep_driving_after_last) {
   // Start
   left_motor.drive(speed);
@@ -84,13 +84,14 @@ void Line_Following::follow_line(float speed, float ramp, float speed_delta, int
   return;
 }
 
-void Line_Following::align_with_intersection(int time_duration, float speed, float speed_delta) {
+void Line_Following::align_with_intersection(float speed, float speed_delta) {
 // Keep driving for a pre-calibrated amount until wheel axis is over intersection
   stopwatch watch;
   watch.start();
-  
+
+  int time_duration = 1080; //TODO: make dependent on speed
   float reduced_speed = speed - speed * speed_delta;
-  
+
   while (watch.read() < time_duration) {
     static Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     if ((reading.front_left == 1) and (reading.front_right == 0)) {
@@ -118,6 +119,15 @@ void Line_Following::align_with_intersection(int time_duration, float speed, flo
 // TODO: Add rotation estimation capabilities (to avoid wrong turns)!!
 void Line_Following::turn(int degrees, float speed) {
   // degrees can be either 90, 180, -90, or -180 (clockwise)
+  // if 270, -270 call itself with -90 or 90 respectively
+
+  if (degrees = 270) {
+    turn(-90, speed);
+  } else if (degrees = -270) {
+    turn(90, speed);
+  } else if (degrees = 0) {
+    return;
+  }
 
   #ifdef DEBUG
   if ((degrees !=  90) and (degrees !=  180) and (degrees !=  -90) and (degrees !=  -180)) {
@@ -180,12 +190,12 @@ void Line_Following::turn(int degrees, float speed) {
 
 void Line_Following::align_after_turn(float alignment_speed) {
   int n_iter_on_line = 0;
-  
+
   Line_Sensor_Reading reading;
   while (n_iter_on_line < NUM_TO_CONFIRM_ALIGNMENT) {
 	// Read the light sensors
 	reading = line_sensors.get_sensor_reading();
-	
+
     if ((reading.front_left == 1) and (reading.front_right == 0)) {
       // Need to go more towards left
       left_motor.drive(-alignment_speed);

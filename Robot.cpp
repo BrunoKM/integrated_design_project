@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "robot.h"
+#include "robot_initialise.h"
 
 Eggs::Eggs() {}
 
@@ -22,8 +23,20 @@ void Eggs::clear() {
 
 
 // The Robot class methods
-Robot::Robot() {
+Robot::Robot() :
+components(PCB1_ADDRESS, PCB2_ADDRESS),
+line_following(components.line_sensors),
+current_junction("s"),
+direction(0) {
+  initialise_robot();
+}
 
+Robot::Robot(int string starting_junction, int starting_direction) :
+components(PCB1_ADDRESS, PCB2_ADDRESS),
+line_following(components.line_sensors),
+current_junction(starting_junction),
+direction(starting_direction) {
+  initialise_robot();
 }
 
 void Robot::input_restart_parameters(int baskets_delivered, string delivery_zone) {
@@ -31,7 +44,29 @@ void Robot::input_restart_parameters(int baskets_delivered, string delivery_zone
 }
 
 void Robot::move(string a, string b) {
+  switch (a) {
+    case "s":
+      switch (b) {
+        case "i":
+          // Assume in the right direciton TODO: remove that dependency
+          line_following.follow_line(1.0, 0.5, 3, 1);
+          line_following.align_with_intersection(1.0, 0.5);
 
+        case "j":
+          move("s", "i");
+          move("i", "j");
+
+      }
+  case "i":
+    switch (b) {
+      case "j":
+        int desired_direction = 270;
+        int turn_by = desired_direction - direction;
+        line_following.turn(turn_by, 1.0);
+        line_following.follow_line(1.0, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+    }
+  }
 }
 
 void Robot::align_for_pickup() {
