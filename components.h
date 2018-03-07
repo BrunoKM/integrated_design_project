@@ -117,7 +117,7 @@ public:
   Line_Sensors line_sensors;
   Microswitches microswitches;
 
-  Components(int pcb1_port, int pcb2_port): pcb1(PCB1(pcb1_port)), pcb2(pcb2_port) // TODO: Get rid of PCB1 explicit constructor
+  Components(int pcb1_port, int pcb2_port): pcb1(PCB1(pcb1_port)), pcb2(PCB2(pcb2_port)), // TODO: Get rid of PCB1 explicit constructor
     line_sensors(pcb1), microswitches(pcb2){};
 
 };

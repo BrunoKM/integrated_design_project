@@ -13,7 +13,7 @@ int main () {
 
   Robot robot;
   cout << "--- Subsystems Demo ---" << endl;
-  cout << "Running Task 1:"
-  robot.move("s", "j")
+  cout << "Running Task 1:" << endl;
+  robot.move("s", "j");
 
 }

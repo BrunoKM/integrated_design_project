@@ -63,6 +63,7 @@ void Robot::move(string a, string b) {
       case "j":
         int desired_direction = 270;
         int turn_by = desired_direction - direction;
+        // Make sure the robot is facing the right direction
         line_following.turn(turn_by, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
@@ -77,7 +78,9 @@ void Robot::align_for_pickup() {
     << current_junction << std::endl;
     throw std::invalid_argument( "Wrong junction for alignment." );
   }
-  
+  int desired_direction = 180;
+  int turn_by = desired_direction - direction;
+  line_following.turn(turn_by, 1.0);
 }
 
 void Robot::pick_up_eggs(int num_to_recycle) {
