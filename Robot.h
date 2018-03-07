@@ -22,7 +22,7 @@ struct Egg {
 
 class Eggs {
 public:
-  vector eggs;
+  std::vector<Egg> eggs;
   void add_egg(Egg egg);
   void clear();
 };
@@ -43,9 +43,9 @@ private:
   void update_onboard_eggs(Egg egg, int reservoir);
 public:
   Robot();
-  Robot(int string starting_junction, int starting_direction);
+  Robot(string starting_junction, int starting_direction);
 
-  string position[2];
+  string position;
   string current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
 

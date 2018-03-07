@@ -67,7 +67,7 @@ void Line_Following::follow_line(float speed, float speed_delta, int num_interse
 
   int intersections_crossed = 0;
   while (intersections_crossed <= num_intersections_to_ignore) {
-    follow_line_until_intersection(speed, ramp, speed_delta);
+    follow_line_until_intersection(speed, speed_delta);
     intersections_crossed += 1;
     // wait until intersection crossed
     Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
@@ -121,11 +121,11 @@ void Line_Following::turn(int degrees, float speed) {
   // degrees can be either 90, 180, -90, or -180 (clockwise)
   // if 270, -270 call itself with -90 or 90 respectively
 
-  if (degrees = 270) {
+  if (degrees == 270) {
     turn(-90, speed);
-  } else if (degrees = -270) {
+  } else if (degrees == -270) {
     turn(90, speed);
-  } else if (degrees = 0) {
+  } else if (degrees == 0) {
     return;
   }
 

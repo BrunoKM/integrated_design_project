@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include "robot.h"
+#include "Robot.h"
 #include "robot_initialise.h"
 
 Eggs::Eggs() {}
@@ -31,7 +31,7 @@ direction(0) {
   initialise_robot();
 }
 
-Robot::Robot(int string starting_junction, int starting_direction) :
+Robot::Robot(string starting_junction, int starting_direction) :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components.line_sensors),
 current_junction(starting_junction),

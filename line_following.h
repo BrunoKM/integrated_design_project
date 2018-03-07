@@ -2,7 +2,7 @@
 
 // Also, change the parameters for the motors here.
 #ifndef LINE_FOLLOWING_H
-#define LINE_FOLLLOWING_H
+#define LINE_FOLLOWING_H
 #include "Driving_Motor.h"
 #include "components.h"
 #include "robot_initialise.h"
