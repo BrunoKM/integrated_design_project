@@ -44,30 +44,106 @@ void Robot::input_restart_parameters(int baskets_delivered, string delivery_zone
   // Allows for key parameters to be reentered post-restart.
 }
 
+void Robot::turn(int degrees, float speed) {
+  line_following.turn(degrees, speed);
+  direction = (direction + degrees) % 360;
+  return;
+}
+
 void Robot::move(string a, string b) {
   switch (a) {
     case "s":
       switch (b) {
         case "i":
-          // Assume in the right direciton TODO: remove that dependency
+          int desired_direction = 0;
+          int turn_by = (desired_direction - direction) % 360;
+          // Make sure the robot is facing the right direction
+          turn(turn_by, 1.0);
           line_following.follow_line(1.0, 0.5, 3, 1);
           line_following.align_with_intersection(1.0, 0.5);
           current_junction = "i";
+          break;
         case "j":
           move("s", "i");
           move("i", "j");
-
+          break;
       }
   case "i":
     switch (b) {
       case "j":
         int desired_direction = 270;
-        int turn_by = desired_direction - direction;
+        int turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
-        line_following.turn(turn_by, 1.0);
+        turn(turn_by, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
-        current_junction = "j"
+        current_junction = "j";
+        break;
+    }
+  case "j":
+    switch (b) {
+      case "l":
+        int desired_direction = 270;
+        int turn_by = (desired_direction - direction) % 360;
+        // Make sure the robot is facing the right direction
+        turn(turn_by, 1.0);
+
+        line_following.follow_line(1.0, 0.7, 0, 1); // Increased speed_delta
+        line_following.align_with_intersection(1.0, 0.5);
+
+        direction = 180; // Direction changed due to curved path.
+
+        turn(90, 1.0);
+        line_following.follow_line(1.0, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+        current_junction = "l";
+        break;
+      case "d2":
+        break;
+      case "k":
+        // TODO: Potentially different route
+        break;
+      case "d1":
+        break;
+      case "d2":
+        int desired_direction = 270;
+        int turn_by = (desired_direction - direction) % 360;
+        // Make sure the robot is facing the right direction
+        turn(turn_by, 1.0);
+
+        line_following.follow_line(1.0, 0.7, 0, 1); // Increased speed_delta
+        line_following.align_with_intersection(1.0, 0.5);
+
+        direction = 180; // Direction changed due to curved path.
+
+        turn(90, 1.0);
+        line_following.follow_line(1.0, 0.5, 0, 1);
+        // Do not stop. TODO: put in align with delivery.
+        current_junction = "d2";
+        break;
+      case "d3":
+        break;
+    }
+  case "c2":
+    switch (b) {
+      case "j":
+        // Only one direction possible at "j"
+        line_following.follow_line(1.0, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+        current_junction = "j";
+        break;
+      case "l":
+        move("c2", "j");
+        move("j", "l");
+        break;
+      case "k":
+        break;
+      case "d1":
+        break;
+      case "d2":
+        break;
+      case "d3":
+        break;
     }
   }
 }
@@ -78,9 +154,14 @@ void Robot::align_for_pickup() {
     << current_junction << std::endl;
     throw std::invalid_argument( "Wrong junction for alignment." );
   }
+
+  // Turn to be facing the pickup with the rear of the vehicle
   int desired_direction = 180;
   int turn_by = desired_direction - direction;
   line_following.turn(turn_by, 1.0);
+
+  line_following.reverse_until_switch(1.0, 0.5);
+  current_junction = "c2";
 }
 
 void Robot::pick_up_eggs(int num_to_recycle) {

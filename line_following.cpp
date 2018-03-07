@@ -235,7 +235,7 @@ void Line_Following::stop_motors() {
   right_motor.drive(0.0);
 }
 
-void Line_Following::reverse_until_switch(float speed, float ramp) {
+void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   left_motor.drive(-speed);
   right_motor.drive(-speed);
   // I wish I was coding in Pascal
