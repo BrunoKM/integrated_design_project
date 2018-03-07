@@ -19,6 +19,7 @@ private:
     Driving_Motor right_motor;
 
     Line_Sensors line_sensors;
+    Microswitches microswitches;
 
     // Methods
     void align_after_turn(float alignment_speed);
@@ -28,9 +29,12 @@ private:
     int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
 
 public:
-    Line_Following(Line_Sensors &line_sensors) : current_speed(0),
-    current_ramp_time(-1), left_motor(Driving_Motor(1, 1.0, 1.0)),
-    right_motor(Driving_Motor(2, 1.0, -1.0)), line_sensors(line_sensors) {}
+    Line_Following(Components &components) : current_speed(0),
+    current_ramp_time(-1),
+    left_motor(Driving_Motor(1, 1.0, 1.0)),
+    right_motor(Driving_Motor(2, 1.0, -1.0)),
+    line_sensors(components.line_sensors),
+    microswitches(components.microswitches) {}
 
     // Methods
     void follow_line_until_intersection(float speed, float speed_delta);
@@ -38,7 +42,7 @@ public:
       int num_intersections_to_ignore, bool keep_driving_after_last);
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed);
-    void follow_line_reverse(float speed, float ramp);
+    void reverse_until_switch(float speed, float ramp);
     void set_ramp(int ramp_time);
     void stop_motors();
 

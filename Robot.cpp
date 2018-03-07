@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include "robot.h"
 #include "robot_initialise.h"
 
@@ -33,7 +34,7 @@ direction(0) {
 
 Robot::Robot(int string starting_junction, int starting_direction) :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
-line_following(components.line_sensors),
+line_following(components),
 current_junction(starting_junction),
 direction(starting_direction) {
   initialise_robot();
@@ -51,7 +52,7 @@ void Robot::move(string a, string b) {
           // Assume in the right direciton TODO: remove that dependency
           line_following.follow_line(1.0, 0.5, 3, 1);
           line_following.align_with_intersection(1.0, 0.5);
-
+          current_junction = "i";
         case "j":
           move("s", "i");
           move("i", "j");
@@ -65,12 +66,18 @@ void Robot::move(string a, string b) {
         line_following.turn(turn_by, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
+        current_junction = "j"
     }
   }
 }
 
 void Robot::align_for_pickup() {
-
+  if (current_junction != "j") {
+    std::cout << "Robot is at the wrong junction for alignment: junction "
+    << current_junction << std::endl;
+    throw std::invalid_argument( "Wrong junction for alignment." );
+  }
+  
 }
 
 void Robot::pick_up_eggs(int num_to_recycle) {
