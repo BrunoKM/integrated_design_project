@@ -105,17 +105,19 @@ public:
 };
 
 // TODO: Finish class LEDs
-// class LEDs {
-// private:
-//   const int led1_pin;
-//   const int led2_pin;
-// public:
-//   LEDs(int led1_pin, int led2_pin);
-//   void off();
-//   void display_egg(Egg egg);
-// };
+class LEDs {
+private:
+    PCB2 pcb2;
+    const int leds_port;
+    const int led1_pin;
+    const int led2_pin;
+public:
+    LEDs(int ledsport, int led1_pin, int led2_pin);
+    void off();
+    void display_egg(Egg egg);
+};
 
-// TODO: Finnish classes below.
+// TODO: Finish classes below.
 // class Scoop {
 // const int address - the pin address of the scoop actuator
 // Public Methods
@@ -131,4 +133,18 @@ public:
 // void dispose_recycling() - Rotate to let out the recycling eggs and rotate back to starting position.
 // void return_to_starting(char which_side) - Returns to starting position either from left (which_side='l') or from the right (which_side='r').
 
-#endif
+// TODO: FINISH IR_communications class when we understand whats going on...
+/*class IR_communication {
+    // Class for communication with both the start beacon and the turn table sensor
+private:
+    PCB1 pcb1;
+    static const int ir_led_bit = 1 << 4; //  IR LED for beacon communication (write only)
+    static const int ir_input_bit = 1 << 5;//  IR Phototransistor for beacon communication (read only)
+public:
+    IR_communication(PCB1 &pcb1) : pcb1(pcb1){};
+    // Public Methods
+    int get_delivery_point(); // Returns delivery point which is based on beacon code
+    void rotate_turntable_start_position(); // Rotates turntable to the starting position (e.g. fully clockwise)
+    void rotate_turntable(int degrees); // Rotates turntable the correct number of degrees
+};
+#endif*/
