@@ -50,10 +50,10 @@ void Robot::turn(int degrees, float speed) {
   return;
 }
 
-void Robot::move(string a, string b) {
-  switch (a) {
+void Robot::move(string destination) {
+  switch (current_junction) {
     case "s":
-      switch (b) {
+      switch (destination) {
         case "i":
           int desired_direction = 0;
           int turn_by = (desired_direction - direction) % 360;
@@ -61,11 +61,10 @@ void Robot::move(string a, string b) {
           turn(turn_by, 1.0);
           line_following.follow_line(1.0, 0.5, 3, 1);
           line_following.align_with_intersection(1.0, 0.5);
-          current_junction = "i";
           break;
         case "j":
-          move("s", "i");
-          move("i", "j");
+          move("i");
+          move("j");
           break;
       }
   case "i":
@@ -77,7 +76,6 @@ void Robot::move(string a, string b) {
         turn(turn_by, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
-        current_junction = "j";
         break;
     }
   case "j":
@@ -96,7 +94,6 @@ void Robot::move(string a, string b) {
         turn(90, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
-        current_junction = "l";
         break;
       case "d2":
         break;
@@ -119,7 +116,6 @@ void Robot::move(string a, string b) {
         turn(90, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
         // Do not stop. TODO: put in align with delivery.
-        current_junction = "d2";
         break;
       case "d3":
         break;
@@ -130,11 +126,10 @@ void Robot::move(string a, string b) {
         // Only one direction possible at "j"
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
-        current_junction = "j";
         break;
       case "l":
-        move("c2", "j");
-        move("j", "l");
+        move("j");
+        move("l");
         break;
       case "k":
         break;
@@ -146,6 +141,11 @@ void Robot::move(string a, string b) {
         break;
     }
   }
+  // Update current_junction
+  current_junction = destination;
+  #ifdef DEBUG
+  std::cout << "Current position is: " << current_junction << std::endl;
+  #endif
 }
 
 void Robot::align_for_pickup() {

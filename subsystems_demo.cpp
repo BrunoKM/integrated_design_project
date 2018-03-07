@@ -15,7 +15,7 @@ int main () {
   Robot robot;
   cout << "--- Subsystems Demo ---" << endl;
   cout << "Running Task 1:" << endl;
-  robot.move("s", "j");
+  robot.move("j");
 
   string usr_reponse;
   while (usr_response != "yes"){
@@ -31,7 +31,7 @@ int main () {
     cin >> usr_reponse;
   }
   cout << "Running Task 3:" << endl;
-  robot.move("c2", "l");
+  robot.move("l");
 
 
 }

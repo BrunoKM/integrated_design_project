@@ -51,7 +51,7 @@ public:
 
   // Methods
   void input_restart_parameters(int baskets_delivered, string delivery_zone);
-  void move(string a, string b);
+  void move(string b);
   void turn(int degrees, float speed); // Wrapper for line_following.turn() that also updates this->direction
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);
