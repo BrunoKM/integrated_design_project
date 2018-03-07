@@ -19,16 +19,20 @@ const int NUM_TO_CONFIRM_ALIGNMENT = 4; // Number of iterations to confirm that 
 // TODO: Potentially have integral control
 // TODO: Add '11' reading counter to be more certain of junctions
 void Line_Following::follow_line_until_intersection(float speed, float speed_delta) {
-  // Assumes motors already started
+
+  left_motor.drive(-speed);
+  right_motor.drive(-speed);
+
   float reduced_speed = speed - speed * speed_delta;
   bool intersection_detected = false;
 
   Line_Sensor_Reading reading;
 
+  // Keep correcting until an intersection is reached
   while (intersection_detected == false) {
     reading = line_sensors.get_sensor_reading();
 
-    #ifdef DEBUG2
+    #ifdef DEBUG3
     std::cout << "\rLine Sensors reading: " << reading.front_left << " "
     << reading.front_right << std::flush;
     #endif
@@ -72,6 +76,8 @@ void Line_Following::follow_line(float speed, float speed_delta, int num_interse
     // wait until intersection crossed
     Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     // TODO: May have to add counter to avoid error
+
+    // Keep driving forwards while over the junction:
     while ((reading.front_left == 1) and (reading.front_right == 1)) {
       reading = line_sensors.get_sensor_reading();
     }
@@ -229,8 +235,46 @@ void Line_Following::stop_motors() {
   right_motor.drive(0.0);
 }
 
-void Line_Following::follow_line_reverse(float speed, float ramp) {
+void Line_Following::reverse_until_switch(float speed, float speed_delta) {
+  left_motor.drive(-speed);
+  right_motor.drive(-speed);
+  // I wish I was coding in Pascal
 
+  float reduced_speed = speed - speed * speed_delta;
+
+  microswitches.update_state();
+  while (microswitches.rear_state) {
+
+    #ifdef DEBUG3
+    std::cout << "\rLine Sensors reading: " << reading.front_left << " "
+    << reading.front_right << std::flush;
+    #endif
+
+    if ((reading.back_left == 1) and (reading.back_right == 0)) {
+      // Need to go more towards left
+      left_motor.drive(-reduced_speed);
+      right_motor.drive(-speed); // Right wheel going faster
+    } else if ((reading.back_left == 0) and (reading.back_right == 1)) {
+      // Need to go more towards right
+      left_motor.drive(-speed);
+      right_motor.drive(-reduced_speed); // Left wheel going faster
+    } else if ((reading.back_left == 0) and (reading.back_right == 0)) {
+      // Make both motors go at the same speed.
+      left_motor.drive(-speed);
+      right_motor.drive(-speed);
+    } else if ((reading.back_left == 1) and (reading.back_right == 1)) {
+      intersection_detected = true;
+      #ifdef DEBUG
+      std::cout << "Junction detected" << std::endl;
+      #endif
+      // Make motors go at equal speeds (don't want to go
+      // in a curved path over the intersection)
+      left_motor.drive(-speed);
+      right_motor.drive(-speed);
+    }
+    microswitches.update_state();
+  }
+  return;
 }
 
 int Line_Following::is_on_the_line() {
@@ -244,3 +288,6 @@ int Line_Following::wiggle_to_line() {
 int Line_Following::reiterate_in_reverse(float reiterate_for) {
 	return 1;
 }
+
+//now that this bit is done I won't need to stick a cactus up my arse
+// TODO: Remove this ^

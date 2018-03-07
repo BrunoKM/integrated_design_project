@@ -17,7 +17,7 @@ int main () {
 
   int pcb1_port = 0; // Port number for PCB 1
   int pcb2_port = 1;
-  
+
   Components components(pcb1_port, pcb2_port);
   Line_Following lf(components.line_sensors);
 

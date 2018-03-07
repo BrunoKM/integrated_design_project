@@ -173,55 +173,21 @@ void Microswitches::update_state() {
 }
 
 
+// class LEDs {
+// private:
+//   const int leds_port;
+//   const int led1_pin;
+//   const int led2_pin;
+// public:
+//   LEDs(int ledsport, int led1_pin, int led2_pin);
+//   void off();
+//   void display_egg(Egg egg);
+// };
 
-// TODO: Finish this section...
-LEDs::LEDs(PCB2 pcb2, int leds_port, int led1_pin, int led2_pin):
-        port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {
-
- }
-
-
-// TODO: Decide whether we need a way of distinguishing between identifying blue small eggs and doing nothing
-void LEDs::off() {
-  // Set all the LEDs to 0
-  write_leds(0, 0);
-}
-
-void LEDs::display_egg(Egg egg) {
-  // Set the LEDs to represent the egg
-  if ((egg.size == 0) && (egg.colour == "b")) {
-    // Write 00
-    write_leds(0, 0);
-  } else if ((egg.size == 0) && (egg.colour == "y")) {
-    // Write 01
-    write_leds(0, 1);
-  } else if ((egg.size == 1) && (egg.colour == "p")) {
-    // Write 10
-    write_leds(1, 0);
-  } else if ((egg.size == 1) && (egg.colour == "y")) {
-    // Write 11
-    write_leds(1, 1);
-  }
-}
-
-
-// TODO: FINISH IR_communications class when we understand whats going on...
-/*IR_communication::IR_communication(PCB1 &pcb1) {
-}
-
-int IR_communication::get_delivery_point() {
-  // Gets start sensor reading from the IR beacon
-  int IR_state = pcb1.read_IR_input(); // returns a 1 or 0 from the infrared sensor
-
-
-}
-
-void IR_communication::rotate_turntable(int degrees) {
-  // Rotates turn table by a fixed number of degrees (degrees will be fixed to the set interval between eggs)
-}
-
-void IR_communication::rotate_turntable_start_position() {
-  // Rotates turn table all the way to one side (e.g all the way clockwise in order to start tracking eggs)
-}*/
-
-
+// LEDs::LEDs(int leds_port, int led1_pin, int led2_pin):
+// port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {
+//
+// }
+//
+// LEDs::off() {
+// }
