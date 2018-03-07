@@ -34,7 +34,7 @@ private:
   static const int ir_led_bit = 1 << 4;
   //  IR Phototransistor for beacon communication (read only)
   static const int ir_input_bit = 1 << 5;
-  
+
   void initialise_write_default();
 public:
   PCB1(int &port);
@@ -57,7 +57,7 @@ private:
   // LEDs to signal colour detection (write only)
   static const int led1_bit = (1 << 6);
   static const int led2_bit = (1 << 7);
-  
+
   void initialise_write_default();
 
 public:
@@ -68,7 +68,8 @@ public:
   void reset_microswitches();
 
   void write_scoop(int scoop_val);
-  
+  int read_microswitches();
+
 };
 
 
@@ -92,17 +93,36 @@ public:
   Line_Sensor_Reading get_sensor_reading();
 };
 
+class Microswitches {
+private:
+  PCB2 pcb2;
+  // Define the order of microswitch bits:
+  static const int front_switch_bit = 1 << 2;
+  static const int rear_switch_bit = 1 << 3;
+
+  bool rear_state;
+  bool front_state;
+public:
+  Microswitches(PCB2 &pcb2) : pcb2(pcb2){};
+  void update_state();
+};
+
 // A master class to rule them all
 class Components {
 private:
   // TODO: Add the rest of the necessary classes
   PCB1 pcb1;
+  PCB2 pcb2;
 public:
   Line_Sensors line_sensors;
+  Microswitches microswitches;
 
-  Components(int pcb1_port): pcb1(PCB1(pcb1_port)), line_sensors(pcb1) {};
+  Components(int pcb1_port, int pcb2_port): pcb1(PCB1(pcb1_port)), pcb2(PCB2(pcb2_port)), // TODO: Get rid of PCB1 explicit constructor
+    line_sensors(pcb1), microswitches(pcb2){};
 
 };
+
+
 
 // TODO: Finish class LEDs
 class LEDs {

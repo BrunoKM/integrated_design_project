@@ -12,6 +12,9 @@
 #include "components.h"
 #include "line_following.h"
 
+const int PCB1_ADDRESS = 0;
+const int PCB2_ADDRESS = 1;
+
 struct Egg {
   const int size;
   const char colour;
@@ -19,7 +22,7 @@ struct Egg {
 
 class Eggs {
 public:
-  vector eggs;
+  std::vector<Egg> eggs;
   void add_egg(Egg egg);
   void clear();
 };
@@ -31,9 +34,7 @@ private:
   int baskets_delivered;
   string delivery_zone;
 
-  Reservoir reservoir;
-  Scoop scoop;
-  LEDs leds;
+  Components components;
   Line_Following line_following;
 
   void scoop();
@@ -42,8 +43,10 @@ private:
   void update_onboard_eggs(Egg egg, int reservoir);
 public:
   Robot();
+  Robot(string starting_junction, int starting_direction);
 
-  string position[2];
+  string position;
+  string current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
 
   // Methods

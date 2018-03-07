@@ -16,8 +16,9 @@ int main () {
   << num_repetitions << " repetitions)." << endl;
 
   int pcb1_port = 0; // Port number for PCB 1
-
-  Components components(pcb1_port);
+  int pcb2_port = 1;
+  
+  Components components(pcb1_port, pcb2_port);
   Line_Following lf(components.line_sensors);
 
   // Set parameters for the test
@@ -31,13 +32,13 @@ int main () {
   bool keep_driving_after_last = 1; // Decides whether to stop motors when the final intersection is reached
 
   for (int i = 0; i < num_repetitions; i++) {
-    lf.follow_line(speed, ramp, speed_delta,
+    lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
-    lf.align_with_intersection(1080, speed, speed_delta);
+    lf.align_with_intersection(speed, speed_delta);
     lf.turn(180, turn_speed);
-    lf.follow_line(speed, ramp, speed_delta,
+    lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
-    lf.align_with_intersection(1080, speed, speed_delta);
+    lf.align_with_intersection(speed, speed_delta);
     lf.turn(-180, turn_speed);
   }
 
