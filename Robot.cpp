@@ -19,6 +19,7 @@ line_following(components),
 current_junction('s'),
 direction(0) {
   initialise_robot();
+  line_following.set_ramp(0);
 }
 
 Robot::Robot(char starting_junction, int starting_direction) :
@@ -27,6 +28,7 @@ line_following(components),
 current_junction(starting_junction),
 direction(starting_direction) {
   initialise_robot();
+  line_following.set_ramp(0);
 }
 
 void Robot::input_restart_parameters(int baskets_delivered, std::string delivery_zone) {

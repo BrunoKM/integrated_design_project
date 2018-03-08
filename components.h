@@ -21,6 +21,7 @@ protected:
   void initialise_write_default();
   void command_write_default();
   int read_state();
+  void write(int byte);
 public:
   PCB(int port);
 };
@@ -31,7 +32,9 @@ private:
   // Line following sensors (read only)
   static const int num_line_sensors = 4;
   static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
-  static const int num_inst_microswitches = 4;
+
+  // Instantaneous microswitches; do not have to be reset in software (read only).
+  static const int num_inst_microswitches = 2;
   static const int inst_microswitch_bits = (1 << 4) + (1 << 5);
   //  IR LED for beacon communication (write only)
   static const int ir_led_bit = 1 << 6;
@@ -42,10 +45,6 @@ private:
 public:
   PCB1(int &port);
   void read_initialise();
-  int read_line_sensors(); // The int value (binary) of the line sensors reading
-  int read_ir_input();
-  void reset_microswitches();
-  int read_microswitches();
 };
 
 // TODO: Change to the same format as PCB1
@@ -67,11 +66,8 @@ private:
 
 public:
   PCB2(int port);
-  void write_leds(int led1_val, int led2_val); //TODO: May potentially have to apply a timer to make sure leds stay on for long enough.
-  // Wrappers for command_write_default:
+  // Wrapper for command_write_default:
   void read_initialise();
-
-  void write_scoop(int scoop_val);
 };
 
 
@@ -84,20 +80,20 @@ struct Line_Sensor_Reading {
 
 class Line_Sensors {
 private:
-  PCB1 pcb1;
+  PCB1 pcb;
   // Define the order of line sensors connections:
   static const int front_left_bit = 1 << 0;
   static const int front_right_bit = 1 << 1;
   static const int back_left_bit = 1 << 2;
   static const int back_right_bit = 1 << 3;
 public:
-  Line_Sensors(PCB1 &pcb1) : pcb1(pcb1){};
+  Line_Sensors(PCB1 &pcb1) : pcb1(pcb){};
   Line_Sensor_Reading get_sensor_reading();
 };
 
 class Microswitches {
 private:
-  PCB1 pcb1;
+  PCB1 pcb;
   // Define the order of microswitch bits:
   static const int front_switch_bit = 1 << 5;
   static const int rear_switch_bit = 1 << 4;
@@ -105,8 +101,8 @@ private:
 public:
   bool rear_state;
   bool front_state;
-  
-  Microswitches(PCB1 &pcb1) : pcb1(pcb1){};
+
+  Microswitches(PCB1 &pcb1) : pcb(pcb1){};
   void update_state();
 };
 
@@ -127,13 +123,14 @@ public:
 // TODO: Finish class LEDs
 class LEDs {
 private:
-    PCB2 pcb2;
-    static const int front_switch_bit = 1 << 5;
-	static const int rear_switch_bit = 1 << 4;
+  PCB2 pcb;
+  static const int led1_bit = 1 << 4;
+	static const int led2_bit = 1 << 5;
 public:
-    LEDs(PCB2 &pcb2) : pcb2(pcb2){};
+    LEDs(PCB2 &pcb2) : pcb(pcb2){};
     void off();
     void display_egg(Egg egg);
+    void write_leds(Egg egg);
 };
 
 
@@ -147,8 +144,11 @@ public:
   Line_Sensors line_sensors;
   Microswitches microswitches;
 
-  Components(int pcb1_port, int pcb2_port): pcb1(PCB1(pcb1_port)), pcb2(PCB2(pcb2_port)), // TODO: Get rid of PCB1 explicit constructor
-    line_sensors(pcb1), microswitches(pcb1){};
+  Components(int pcb1_port, int pcb2_port):
+  pcb1(PCB1(pcb1_port)),
+  pcb2(PCB2(pcb2_port)),
+  line_sensors(pcb1),
+  microswitches(pcb1){};
 
 };
 

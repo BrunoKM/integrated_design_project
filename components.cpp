@@ -62,7 +62,7 @@ void PCB1::initialise_write_default() {
   // The default for microswitch input is 1:
   write_default = write_default bitor inst_microswitch_bits;
   // The default value for IR LED is 0
-	
+
 // TODO: See what's actually connected here
   // The default for IR Input sensor i 1:
   // write_default = write_default bitor ir_input_bit;
@@ -73,12 +73,9 @@ PCB1::PCB1(int& port): PCB(port) {
   read_initialise();
 }
 
-int PCB1::read_line_sensors() {
-   // Returns the int value (binary) of the line sensors reading
-   int sensor_reading = read_state() bitand line_sensor_bits;
-   return sensor_reading;
-}
+// TODO: Put this into the IR class instead
 
+/*
 int PCB1::read_ir_input() {
   int ir_reading = read_state();
   if ((ir_reading bitand ir_input_bit) > 0) {
@@ -87,19 +84,17 @@ int PCB1::read_ir_input() {
   return 0;
   }
 }
+*/
 
 void PCB1::read_initialise() {
   command_write_default();
 }
 
+/* No longer necessary
 void PCB1::reset_microswitches() {
   command_write_default();
 }
-
-int PCB1::read_microswitches() {
-  int switches_reading = read_state() bitand (inst_microswitch_bits);
-  return switches_reading;
-}
+*/
 
 
 
@@ -122,21 +117,20 @@ void PCB2::read_initialise() {
   command_write_default();
 }
 
-void PCB2::write_leds(int led1_val, int led2_val) {
-  int led1_byte_val = led1_bit * led1_val;
-  int led2_byte_val = led2_bit * led2_val;
-  int write_byte = write_default bitor led1_byte_val bitor led2_byte_val;
 
+void PCB2::write(int byte) {
+  int write_byte = write_default bitor byte;
   rlink.command(write_instruction, write_byte);
   return;
-}
+} */
 
 void PCB2::write_scoop(int scoop_val) {
   // TODO: finish this
 }
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
-  int sensor_state = pcb1.read_line_sensors();
+  int sensor_state = pcb.read_state() bitand pcb.line_sensor_bits;
+
   Line_Sensor_Reading reading;
   // Assign to each value of the reading:
   if (sensor_state bitand front_left_bit) {
@@ -164,7 +158,7 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 
 
 void Microswitches::update_state() {
-  int state = pcb1.read_microswitches();
+  int state = pcb.read_state() bitand (pcb.inst_microswitch_bits);
   if (state bitand front_switch_bit) {
     front_state = false; // Microswitch on when unpressed for some reason
   } else {
@@ -175,22 +169,33 @@ void Microswitches::update_state() {
   } else {
     rear_state = true;
   }
+  return;
 }
 
 
-// TODO: Finish this section...
+// TODO: Finish LEDs once the pin allocation is known
 
-/*
-// TODO: Decide whether we need a way of distinguishing between identifying blue small eggs and doing nothing
+
+
 void LEDs::off() {
   // Set all the LEDs to 0
-  write_leds(0, 0);
+  int out_byte = 0;
+  pcb.write(out_byte);
+  return;
+}
+
+void LEDs::write_leds(int led1_val, int led2_val) {
+  int led1_byte_val = led1_bit * led1_val;
+  int led2_byte_val = led2_bit * led2_val;
+  int out_byte = led1_byte_val bitor led2_byte_val;
+  pcb.write(out_byte);
+  return;
 }
 
 void LEDs::display_egg(Egg egg) {
   // Set the LEDs to represent the egg
-  int delay_time = 200;
-  int short_delay_time = 100;
+  int delay_time = 100;
+  int short_delay_time = 50;
   if ((egg.size == 0) && (egg.colour == "b")) {
     // Write 00
     write_leds(1, 0);
@@ -221,8 +226,10 @@ void LEDs::display_egg(Egg egg) {
     delay(short_delay_time);
     off();
   }
+  return;
 }
-*/
+
+
 Eggs::Eggs() {}
 
 void Eggs::add_egg(Egg egg) {
@@ -254,4 +261,3 @@ void IR_communication::rotate_turntable(int degrees) {
 void IR_communication::rotate_turntable_start_position() {
   // Rotates turn table all the way to one side (e.g all the way clockwise in order to start tracking eggs)
 }*/
-

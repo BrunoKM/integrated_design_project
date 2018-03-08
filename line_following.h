@@ -29,19 +29,15 @@ private:
     int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
 
 public:
-    Line_Following(Components &components) : current_speed(0),
-    current_ramp_time(-1),
-    left_motor(Driving_Motor(1, 1.0, 1.0)),
-    right_motor(Driving_Motor(2, 1.0, -1.0)),
-    line_sensors(components.line_sensors),
-    microswitches(components.microswitches) {}
+    Line_Following(Components &components);
 
     // Methods
     void follow_line_until_intersection(float speed, float speed_delta);
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
     void align_with_intersection(float speed, float speed_delta);
-    void turn(int degrees, float speed);
+    void turn(int degrees, float speed); // Degrees can only be = 0 mod 90
+    void turn_exactly(int degrees, float speed, bool stop_after); // Degrees can be any int < 360 in magnitude
     void reverse_until_switch(float speed, float ramp);
     void set_ramp(int ramp_time);
     void stop_motors();

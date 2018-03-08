@@ -14,11 +14,11 @@ void initialise_robot (void) {
     if (rlink.fatal_err()) { // check for errors
       rlink.print_errs(); // print them out
       rlink.reinitialise(); // flush the link
-      std::cout << "Robot re-initialised" << std::endl;
+      std::cout << "Robot re-initialised." << std::endl;
       return;
     }
   } else {
-    std::cout << "Robot initialised succesfully" << std::endl;
+    std::cout << "Robot initialised succesfully." << std::endl;
     return;
   }
 }

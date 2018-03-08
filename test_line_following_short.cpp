@@ -13,9 +13,10 @@ int main () {
   cout << "Running line_following_test_first_intersection" << endl;
 
   int pcb1_port = 0; // Port number for PCB 1
+  int pcb2_port = 1; // Port number for PCB 2
 
-  Components components(pcb1_port);
-  Line_Following lf(components.line_sensors);
+  Components components(pcb1_port, pcb2_port);
+  Line_Following lf(components);
 
   // Set parameters for the test
   float speed = 1.0; // Set speed of motors in range 0-1
