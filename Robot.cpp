@@ -175,9 +175,10 @@ int Robot::sort_egg(bool large_egg) {
   // Returns 1 for egg sorted into delivery reservoir and 0 for egg sorted into recycling.
 }
 
-Egg Robot::classify_egg(bool large_egg) {
+//Egg Robot::classify_egg(bool large_egg) {
   // Use the IR sensor and diode to classify the egg
-}
+//  return;
+//}
 
 void Robot::update_onboard_eggs(Egg egg, int reservoir) {
   // Updates the delivery_eggs and recycling_eggs parameters of the object.
