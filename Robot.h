@@ -32,10 +32,10 @@ private:
   void update_onboard_eggs(Egg egg, int reservoir);
 public:
   Robot();
-  Robot(std::string starting_junction, int starting_direction);
+  Robot(char starting_junction, int starting_direction);
 
   std::string position;
-  std::string current_junction; // Only update when on intersections.
+  char current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
 
   // Methods

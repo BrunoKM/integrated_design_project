@@ -85,14 +85,14 @@ void Robot::move(char destination) {
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
-      case 'd2':
+      case 'e':
         break;
       case 'k':
         // TODO: Potentially different route
         break;
-      case 'd1':
+      case 'd':
         break;
-      case 'd2':
+      case 'e':
         int desired_direction = 270;
         int turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
@@ -107,10 +107,10 @@ void Robot::move(char destination) {
         line_following.follow_line(1.0, 0.5, 0, 1);
         // Do not stop. TODO: put in align with delivery.
         break;
-      case "d3":
+      case "f":
         break;
     }
-  case "c2":
+  case "c":
     switch (destination) {
       case "j":
         // Only one direction possible at "j"
@@ -123,11 +123,11 @@ void Robot::move(char destination) {
         break;
       case "k":
         break;
-      case "d1":
+      case "d":
         break;
-      case "d2":
+      case "e":
         break;
-      case "d3":
+      case "f":
         break;
     }
   }
@@ -151,7 +151,7 @@ void Robot::align_for_pickup() {
   line_following.turn(turn_by, 1.0);
 
   line_following.reverse_until_switch(1.0, 0.5);
-  current_junction = "c2";
+  current_junction = "c";
 }
 
 void Robot::pick_up_eggs(int num_to_recycle) {
