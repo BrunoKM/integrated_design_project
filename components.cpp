@@ -1,4 +1,5 @@
 #include "components.h"
+#include <delay.h>
 
 
 
@@ -58,10 +59,13 @@ void PCB1::initialise_write_default() {
 
   // The default values for line sensors are 1:
   write_default = write_default bitor line_sensor_bits;
+  // The default for microswitch input is 1:
+  write_default = write_default bitor inst_microswitch_bits;
   // The default value for IR LED is 0
-
+	
+// TODO: See what's actually connected here
   // The default for IR Input sensor i 1:
-  write_default = write_default bitor ir_input_bit;
+  // write_default = write_default bitor ir_input_bit;
 };
 
 PCB1::PCB1(int& port): PCB(port) {
@@ -88,6 +92,15 @@ void PCB1::read_initialise() {
   command_write_default();
 }
 
+void PCB1::reset_microswitches() {
+  command_write_default();
+}
+
+int PCB1::read_microswitches() {
+  int switches_reading = read_state() bitand (inst_microswitch_bits);
+  return switches_reading;
+}
+
 
 
 PCB2::PCB2(int port): PCB(port) {
@@ -109,21 +122,13 @@ void PCB2::read_initialise() {
   command_write_default();
 }
 
-void PCB2::reset_microswitches() {
-  command_write_default();
-}
-
-int PCB2::read_microswitches() {
-  int switches_reading = read_state() bitand (inst_microswitch_bits bitor persistent_microswitch_bits);
-  return switches_reading;
-}
-
 void PCB2::write_leds(int led1_val, int led2_val) {
   int led1_byte_val = led1_bit * led1_val;
   int led2_byte_val = led2_bit * led2_val;
   int write_byte = write_default bitor led1_byte_val bitor led2_byte_val;
 
   rlink.command(write_instruction, write_byte);
+  return;
 }
 
 void PCB2::write_scoop(int scoop_val) {
@@ -159,7 +164,7 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 
 
 void Microswitches::update_state() {
-  int state = pcb2.read_microswitches();
+  int state = pcb1.read_microswitches();
   if (state bitand front_switch_bit) {
     front_state = true;
   } else {
@@ -172,15 +177,10 @@ void Microswitches::update_state() {
   }
 }
 
-/*
 
 // TODO: Finish this section...
-LEDs::LEDs(PCB2 pcb2, int leds_port, int led1_pin, int led2_pin):
-        port(leds_port), led1_pin(led1_pin), led2_pin(led2_pin) {
 
-}
-
-
+/*
 // TODO: Decide whether we need a way of distinguishing between identifying blue small eggs and doing nothing
 void LEDs::off() {
   // Set all the LEDs to 0
@@ -189,18 +189,37 @@ void LEDs::off() {
 
 void LEDs::display_egg(Egg egg) {
   // Set the LEDs to represent the egg
+  int delay_time = 200;
+  int short_delay_time = 100;
   if ((egg.size == 0) && (egg.colour == "b")) {
     // Write 00
-    write_leds(0, 0);
+    write_leds(1, 0);
+    delay(delay_time);
+    off();
   } else if ((egg.size == 0) && (egg.colour == "y")) {
     // Write 01
     write_leds(0, 1);
+    delay(delay_time);
+    off();
   } else if ((egg.size == 1) && (egg.colour == "p")) {
+	  // For big eggs, blink
     // Write 10
     write_leds(1, 0);
+    delay(short_delay_time);
+    off();
+    delay(short_delay_time);
+    write_leds(1, 0);
+    delay(short_delay_time);
+    off();
   } else if ((egg.size == 1) && (egg.colour == "y")) {
     // Write 11
-    write_leds(1, 1);
+    write_leds(0, 1);
+    delay(short_delay_time);
+    off();
+    delay(short_delay_time);
+    write_leds(0, 1);
+    delay(short_delay_time);
+    off();
   }
 }
 */
