@@ -20,8 +20,8 @@ const int NUM_TO_CONFIRM_ALIGNMENT = 4; // Number of iterations to confirm that 
 // TODO: Add '11' reading counter to be more certain of junctions
 void Line_Following::follow_line_until_intersection(float speed, float speed_delta) {
 
-  left_motor.drive(-speed);
-  right_motor.drive(-speed);
+  left_motor.drive(speed);
+  right_motor.drive(speed);
 
   float reduced_speed = speed - speed * speed_delta;
   bool intersection_detected = false;

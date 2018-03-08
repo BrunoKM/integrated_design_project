@@ -19,7 +19,7 @@ int main () {
   int pcb2_port = 1;
 
   Components components(pcb1_port, pcb2_port);
-  Line_Following lf(components.line_sensors);
+  Line_Following lf(components);
 
   // Set parameters for the test
   float speed = 1.0; // Set speed of motors in range 0-1
