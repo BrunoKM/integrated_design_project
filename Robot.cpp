@@ -16,12 +16,12 @@
 Robot::Robot() :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components),
-current_junction("s"),
+current_junction('s'),
 direction(0) {
   initialise_robot();
 }
 
-Robot::Robot(std::string starting_junction, int starting_direction) :
+Robot::Robot(char starting_junction, int starting_direction) :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components),
 current_junction(starting_junction),
@@ -40,12 +40,13 @@ void Robot::turn(int degrees, float speed) {
 }
 
 void Robot::move(char destination) {
+  int turn_by;
+  int desired_direction;
   switch (current_junction) {
     case 's':
       switch (destination) {
         case 'i':
-          static int desired_direction = 0;
-          static int turn_by;
+          desired_direction = 0;
           turn_by = (desired_direction - direction) % 360;
           // Make sure the robot is facing the right direction
           turn(turn_by, 1.0);
@@ -60,8 +61,8 @@ void Robot::move(char destination) {
   case 'i':
     switch (destination) {
       case 'j':
-        int desired_direction = 270;
-        int turn_by = (desired_direction - direction) % 360;
+        desired_direction = 270;
+        turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
         turn(turn_by, 1.0);
         line_following.follow_line(1.0, 0.5, 0, 1);
@@ -71,8 +72,8 @@ void Robot::move(char destination) {
   case 'j':
     switch (destination) {
       case 'l':
-        int desired_direction = 270;
-        int turn_by = (desired_direction - direction) % 360;
+        desired_direction = 270;
+        turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
         turn(turn_by, 1.0);
 
@@ -85,16 +86,14 @@ void Robot::move(char destination) {
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
-      case 'e':
-        break;
       case 'k':
         // TODO: Potentially different route
         break;
       case 'd':
         break;
       case 'e':
-        int desired_direction = 270;
-        int turn_by = (desired_direction - direction) % 360;
+        desired_direction = 270;
+        turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
         turn(turn_by, 1.0);
 
@@ -107,27 +106,27 @@ void Robot::move(char destination) {
         line_following.follow_line(1.0, 0.5, 0, 1);
         // Do not stop. TODO: put in align with delivery.
         break;
-      case "f":
+      case 'f':
         break;
     }
-  case "c":
+  case 'c':
     switch (destination) {
-      case "j":
+      case 'j':
         // Only one direction possible at "j"
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
-      case "l":
-        move("j");
-        move("l");
+      case 'l':
+        move('j');
+        move('l');
         break;
-      case "k":
+      case 'k':
         break;
-      case "d":
+      case 'd':
         break;
-      case "e":
+      case 'e':
         break;
-      case "f":
+      case 'f':
         break;
     }
   }
@@ -139,7 +138,7 @@ void Robot::move(char destination) {
 }
 
 void Robot::align_for_pickup() {
-  if (current_junction != "j") {
+  if (current_junction != 'j') {
     std::cout << "Robot is at the wrong junction for alignment: junction "
     << current_junction << std::endl;
     throw std::invalid_argument( "Wrong junction for alignment." );
@@ -151,7 +150,7 @@ void Robot::align_for_pickup() {
   line_following.turn(turn_by, 1.0);
 
   line_following.reverse_until_switch(1.0, 0.5);
-  current_junction = "c";
+  current_junction = 'c';
 }
 
 void Robot::pick_up_eggs(int num_to_recycle) {

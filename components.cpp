@@ -172,7 +172,7 @@ void Microswitches::update_state() {
   }
 }
 
-
+/*
 
 // TODO: Finish this section...
 LEDs::LEDs(PCB2 pcb2, int leds_port, int led1_pin, int led2_pin):
@@ -203,7 +203,7 @@ void LEDs::display_egg(Egg egg) {
     write_leds(1, 1);
   }
 }
-
+*/
 Eggs::Eggs() {}
 
 void Eggs::add_egg(Egg egg) {

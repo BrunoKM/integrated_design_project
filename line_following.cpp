@@ -249,7 +249,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
     std::cout << "\rLine Sensors reading: " << reading.front_left << " "
     << reading.front_right << std::flush;
     #endif
-
+	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     if ((reading.back_left == 1) and (reading.back_right == 0)) {
       // Need to go more towards left
       left_motor.drive(-reduced_speed);
@@ -263,7 +263,6 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
       left_motor.drive(-speed);
       right_motor.drive(-speed);
     } else if ((reading.back_left == 1) and (reading.back_right == 1)) {
-      intersection_detected = true;
       #ifdef DEBUG
       std::cout << "Junction detected" << std::endl;
       #endif

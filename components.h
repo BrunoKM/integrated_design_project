@@ -101,9 +101,10 @@ private:
   static const int front_switch_bit = 1 << 2;
   static const int rear_switch_bit = 1 << 3;
 
+public:
   bool rear_state;
   bool front_state;
-public:
+  
   Microswitches(PCB2 &pcb2) : pcb2(pcb2){};
   void update_state();
 };
@@ -131,10 +132,12 @@ struct Egg {
 
 class Eggs {
 public:
+  Eggs();
   std::vector<Egg> eggs;
   void add_egg(Egg egg);
   void clear();
 };
+
 
 // TODO: Finish class LEDs
 class LEDs {
@@ -144,7 +147,7 @@ private:
     const int led1_pin;
     const int led2_pin;
 public:
-    LEDs(int ledsport, int led1_pin, int led2_pin);
+    LEDs(int leds_port, int led1_pin, int led2_pin);
     void off();
     void display_egg(Egg egg);
 };
