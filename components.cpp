@@ -204,6 +204,18 @@ void LEDs::display_egg(Egg egg) {
   }
 }
 
+Eggs::Eggs() {}
+
+void Eggs::add_egg(Egg egg) {
+
+}
+
+void Eggs::clear() {
+  // Clears all the eggs, i.e. no eggs in the eggs vector after this
+  // function is called.
+}
+
+
 
 // TODO: FINISH IR_communications class when we understand whats going on...
 /*IR_communication::IR_communication(PCB1 &pcb1) {

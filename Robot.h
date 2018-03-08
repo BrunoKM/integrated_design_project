@@ -15,24 +15,13 @@
 const int PCB1_ADDRESS = 0;
 const int PCB2_ADDRESS = 1;
 
-struct Egg {
-  const int size;
-  const char colour;
-};
-
-class Eggs {
-public:
-  std::vector<Egg> eggs;
-  void add_egg(Egg egg);
-  void clear();
-};
 
 class Robot {
 private:
   Eggs recycling_eggs;
   Eggs delivery_eggs;
   int baskets_delivered;
-  string delivery_zone;
+  std::string delivery_zone;
 
   Components components;
   Line_Following line_following;
@@ -43,15 +32,15 @@ private:
   void update_onboard_eggs(Egg egg, int reservoir);
 public:
   Robot();
-  Robot(string starting_junction, int starting_direction);
+  Robot(std::string starting_junction, int starting_direction);
 
-  string position;
-  string current_junction; // Only update when on intersections.
+  std::string position;
+  std::string current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
 
   // Methods
-  void input_restart_parameters(int baskets_delivered, string delivery_zone);
-  void move(string b);
+  void input_restart_parameters(int baskets_delivered, std::string delivery_zone);
+  void move(std::string b);
   void turn(int degrees, float speed); // Wrapper for line_following.turn() that also updates this->direction
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);

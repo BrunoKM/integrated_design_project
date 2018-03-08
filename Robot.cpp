@@ -8,31 +8,20 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include "robot.h"
+#include <iostream>
+#include "Robot.h"
 #include "robot_initialise.h"
-
-Eggs::Eggs() {}
-
-void Eggs::add_egg(Egg egg) {
-
-}
-
-void Eggs::clear() {
-  // Clears all the eggs, i.e. no eggs in the eggs vector after this
-  // function is called.
-}
-
 
 // The Robot class methods
 Robot::Robot() :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
-line_following(components.line_sensors),
+line_following(components),
 current_junction("s"),
 direction(0) {
   initialise_robot();
 }
 
-Robot::Robot(int string starting_junction, int starting_direction) :
+Robot::Robot(std::string starting_junction, int starting_direction) :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components),
 current_junction(starting_junction),
@@ -40,7 +29,7 @@ direction(starting_direction) {
   initialise_robot();
 }
 
-void Robot::input_restart_parameters(int baskets_delivered, string delivery_zone) {
+void Robot::input_restart_parameters(int baskets_delivered, std::string delivery_zone) {
   // Allows for key parameters to be reentered post-restart.
 }
 
@@ -50,26 +39,27 @@ void Robot::turn(int degrees, float speed) {
   return;
 }
 
-void Robot::move(string destination) {
+void Robot::move(char destination) {
   switch (current_junction) {
-    case "s":
+    case 's':
       switch (destination) {
-        case "i":
-          int desired_direction = 0;
-          int turn_by = (desired_direction - direction) % 360;
+        case 'i':
+          static int desired_direction = 0;
+          static int turn_by;
+          turn_by = (desired_direction - direction) % 360;
           // Make sure the robot is facing the right direction
           turn(turn_by, 1.0);
           line_following.follow_line(1.0, 0.5, 3, 1);
           line_following.align_with_intersection(1.0, 0.5);
           break;
-        case "j":
-          move("i");
-          move("j");
+        case 'j':
+          move('i');
+          move('j');
           break;
       }
-  case "i":
-    switch (b) {
-      case "j":
+  case 'i':
+    switch (destination) {
+      case 'j':
         int desired_direction = 270;
         int turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
@@ -78,9 +68,9 @@ void Robot::move(string destination) {
         line_following.align_with_intersection(1.0, 0.5);
         break;
     }
-  case "j":
-    switch (b) {
-      case "l":
+  case 'j':
+    switch (destination) {
+      case 'l':
         int desired_direction = 270;
         int turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
@@ -95,14 +85,14 @@ void Robot::move(string destination) {
         line_following.follow_line(1.0, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
-      case "d2":
+      case 'd2':
         break;
-      case "k":
+      case 'k':
         // TODO: Potentially different route
         break;
-      case "d1":
+      case 'd1':
         break;
-      case "d2":
+      case 'd2':
         int desired_direction = 270;
         int turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
@@ -121,7 +111,7 @@ void Robot::move(string destination) {
         break;
     }
   case "c2":
-    switch (b) {
+    switch (destination) {
       case "j":
         // Only one direction possible at "j"
         line_following.follow_line(1.0, 0.5, 0, 1);

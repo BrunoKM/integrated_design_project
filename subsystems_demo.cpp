@@ -17,18 +17,18 @@ int main () {
   cout << "Running Task 1:" << endl;
   robot.move("j");
 
-  string usr_reponse;
+  string usr_response;
   while (usr_response != "yes"){
     cout << "   Ready for Task 2?" << endl;
-    cin >> usr_reponse;
+    cin >> usr_response;
   }
   cout << "Running Task 2:" << endl;
   robot.align_for_pickup();
 
-  usr_reponse = "";
+  usr_response = "";
   while (usr_response != "yes"){
     cout << "   Ready for Task 3?" << endl;
-    cin >> usr_reponse;
+    cin >> usr_response;
   }
   cout << "Running Task 3:" << endl;
   robot.move("l");

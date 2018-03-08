@@ -6,6 +6,7 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
+#include <vector>
 #include <robot_link.h>
 #include <robot_instr.h>
 #include "robot_initialise.h"
@@ -123,6 +124,17 @@ public:
 };
 
 
+struct Egg {
+  const int size;
+  const char colour;
+};
+
+class Eggs {
+public:
+  std::vector<Egg> eggs;
+  void add_egg(Egg egg);
+  void clear();
+};
 
 // TODO: Finish class LEDs
 class LEDs {
@@ -167,4 +179,5 @@ public:
     void rotate_turntable_start_position(); // Rotates turntable to the starting position (e.g. fully clockwise)
     void rotate_turntable(int degrees); // Rotates turntable the correct number of degrees
 };
-#endif*/
+*/
+#endif
