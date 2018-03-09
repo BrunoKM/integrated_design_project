@@ -153,6 +153,12 @@ void Robot::align_for_pickup() {
   // Turn to be facing the pickup with the rear of the vehicle
   int desired_direction = 180;
   int turn_by = desired_direction - direction;
+
+  #ifdef DEBUG2
+  std::cout << "Turning by " << turn_by << " to align to direction "
+  desired_direction << " from the current direction " << direction;
+  #endif
+
   line_following.turn(turn_by, 1.0);
 
   line_following.reverse_until_switch(1.0, 0.5);

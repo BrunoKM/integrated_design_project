@@ -258,7 +258,7 @@ void Line_Following::turn(int degrees, float speed) {
       throw std::invalid_argument( "received negative value");
     }
   #endif
-	
+
 
   // Turn by some amount without monitoring the sensors
   int turn_blindly_by = 45;
@@ -327,7 +327,7 @@ void Line_Following::align_after_turn(float alignment_speed) {
   while (watch.read() >= time_to_confirm_alignment) {
 	// Read the light sensors
 	reading = line_sensors.get_sensor_reading();
-	
+
 	#ifdef DEBUG3
     Line_Sensor_Reading last_reading;
     if ((last_reading.front_left != reading.front_left) or (last_reading.front_right != reading.front_right)) {
@@ -372,6 +372,11 @@ void Line_Following::stop_motors() {
 }
 
 void Line_Following::reverse_until_switch(float speed, float speed_delta) {
+  #ifdef DEBUG2
+  std::cout << " + Making motors go in reverse. Current speed sent to .drive(): "
+  << -speed << std::endl;
+  #endif
+  
   left_motor.drive(-speed);
   right_motor.drive(-speed);
   // I wish I was coding in Pascal
@@ -410,7 +415,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
 void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 	// TODO: calculate rotate_for by using a constant
   float rotate_time_360 = 6001; // TODO: Recalibrate for proper chasis.
-  
+
   int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
 #ifdef DEBUG3
     std::cout << " + Turning blindly by " << degrees << " degrees for "
@@ -424,17 +429,17 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
     left_motor.drive(speed);
     right_motor.drive(-speed);
   }
-  
+
   #ifdef DEBUG3
 	std::cout << " + Current requested motor speeds: left:"  << left_motor.get_requested_speed()
      << "    right: " << right_motor.get_requested_speed() << std::endl;
 	std::cout << " + Current actual motor speeds: left:"  << left_motor.get_current_speed()
      << "    right: " << right_motor.get_current_speed() << std::endl;
-    
+
   #endif
-  
-  
-  
+
+
+
 
   // Wait
   delay(rotate_for);
@@ -449,7 +454,7 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
      << "    right: " << right_motor.get_requested_speed() << std::endl;
 	std::cout << " + Current actual motor speeds: left:"  << left_motor.get_current_speed()
      << "    right: " << right_motor.get_current_speed() << std::endl;
-    
+
   #endif
   return;
 }
