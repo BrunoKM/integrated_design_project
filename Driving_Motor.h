@@ -7,7 +7,7 @@ class Driving_Motor {
 private:
   const int motor_number;
   const float speed_calibration_factor;
-  float orientation;
+  int orientation;
   float requested_speed;
 
   void go_command(int speed_cmd);

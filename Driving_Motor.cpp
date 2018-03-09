@@ -2,7 +2,7 @@
 #include <robot_link.h>
 #include "Driving_Motor.h"
 
-// #define DEBUG4
+#define DEBUG4
 
 Driving_Motor::Driving_Motor (int motor_number, float speed_cal_factor, int orientation):
 motor_number(motor_number), speed_calibration_factor(speed_cal_factor), orientation(orientation)
@@ -27,7 +27,10 @@ void Driving_Motor::drive(float speed) {
     } else if (speed < 0) {
       // If direction is backwards:
       speed_cmd *= (-1);
-      if (orientation == 1) speed_cmd += 128;
+      #ifdef DEBUG4
+      std::cout << "Cmd after time -1 : " << speed_cmd << std::endl;
+     #endif
+      if (orientation == 1) {speed_cmd += 128; std::cout << "speed_cmd increased" << std::endl;}
       go_command(speed_cmd);
     } else {
 	  go_command(0);

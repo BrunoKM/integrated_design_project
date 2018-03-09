@@ -377,9 +377,10 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   << -speed << std::endl;
   #endif
   
+  std::cout << "left motor" << std::endl;
   left_motor.drive(-speed);
+  std::cout << "left motor" << std::endl;
   right_motor.drive(-speed);
-  // I wish I was coding in Pascal
 
   float reduced_speed = speed - speed * speed_delta;
 
