@@ -53,6 +53,11 @@ int PCB::read_state() {
   return state;
 }
 
+void PCB::write(int byte) {
+  int write_byte = write_default bitor byte;
+  rlink.command(write_instruction, write_byte);
+  return;
+}
 
 void PCB1::initialise_write_default() {
   write_default = 0;
@@ -115,17 +120,6 @@ void PCB2::initialise_write_default() {
 
 void PCB2::read_initialise() {
   command_write_default();
-}
-
-
-void PCB2::write(int byte) {
-  int write_byte = write_default bitor byte;
-  rlink.command(write_instruction, write_byte);
-  return;
-} */
-
-void PCB2::write_scoop(int scoop_val) {
-  // TODO: finish this
 }
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
@@ -196,17 +190,17 @@ void LEDs::display_egg(Egg egg) {
   // Set the LEDs to represent the egg
   int delay_time = 100;
   int short_delay_time = 50;
-  if ((egg.size == 0) && (egg.colour == "b")) {
+  if ((egg.size == 0) && (egg.colour == 'b')) {
     // Write 00
     write_leds(1, 0);
     delay(delay_time);
     off();
-  } else if ((egg.size == 0) && (egg.colour == "y")) {
+  } else if ((egg.size == 0) && (egg.colour == 'y')) {
     // Write 01
     write_leds(0, 1);
     delay(delay_time);
     off();
-  } else if ((egg.size == 1) && (egg.colour == "p")) {
+  } else if ((egg.size == 1) && (egg.colour == 'p')) {
 	  // For big eggs, blink
     // Write 10
     write_leds(1, 0);
@@ -216,7 +210,7 @@ void LEDs::display_egg(Egg egg) {
     write_leds(1, 0);
     delay(short_delay_time);
     off();
-  } else if ((egg.size == 1) && (egg.colour == "y")) {
+  } else if ((egg.size == 1) && (egg.colour == 'y')) {
     // Write 11
     write_leds(0, 1);
     delay(short_delay_time);

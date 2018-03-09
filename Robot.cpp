@@ -174,6 +174,7 @@ void Robot::recycle_eggs() {
 
 int Robot::sort_egg(bool large_egg) {
   // Returns 1 for egg sorted into delivery reservoir and 0 for egg sorted into recycling.
+  return 1;
 }
 
 //Egg Robot::classify_egg(bool large_egg) {

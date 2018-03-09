@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <stdlib.h>
 #include <robot_link.h>
 #include <stopwatch.h>
 #include <robot_delay.h>
@@ -43,7 +44,7 @@ void Line_Following::follow_line_until_intersection(float speed, float speed_del
     reading = line_sensors.get_sensor_reading();
 
     #ifdef DEBUG3
-    LineSensorReading last_reading;
+    Line_Sensor_Reading last_reading;
     if ((last_reading.front_left != reading.front_left) or (last_reading.front_right != reading.front_right)) {
       // If the reading changes, print it out.
       std::cout << " + Current line sensor reading: " << reading.front_left << " "
@@ -213,7 +214,7 @@ void Line_Following::turn(int degrees, float speed) {
       reading = line_sensors.get_sensor_reading();
     }
   }
-  else if (degrees > 0) { // If counter-clockwise
+  else if (degrees < 0) { // If counter-clockwise
     while (!((reading.front_left == 1) and (reading.front_right == 0))) {
       reading = line_sensors.get_sensor_reading();
     }
@@ -372,11 +373,6 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
 
   microswitches.update_state();
   while (microswitches.rear_state) {
-
-    #ifdef DEBUG3
-    std::cout << "\rLine Sensors reading: " << reading.front_left << " "
-    << reading.front_right << std::flush;
-    #endif
 	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     if ((reading.back_left == 1) and (reading.back_right == 0)) {
       // Need to go more towards left
@@ -414,7 +410,9 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
     right_motor.drive(-speed);
   }
   // TODO: calculate rotate_for by using a constant
-  int rotate_for = 1000;
+  float rotate_time_360 = 6001; // TODO: Recalibrate for proper chasis.
+  
+  int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
 
   // Wait
   delay(rotate_for);

@@ -14,12 +14,13 @@ int main () {
   initialise_robot();
 
   int pcb1_port = 0; // Port number for PCB 1
+  int pcb2_port = 1; // Port number for PCB 2
 
-  Components components(pcb1_port);
+  Components components(pcb1_port, pcb2_port);
 
   stopwatch watch;
   watch.start();
-  while (watch.read() < 10000) {
+  while (watch.read() < 15000) {
     Line_Sensor_Reading reading;
     reading = components.line_sensors.get_sensor_reading();
     cout << "Reading is: Front: " << reading.front_left << " " 

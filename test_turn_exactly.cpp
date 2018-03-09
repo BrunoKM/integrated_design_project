@@ -19,9 +19,9 @@ int main () {
   Line_Following lf(components);
 
   float speed = 1.0;
-  float speed_delta = 0.5;
+  // float speed_delta = 0.5;
 
-  int turn_by = 360;
+  int turn_by = -180;
   bool stop_after = true;
 
   lf.turn_exactly(turn_by, speed, stop_after);

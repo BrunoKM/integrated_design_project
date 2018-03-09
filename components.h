@@ -20,15 +20,20 @@ protected:
   int write_default; // used for and'ing with the values to be sent to write'able bits.
   void initialise_write_default();
   void command_write_default();
-  int read_state();
-  void write(int byte);
 public:
   PCB(int port);
+  int read_state();
+  void write(int byte);
 };
 
 
 class PCB1 : public PCB {
 private:
+  void initialise_write_default();
+public:
+  PCB1(int &port);
+  void read_initialise();
+  
   // Line following sensors (read only)
   static const int num_line_sensors = 4;
   static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
@@ -41,15 +46,18 @@ private:
   //  IR Phototransistor for beacon communication (read only)
   static const int ir_input_bit = 1 << 7;
 
-  void initialise_write_default();
-public:
-  PCB1(int &port);
-  void read_initialise();
 };
 
 // TODO: Change to the same format as PCB1
 class PCB2 : public PCB {
 private:
+  void initialise_write_default();
+
+public:
+  PCB2(int port);
+  // Wrapper for command_write_default:
+  void read_initialise();
+  
   // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
   static const int num_persistent_microswitches = 2;
   static const int persistent_microswitch_bits = (1 << 0) + (1 << 1);
@@ -61,13 +69,6 @@ private:
   // LEDs to signal colour detection (write only)
   static const int led1_bit = (1 << 6);
   static const int led2_bit = (1 << 7);
-
-  void initialise_write_default();
-
-public:
-  PCB2(int port);
-  // Wrapper for command_write_default:
-  void read_initialise();
 };
 
 
@@ -87,7 +88,7 @@ private:
   static const int back_left_bit = 1 << 2;
   static const int back_right_bit = 1 << 3;
 public:
-  Line_Sensors(PCB1 &pcb1) : pcb1(pcb){};
+  Line_Sensors(PCB1 &pcb1) : pcb(pcb1){};
   Line_Sensor_Reading get_sensor_reading();
 };
 
@@ -130,7 +131,7 @@ public:
     LEDs(PCB2 &pcb2) : pcb(pcb2){};
     void off();
     void display_egg(Egg egg);
-    void write_leds(Egg egg);
+    void write_leds(int led1_val, int led2_val);
 };
 
 
