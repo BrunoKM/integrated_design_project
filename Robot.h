@@ -45,6 +45,7 @@ public:
   void input_restart_parameters(int baskets_delivered, std::string delivery_zone);
   void move(char destination);
   void turn(int degrees, float speed); // Wrapper for line_following.turn() that also updates this->direction
+  void turn_rear_align(int degrees, float speed);
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);
   void pick_up_all_eggs();

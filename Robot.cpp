@@ -9,6 +9,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <delay.h>
 #include "Robot.h"
 #include "robot_initialise.h"
 
@@ -48,6 +49,12 @@ void Robot::turn(int degrees, float speed) {
   return;
 }
 
+void Robot::turn_rear_align(int degrees, float speed) {
+  line_following.turn_rear_align(degrees, speed);
+  direction = (direction + degrees) % 360;
+  return;
+}
+
 void Robot::move(char destination) {
   std::cout << "<.> Moving from " << current_junction << " to " << destination << std::endl;
   int turn_by;
@@ -77,9 +84,7 @@ void Robot::move(char destination) {
         // Make sure the robot is facing the right direction
         turn(turn_by, turn_speed);
         line_following.follow_line(speed, 0.5, 0, 1);
-        std::cout << "Aligning noW!! " << std::endl;
         line_following.align_with_intersection(1.0, 0.5);
-        std::cout << "Aligned" << std::endl;
         break;
     }
     break;
@@ -122,13 +127,24 @@ void Robot::move(char destination) {
         break;
       case 'f':
         break;
+      case 'i':
+		desired_direction = 90;
+        turn_by = (desired_direction - direction) % 360;
+        // Make sure the robot is facing the right direction
+        turn(turn_by, turn_speed);
+        line_following.follow_line(speed, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+        break;
     }
     break;
   case 'c':
     switch (destination) {
       case 'j':
         // Only one direction possible at "c"
-        line_following.align_with_intersection(1.0, 0.5); // TODO: Change for actual robot.
+        line_following.motors_go(1, 1);
+        delay(1200); // TODO: Tune for the real chassis
+        line_following.motors_go(0, 0);
+        delay(200);
         break;
       case 'l':
         move('j');
@@ -142,6 +158,10 @@ void Robot::move(char destination) {
         break;
       case 'f':
         break;
+      case 'i':
+		move('j');
+		move('i');
+		break;
     }
     break;
   }
@@ -167,12 +187,12 @@ std::cout << "<.> Aligning for pickup." << std::endl;
 
   #ifdef DEBUG2
   std::cout << "Turning by " << turn_by << " to align to direction "
-  << desired_direction << " from the current direction " << direction;
+  << desired_direction << " from the current direction " << direction << std::endl;
   #endif
 
-  line_following.turn(turn_by, 1.0);
+  turn_rear_align(turn_by, turn_speed);
 
-  line_following.reverse_until_switch(1.0, 0.5);
+  line_following.reverse_until_switch(0.7, 0.5);
   current_junction = 'c';
 }
 

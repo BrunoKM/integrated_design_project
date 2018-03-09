@@ -23,6 +23,7 @@ private:
 
     // Methods
     void align_after_turn(float alignment_speed);
+    void align_rear_after_turn(float alignment_speed);
     // TODO: these need to be written
     int is_on_the_line(); // return 1 if true, 0 if false, 2 if intersection encountered
     int wiggle_to_line(); // return 1 if successful, 0 if failed
@@ -35,12 +36,14 @@ public:
     void follow_line_until_intersection(float speed, float speed_delta);
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
+    void follow_line_blind_curve(float speed);
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed); // Degrees can only be = 0 mod 90
     void turn_rear_align(int degrees, float speed);
     void turn_exactly(int degrees, float speed, bool stop_after); // Degrees can be any int < 360 in magnitude
     void reverse_until_switch(float speed, float speed_delta);
     void set_ramp(int ramp_time);
+    void motors_go(float left_speed, float right_speed);
     void stop_motors();
 
 };
