@@ -370,12 +370,12 @@ void Line_Following::turn_rear_align(int degrees, float speed) {
   // Start monitoring the sensors to detect the incoming line:
   Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
   if (degrees > 0) { // If clockwise
-    while (!((reading.back_left == 0) and (reading.back_right == 1))) {
+    while (!((reading.back_left == 1) and (reading.back_right == 0))) {
       reading = line_sensors.get_sensor_reading();
     }
   }
   else if (degrees < 0) { // If counter-clockwise
-    while (!((reading.back_left == 1) and (reading.back_right == 0))) {
+    while (!((reading.back_left == 0) and (reading.back_right == 1))) {
       reading = line_sensors.get_sensor_reading();
     }
   }
@@ -396,12 +396,11 @@ void Line_Following::turn_rear_align(int degrees, float speed) {
     left_motor.drive(-alignment_speed);
     right_motor.drive(alignment_speed);
   }
-  align_after_turn(alignment_speed);
+  align_rear_after_turn(alignment_speed);
 
   #ifdef DEBUG3
     std::cout << " + Aligned." << degrees << std::endl;
   #endif
-
   return;
 }
 
@@ -440,6 +439,46 @@ void Line_Following::align_after_turn(float alignment_speed) {
       right_motor.drive(0);
       watch.start();
     } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
+      std::cout << "An unexpected detection of junction occured!" << std::endl;
+    }
+  }
+}
+
+void Line_Following::align_rear_after_turn(float alignment_speed) {
+  stopwatch watch;
+  int time_to_confirm_alignment = 30;
+
+  Line_Sensor_Reading reading;
+  while (watch.read() >= time_to_confirm_alignment) {
+	// Read the light sensors
+	reading = line_sensors.get_sensor_reading();
+
+	#ifdef DEBUG3
+    Line_Sensor_Reading last_reading;
+    if ((last_reading.back_left != reading.back_left) or (last_reading.back_right != reading.back_right)) {
+      // If the reading changes, print it out.
+      std::cout << " + Current line sensor reading: " << reading.front_left << " "
+      << reading.front_right << std::endl;
+      last_reading = reading;
+    }
+    #endif
+
+    if ((reading.back_left == 1) and (reading.back_right == 0)) {
+      // Need to go more towards left
+      left_motor.drive(alignment_speed);
+      right_motor.drive(-alignment_speed);
+      watch.stop();
+    } else if ((reading.back_left == 0) and (reading.back_right == 1)) {
+      // Need to go more towards right
+      left_motor.drive(-alignment_speed);
+      right_motor.drive(alignment_speed);
+      watch.stop();
+    } else if ((reading.back_left == 0) and (reading.back_right == 0)) {
+      // Make both motors go at the same speed.
+      left_motor.drive(0);
+      right_motor.drive(0);
+      watch.start();
+    } else if ((reading.back_left == 1) and (reading.back_right == 1)) {
       std::cout << "An unexpected detection of junction occured!" << std::endl;
     }
   }
@@ -557,5 +596,7 @@ int Line_Following::reiterate_in_reverse(float reiterate_for) {
 	return 1;
 }
 
-//now that this bit is done I won't need to stick a cactus up my arse
-// TODO: Remove this ^
+void Line_Following::motors_go(float left_speed, float right_speed) {
+  left_motor.drive(left_speed);
+  right_motor.drive(right_speed);
+};

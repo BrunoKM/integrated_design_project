@@ -12,8 +12,6 @@
 #include "Robot.h"
 #include "robot_initialise.h"
 
-#define DEBUG2
-
 // The Robot class methods
 Robot::Robot() :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
@@ -23,7 +21,7 @@ turn_speed(0.93),
 current_junction('s'),
 direction(0) {
   initialise_robot();
-  line_following.set_ramp(10);
+  line_following.set_ramp(0);
 }
 
 Robot::Robot(char starting_junction, int starting_direction) :
@@ -32,9 +30,9 @@ line_following(components),
 speed(1),
 turn_speed(0.93),
 current_junction(starting_junction),
-direction(starting_direction) {
+direction(0) {
   initialise_robot();
-  line_following.set_ramp(10);
+  line_following.set_ramp(0);
 }
 
 void Robot::input_restart_parameters(int baskets_delivered, std::string delivery_zone) {
@@ -121,8 +119,8 @@ void Robot::move(char destination) {
     switch (destination) {
       case 'j':
         // Only one direction possible at "j"
-        line_following.follow_line(speed, 0.5, 0, 1);
-        line_following.align_with_intersection(1.0, 0.5);
+        line_following.motors_go(1, 1);
+        delay(1000); // TODO: Tune for the real chassis
         break;
       case 'l':
         move('j');
@@ -158,12 +156,12 @@ void Robot::align_for_pickup() {
 
   #ifdef DEBUG2
   std::cout << "Turning by " << turn_by << " to align to direction "
-  << desired_direction << " from the current direction " << direction;
+  desired_direction << " from the current direction " << direction << std::endl;
   #endif
 
-  line_following.turn(turn_by, 1.0);
+  line_following.turn_rear_align(turn_by, turn_speed);
 
-  line_following.reverse_until_switch(1.0, 0.5);
+  line_following.reverse_until_switch(0.7, 0.5);
   current_junction = 'c';
 }
 

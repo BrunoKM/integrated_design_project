@@ -40,7 +40,7 @@ public:
     void turn_exactly(int degrees, float speed, bool stop_after); // Degrees can be any int < 360 in magnitude
     void reverse_until_switch(float speed, float speed_delta);
     void set_ramp(int ramp_time);
-    void stop_motors();
+    void motors_go(float left_speed, float right_speed);
 
 };
 
