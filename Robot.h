@@ -25,6 +25,9 @@ private:
 
   Components components;
   Line_Following line_following;
+  
+  float speed;
+  float turn_speed;
 
   void scoop();
   int sort_egg(bool large_egg);

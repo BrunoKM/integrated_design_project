@@ -16,6 +16,8 @@
 Robot::Robot() :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components),
+speed(1),
+turn_speed(0.93),
 current_junction('s'),
 direction(0) {
   initialise_robot();
@@ -25,8 +27,10 @@ direction(0) {
 Robot::Robot(char starting_junction, int starting_direction) :
 components(PCB1_ADDRESS, PCB2_ADDRESS),
 line_following(components),
+speed(1),
+turn_speed(0.93),
 current_junction(starting_junction),
-direction(starting_direction) {
+direction(0) {
   initialise_robot();
   line_following.set_ramp(0);
 }
@@ -51,8 +55,8 @@ void Robot::move(char destination) {
           desired_direction = 0;
           turn_by = (desired_direction - direction) % 360;
           // Make sure the robot is facing the right direction
-          turn(turn_by, 1.0);
-          line_following.follow_line(1.0, 0.5, 3, 1);
+          turn(turn_by, turn_speed);
+          line_following.follow_line(speed, 0.5, 3, 1);
           line_following.align_with_intersection(1.0, 0.5);
           break;
         case 'j':
@@ -66,8 +70,8 @@ void Robot::move(char destination) {
         desired_direction = 270;
         turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
-        turn(turn_by, 1.0);
-        line_following.follow_line(1.0, 0.5, 0, 1);
+        turn(turn_by, turn_speed);
+        line_following.follow_line(speed, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
     }
@@ -77,15 +81,15 @@ void Robot::move(char destination) {
         desired_direction = 270;
         turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
-        turn(turn_by, 1.0);
+        turn(turn_by, turn_speed);
 
-        line_following.follow_line(1.0, 0.7, 0, 1); // Increased speed_delta
+        line_following.follow_line(speed, 0.7, 0, 1); // Increased speed_delta
         line_following.align_with_intersection(1.0, 0.5);
 
         direction = 180; // Direction changed due to curved path.
 
-        turn(90, 1.0);
-        line_following.follow_line(1.0, 0.5, 0, 1);
+        turn(90, turn_speed);
+        line_following.follow_line(speed, 0.5, 0, 1); // TODO: Replace name speed with line_speed
         line_following.align_with_intersection(1.0, 0.5);
         break;
       case 'k':
@@ -97,15 +101,15 @@ void Robot::move(char destination) {
         desired_direction = 270;
         turn_by = (desired_direction - direction) % 360;
         // Make sure the robot is facing the right direction
-        turn(turn_by, 1.0);
+        turn(turn_by, turn_speed);
 
-        line_following.follow_line(1.0, 0.7, 0, 1); // Increased speed_delta
+        line_following.follow_line(speed, 0.7, 0, 1); // Increased speed_delta
         line_following.align_with_intersection(1.0, 0.5);
 
         direction = 180; // Direction changed due to curved path.
 
-        turn(90, 1.0);
-        line_following.follow_line(1.0, 0.5, 0, 1);
+        turn(90, turn_speed);
+        line_following.follow_line(speed, 0.5, 0, 1);
         // Do not stop. TODO: put in align with delivery.
         break;
       case 'f':
@@ -115,7 +119,7 @@ void Robot::move(char destination) {
     switch (destination) {
       case 'j':
         // Only one direction possible at "j"
-        line_following.follow_line(1.0, 0.5, 0, 1);
+        line_following.follow_line(speed, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
       case 'l':

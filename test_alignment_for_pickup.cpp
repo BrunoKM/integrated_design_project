@@ -12,11 +12,15 @@ using namespace std;
 
 int main () {
 
-  Robot robot;
+  int starting_direction = 180;
+  char starting_junction = 'j';
+    
+  Robot robot(starting_junction, starting_direction);
   int num_repeat = 20;
   cout << "Running Alignment for pickup test" << endl;
 
   for (int i = 0; i < num_repeat; i++) {
     robot.align_for_pickup();
-    robot.move("j")
+    robot.move('j');
   }
+}

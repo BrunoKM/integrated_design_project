@@ -16,6 +16,7 @@ public:
   Driving_Motor(int motor_number, float speed_cal_factor, int orientation);
   void drive(float speed);
   float get_current_speed();
+  float get_requested_speed();
 };
 
 #endif
