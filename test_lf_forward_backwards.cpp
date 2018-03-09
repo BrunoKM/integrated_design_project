@@ -4,6 +4,7 @@
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
 #include "robot_initialise.h"
 #include "line_following.h"
 #include "components.h"
@@ -20,7 +21,7 @@ int main () {
 
   // Set parameters for the test
   float speed = 1.0; // Set speed of motors in range 0-1
-  float ramp =  0;// Set acceleration of motors in range 0-254
+  float ramp =  50;// Set acceleration of motors in range 0-254
   lf.set_ramp(ramp);
 
   float speed_delta = 0.5;
@@ -30,7 +31,8 @@ int main () {
   lf.follow_line(speed, speed_delta,
               num_intersections_to_ignore, keep_driving_after_last);
   lf.align_with_intersection(speed, speed_delta);
-  lf.reverse_until_switch(speed, 0.5)
+  lf.reverse_until_switch(speed, 0.5);
+  delay(5000);
 
   cout << "Finished" << endl;
 

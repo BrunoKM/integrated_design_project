@@ -12,6 +12,7 @@
 #include "Robot.h"
 #include "robot_initialise.h"
 
+#define DEBUG
 #define DEBUG2
 
 // The Robot class methods
@@ -23,7 +24,7 @@ turn_speed(0.93),
 current_junction('s'),
 direction(0) {
   initialise_robot();
-  line_following.set_ramp(10);
+  line_following.set_ramp(50);
 }
 
 Robot::Robot(char starting_junction, int starting_direction) :
@@ -34,7 +35,7 @@ turn_speed(0.93),
 current_junction(starting_junction),
 direction(starting_direction) {
   initialise_robot();
-  line_following.set_ramp(10);
+  line_following.set_ramp(50);
 }
 
 void Robot::input_restart_parameters(int baskets_delivered, std::string delivery_zone) {
@@ -48,6 +49,7 @@ void Robot::turn(int degrees, float speed) {
 }
 
 void Robot::move(char destination) {
+  std::cout << "<.> Moving from " << current_junction << " to " << destination << std::endl;
   int turn_by;
   int desired_direction;
   switch (current_junction) {
@@ -66,6 +68,7 @@ void Robot::move(char destination) {
           move('j');
           break;
       }
+      break;
   case 'i':
     switch (destination) {
       case 'j':
@@ -74,9 +77,12 @@ void Robot::move(char destination) {
         // Make sure the robot is facing the right direction
         turn(turn_by, turn_speed);
         line_following.follow_line(speed, 0.5, 0, 1);
+        std::cout << "Aligning noW!! " << std::endl;
         line_following.align_with_intersection(1.0, 0.5);
+        std::cout << "Aligned" << std::endl;
         break;
     }
+    break;
   case 'j':
     switch (destination) {
       case 'l':
@@ -85,7 +91,7 @@ void Robot::move(char destination) {
         // Make sure the robot is facing the right direction
         turn(turn_by, turn_speed);
 
-        line_following.follow_line(speed, 0.7, 0, 1); // Increased speed_delta
+        line_following.follow_line_blind_curve(speed); // Increased speed_delta
         line_following.align_with_intersection(1.0, 0.5);
 
         direction = 180; // Direction changed due to curved path.
@@ -117,12 +123,12 @@ void Robot::move(char destination) {
       case 'f':
         break;
     }
+    break;
   case 'c':
     switch (destination) {
       case 'j':
-        // Only one direction possible at "j"
-        line_following.follow_line(speed, 0.5, 0, 1);
-        line_following.align_with_intersection(1.0, 0.5);
+        // Only one direction possible at "c"
+        line_following.align_with_intersection(1.0, 0.5); // TODO: Change for actual robot.
         break;
       case 'l':
         move('j');
@@ -137,15 +143,18 @@ void Robot::move(char destination) {
       case 'f':
         break;
     }
+    break;
   }
   // Update current_junction
   current_junction = destination;
   #ifdef DEBUG
   std::cout << "Current position is: " << current_junction << std::endl;
   #endif
+  return;
 }
 
 void Robot::align_for_pickup() {
+std::cout << "<.> Aligning for pickup." << std::endl;
   if (current_junction != 'j') {
     std::cout << "Robot is at the wrong junction for alignment: junction "
     << current_junction << std::endl;

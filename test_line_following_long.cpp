@@ -24,11 +24,11 @@ int main () {
   // Set parameters for the test
   float speed = 1.0; // Set speed of motors in range 0-1
   float turn_speed = 0.95;
-  float ramp =  0;// Set acceleration of motors in range 0-254
+  float ramp =  50;// Set acceleration of motors in range 0-254
   lf.set_ramp(ramp);
 
   float speed_delta = 0.5;
-  int num_intersections_to_ignore = 0;
+  int num_intersections_to_ignore = 1;
   bool keep_driving_after_last = 1; // Decides whether to stop motors when the final intersection is reached
 
   for (int i = 1; i <= num_repetitions; i++) {

@@ -5,6 +5,7 @@
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
 #include "robot_initialise.h"
 #include "line_following.h"
 #include "components.h"
@@ -21,6 +22,7 @@ int main () {
 
   for (int i = 0; i < num_repeat; i++) {
     robot.align_for_pickup();
+    delay(2000);
     robot.move('j');
   }
 }

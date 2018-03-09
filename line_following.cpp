@@ -121,6 +121,10 @@ void Line_Following::follow_line(float speed, float speed_delta, int num_interse
 
 void Line_Following::align_with_intersection(float speed, float speed_delta) {
 // Keep driving for a pre-calibrated amount until wheel axis is over intersection
+
+  left_motor.drive(speed);
+  right_motor.drive(speed);
+  
   stopwatch watch;
   watch.start();
 
@@ -160,81 +164,65 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
 }
 
 
-// TODO: Add rotation estimation capabilities (to avoid wrong turns)!!
-// void Line_Following::turn(int degrees, float speed) {
-//   // degrees can be either 90, 180, -90, or -180 (clockwise)
-//   // if 270, -270 call itself with -90 or 90 respectively
-//
-//   #ifdef DEBUG3
-//   //  std::cout << " + Going forward blindly" << std::endl;
-//   #endif
-//
-//   if (degrees == 270) {
-//     turn(-90, speed);
-//   } else if (degrees == -270) {
-//     turn(90, speed);
-//   } else if (degrees == 0) {
-//     return;
-//   }
-//
-//   #ifdef DEBUG
-//   if ((degrees !=  90) and (degrees !=  180) and (degrees !=  -90) and (degrees !=  -180)) {
-//     std::cout << "Invalide value of degrees: " << degrees << std::endl;
-//     throw std::invalid_argument( "received negative value");
-//   }
-//   #endif
-//
-//   if (degrees > 0) {
-//     // Rotate in clockwise direction
-//     left_motor.drive(speed);
-//     right_motor.drive(-speed);
-//     delay(TURN_DELAY_TIME);
-//
-//     Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
-//     while (!((reading.front_left == 0) and (reading.front_right == 1))) {
-//       // Continue rotating until the right sensor picks up the line.
-//       reading = line_sensors.get_sensor_reading();
-//     }
-//     if (degrees == 180) {
-//       // Call the function recursively:
-//       turn(90, speed);
-//     } else {
-//       // align the robot with the line
-//
-//       // Reduce the speed
-//       float alignment_speed = TURN_ALIGN_SPEED_FRAC * speed;
-//       left_motor.drive(alignment_speed);
-//       right_motor.drive(-alignment_speed);
-//
-//       align_after_turn(alignment_speed);
-//     }
-//   }
-//   else if (degrees < 0) {
-//     // Rotate in counter-clockwise direction
-//     left_motor.drive(-speed);
-//     right_motor.drive(speed);
-//     delay(TURN_DELAY_TIME);
-//
-//     Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
-//     while (!((reading.front_left == 1) and (reading.front_right == 0))) {
-//       // Continue rotating until the right sensor picks up the line.
-//       reading = line_sensors.get_sensor_reading();
-//     }
-//     if (degrees == -180) {
-//       // Call the function recursively:
-//       turn(-90, speed);
-//     } else {
-//       // align the robot with the line
-//
-//       // Reduce the speed
-//       float alignment_speed = TURN_ALIGN_SPEED_FRAC * speed;
-//       left_motor.drive(-alignment_speed);
-//       right_motor.drive(alignment_speed);
-//
-//       align_after_turn(alignment_speed);
-//     }
-//   }
-// }
+void Line_Following::follow_line_blind_curve(float speed) {
+
+  float speed_delta = 0.7;
+  left_motor.drive(speed);
+  right_motor.drive(speed);
+
+  float reduced_speed = speed - speed * speed_delta;
+  
+  float slow_turn_speed = 0.94 * speed;
+  bool intersection_detected = false;
+
+  Line_Sensor_Reading reading;
+
+  #ifdef DEBUG3
+    std::cout << " + Starting to line_follow (with adjustment)" << std::endl;
+  #endif
+  // Keep correcting until an intersection is reached
+  while (intersection_detected == false) {
+    reading = line_sensors.get_sensor_reading();
+
+    #ifdef DEBUG3
+    Line_Sensor_Reading last_reading;
+    if ((last_reading.front_left != reading.front_left) or (last_reading.front_right != reading.front_right)) {
+      // If the reading changes, print it out.
+      std::cout << " + Current line sensor reading: " << reading.front_left << " "
+      << reading.front_right << std::endl;
+      last_reading = reading;
+    }
+    #endif
+
+    if ((reading.front_left == 1) and (reading.front_right == 0)) {
+      // Need to go more towards left
+      left_motor.drive(reduced_speed);
+      right_motor.drive(speed); // Right wheel going faster
+    } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
+      // Need to go more towards right
+      left_motor.drive(speed);
+      right_motor.drive(reduced_speed); // Left wheel going faster
+    } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
+      // Make both motors go forwards, but keep turning left ever so slightly
+      left_motor.drive(slow_turn_speed);
+      right_motor.drive(speed);
+    } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
+      intersection_detected = true;
+      #ifdef DEBUG2
+        std::cout << " + Junction detected. Motors moving and at equal speeds." << std::endl;
+      #endif
+      // Make motors go at equal speeds (don't want to go
+      // in a curved path over the intersection)
+      left_motor.drive(speed);
+      right_motor.drive(speed);
+    }
+  }
+  // Keep driving forwards while over the junction:
+  while ((reading.front_left == 1) and (reading.front_right == 1)) {
+    reading = line_sensors.get_sensor_reading();
+  }
+  return;
+}
 
 void Line_Following::turn(int degrees, float speed) {
   // degrees can be either 90, 180, -90, or -180 (clockwise)
@@ -242,8 +230,10 @@ void Line_Following::turn(int degrees, float speed) {
 
   if (degrees == 270) {
     turn(-90, speed);
+    return;
   } else if (degrees == -270) {
     turn(90, speed);
+    return;
   } else if (degrees == 0) {
     return;
   }
@@ -254,7 +244,7 @@ void Line_Following::turn(int degrees, float speed) {
 
   #ifdef DEBUG
     if ((degrees !=  90) and (degrees !=  180) and (degrees !=  -90) and (degrees !=  -180)) {
-      std::cout << "Invalide value of degrees: " << degrees << std::endl;
+      std::cout << "Invalid value of degrees: " << degrees << std::endl;
       throw std::invalid_argument( "received negative value");
     }
   #endif
@@ -470,7 +460,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   float reduced_speed = speed - speed * speed_delta;
 
   microswitches.update_state();
-  while (microswitches.rear_state) {
+  while (microswitches.rear_state == 0) {
 	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     if ((reading.back_left == 1) and (reading.back_right == 0)) {
       // Need to go more towards left
@@ -495,8 +485,16 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
     }
     microswitches.update_state();
   }
+  
+  left_motor.drive(0);
+  right_motor.drive(0);
+  #ifdef DEBUG
+  std::cout << " + Rear switch triggered" << std::endl;
+  #endif
   return;
 }
+
+
 
 void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 	// TODO: calculate rotate_for by using a constant

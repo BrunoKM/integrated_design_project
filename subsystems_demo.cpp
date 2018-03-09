@@ -5,6 +5,7 @@
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
 #include "robot_initialise.h"
 #include "line_following.h"
 #include "components.h"
@@ -24,6 +25,7 @@ int main () {
   }
   cout << "Running Task 2:" << endl;
   robot.align_for_pickup();
+  delay(2000);
 
   usr_response = "";
   while (usr_response != "yes"){

@@ -2,7 +2,7 @@
 #include <robot_link.h>
 #include "Driving_Motor.h"
 
-#define DEBUG4
+// #define DEBUG4
 
 Driving_Motor::Driving_Motor (int motor_number, float speed_cal_factor, int orientation):
 motor_number(motor_number), speed_calibration_factor(speed_cal_factor), orientation(orientation)
