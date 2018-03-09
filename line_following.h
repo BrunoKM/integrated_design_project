@@ -38,7 +38,7 @@ public:
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed); // Degrees can only be = 0 mod 90
     void turn_exactly(int degrees, float speed, bool stop_after); // Degrees can be any int < 360 in magnitude
-    void reverse_until_switch(float speed, float ramp);
+    void reverse_until_switch(float speed, float speed_delta);
     void set_ramp(int ramp_time);
     void stop_motors();
 
