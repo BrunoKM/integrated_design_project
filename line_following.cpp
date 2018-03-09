@@ -319,6 +319,92 @@ void Line_Following::turn(int degrees, float speed) {
   return;
 }
 
+// TODO: finish and replace turn for reversing.
+void Line_Following::turn_rear_align(int degrees, float speed) {
+  // Turn and align with rear sensors instead of front.
+
+  // degrees can be either 90, 180, -90, or -180 (clockwise)
+  // if 270, -270 call itself with -90 or 90 respectively
+
+  if (degrees == 270) {
+    turn(-90, speed);
+  } else if (degrees == -270) {
+    turn(90, speed);
+  } else if (degrees == 0) {
+    return;
+  }
+
+  #ifdef DEBUG3
+    std::cout << " + Turning by: " << degrees << std::endl;
+  #endif
+
+  #ifdef DEBUG
+    if ((degrees !=  90) and (degrees !=  180) and (degrees !=  -90) and (degrees !=  -180)) {
+      std::cout << "Invalide value of degrees: " << degrees << std::endl;
+      throw std::invalid_argument( "received negative value");
+    }
+  #endif
+
+
+  // Turn by some amount without monitoring the sensors
+  int turn_blindly_by = 45;
+  switch (degrees) {
+    case 90:
+      turn_exactly(turn_blindly_by, speed, false);
+      break;
+    case 180:
+      turn_exactly(90 + turn_blindly_by, speed, false);
+      break;
+    case -90:
+      turn_exactly(-turn_blindly_by, speed, false);
+      break;
+    case -180:
+      turn_exactly(-90 - turn_blindly_by, speed, false);
+      break;
+  }
+
+  #ifdef DEBUG3
+    std::cout << " + Looking for line." << degrees << std::endl;
+  #endif
+
+  // Start monitoring the sensors to detect the incoming line:
+  Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+  if (degrees > 0) { // If clockwise
+    while (!((reading.back_left == 0) and (reading.back_right == 1))) {
+      reading = line_sensors.get_sensor_reading();
+    }
+  }
+  else if (degrees < 0) { // If counter-clockwise
+    while (!((reading.back_left == 1) and (reading.back_right == 0))) {
+      reading = line_sensors.get_sensor_reading();
+    }
+  }
+
+  #ifdef DEBUG3
+    std::cout << " + Line found. Motors starting to go at alignment speed. Aligning." << degrees << std::endl;
+  #endif
+
+  // Align with the line
+  // TODO: See if necessary. On second thoughts probably
+  float alignment_speed = TURN_ALIGN_SPEED_FRAC * speed;
+
+  if (degrees > 0) {// If clockwise
+    left_motor.drive(alignment_speed);
+    right_motor.drive(-alignment_speed);
+  }
+  else if (degrees < 0){ // If counter-clockwise
+    left_motor.drive(-alignment_speed);
+    right_motor.drive(alignment_speed);
+  }
+  align_after_turn(alignment_speed);
+
+  #ifdef DEBUG3
+    std::cout << " + Aligned." << degrees << std::endl;
+  #endif
+
+  return;
+}
+
 void Line_Following::align_after_turn(float alignment_speed) {
   stopwatch watch;
   int time_to_confirm_alignment = 30;
@@ -376,10 +462,9 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   std::cout << " + Making motors go in reverse. Current speed sent to .drive(): "
   << -speed << std::endl;
   #endif
-  
   std::cout << "left motor" << std::endl;
   left_motor.drive(-speed);
-  std::cout << "left motor" << std::endl;
+  std::cout << "right motor" << std::endl;
   right_motor.drive(-speed);
 
   float reduced_speed = speed - speed * speed_delta;
