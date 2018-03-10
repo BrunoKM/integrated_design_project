@@ -13,17 +13,13 @@ using namespace std;
 
 int main () {
 
-  int starting_direction = 90;
+  int starting_direction = 180;
   char starting_junction = 'j';
 
   Robot robot(starting_junction, starting_direction);
   int num_repeat = 20;
-  cout << "Running Alignment for pickup test" << endl;
+  cout << "Running curve blind test." << endl;
 
-  for (int i = 0; i < num_repeat; i++) {
-    robot.align_for_pickup();
-    delay(1000);
-    robot.move('i');
-    robot.move('j');
+  robot.move('l');
   }
 }

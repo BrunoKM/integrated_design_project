@@ -124,7 +124,7 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
 
   left_motor.drive(speed);
   right_motor.drive(speed);
-  
+
   stopwatch watch;
   watch.start();
 
@@ -171,7 +171,7 @@ void Line_Following::follow_line_blind_curve(float speed) {
   right_motor.drive(speed);
 
   float reduced_speed = speed - speed * speed_delta;
-  
+
   float slow_turn_speed = 0.94 * speed;
   bool intersection_detected = false;
 
@@ -517,14 +517,13 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
       #ifdef DEBUG
       std::cout << "Junction detected" << std::endl;
       #endif
-      // Make motors go at equal speeds (don't want to go
-      // in a curved path over the intersection)
+      // Just ignore any junction (if for some reason started reversing in front of one)
       left_motor.drive(-speed);
       right_motor.drive(-speed);
     }
     microswitches.update_state();
   }
-  
+
   left_motor.drive(0);
   right_motor.drive(0);
   #ifdef DEBUG

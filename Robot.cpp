@@ -144,7 +144,7 @@ void Robot::move(char destination) {
         line_following.motors_go(1, 1);
         delay(1200); // TODO: Tune for the real chassis
         line_following.motors_go(0, 0);
-        delay(200);
+        delay(200); // TODO: Reduce when not debugging
         break;
       case 'l':
         move('j');
@@ -192,7 +192,7 @@ std::cout << "<.> Aligning for pickup." << std::endl;
 
   turn_rear_align(turn_by, turn_speed);
 
-  line_following.reverse_until_switch(0.7, 0.5);
+  line_following.reverse_until_switch(0.5, 0.9); // Low speed and very high speed_delta
   current_junction = 'c';
 }
 
