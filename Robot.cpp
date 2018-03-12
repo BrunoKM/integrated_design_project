@@ -219,7 +219,7 @@ void Robot::move(char destination) {
         case 'i':
   		    invoke_move('i');
         case 'k':
-          invoke_move('l')
+          invoke_move('l');
           invoke_move('k');
         break;
       }
