@@ -14,6 +14,7 @@
 
 const int PCB1_ADDRESS = 0;
 const int PCB2_ADDRESS = 1;
+const int INPUT_IR_PORT = 0;
 
 
 class Robot {
@@ -50,6 +51,7 @@ public:
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);
   void pick_up_all_eggs();
+  void read_beacon();
   void deliver_basket();
   void recycle_eggs();
 };
