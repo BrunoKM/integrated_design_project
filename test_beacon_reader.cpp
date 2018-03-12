@@ -26,16 +26,14 @@ int main () {
 
   int threshold = 100;
 
-  while (watch.read() < 10000) {
+  while (watch.read() < 3000) {
     state = components.beacon_reader.read_state();
     reading = (state >= threshold);
     cout << "Reading is: " << state << "   Classified as: " << reading << endl;
     delay(50);
   }
 
-  cout << "Continue with pulse count testing?" << endl;
-  string usr_input;
-  cin >> usr_input;
+  cout << "Continue with pulse count testing" << endl;
 
   int pulse_count = components.beacon_reader.get_beacon_code();
   cout << "Number of pulses: " << pulse_count << endl;

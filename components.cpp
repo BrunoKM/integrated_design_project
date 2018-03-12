@@ -187,12 +187,13 @@ int Beacon_Reader::get_beacon_code() {
   bool reading = 0; // current reading
   bool last_reading = 0; //
   // If there hasn't been a reading for 200 ms, stop reading
-  while ((pulse_count == 0) or (watch.read() > 200)) {
+  while ((pulse_count == 0) or (watch.read() < 160)) {
     current_state = read_state();
     reading = (current_state >= reading_threshold);
     if (reading != last_reading) {
       // Check that the duration of the last signal is of sufficient length
       if (watch.read() < 50) {
+		std::cout << " ! pulse reading too short " << std::endl;
         // Try reading the code again if an error occurs (TODO: potentially less lazy solution?)
         // Infinite recursion possibilities, yeeet
         return get_beacon_code();
@@ -201,6 +202,7 @@ int Beacon_Reader::get_beacon_code() {
         pulse_count += 1;
 
       }
+      last_reading = reading;
       watch.start();
     }
   }
