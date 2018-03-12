@@ -22,8 +22,58 @@ left_motor(Driving_Motor(1, 1.0, 1.0)),
 right_motor(Driving_Motor(2, 1.0, -1.0)),
 line_sensors(components.line_sensors),
 microswitches(components.microswitches) {
-  set_ramp(0);
+  set_ramp(default_ramp_time);
 }
+
+bool Line_Following::adjust_speeds_from_reading(float speed, float reduced_speed, Line_Sensor_Reading reading) {
+  // Basic component for any of the line following functions
+  // Return True if an intersection was detected, return False otherwise
+  if ((reading.front_left == 1) and (reading.front_right == 0)) {
+    // Need to go more towards left
+    left_motor.drive(reduced_speed);
+    right_motor.drive(speed); // Right wheel going faster
+  } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
+    // Need to go more towards right
+    left_motor.drive(speed);
+    right_motor.drive(reduced_speed); // Left wheel going faster
+  } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
+    // Make both motors go at the same speed.
+    left_motor.drive(speed);
+    right_motor.drive(speed);
+  } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
+    // Make motors go at equal speeds (don't want to go
+    // in a curved path over the intersection)
+    left_motor.drive(speed);
+    right_motor.drive(speed);
+    return true;
+  }
+  return false;
+}
+
+bool Line_Following::adjust_reverse_speeds_from_reading(float speed, float reduced_speed, Line_Sensor_Reading reading) {
+  // Adjusts speeds of the motors to stay on the line, but for following the line in reverse.
+  if ((reading.back_left == 1) and (reading.back_right == 0)) {
+    // Need to go more towards left
+    left_motor.drive(-reduced_speed);
+    right_motor.drive(-speed); // Right wheel going faster
+  } else if ((reading.back_left == 0) and (reading.back_right == 1)) {
+    // Need to go more towards right
+    left_motor.drive(-speed);
+    right_motor.drive(-reduced_speed); // Left wheel going faster
+  } else if ((reading.back_left == 0) and (reading.back_right == 0)) {
+    // Make both motors go at the same speed.
+    left_motor.drive(-speed);
+    right_motor.drive(-speed);
+  } else if ((reading.back_left == 1) and (reading.back_right == 1)) {
+    // Make motors go at equal speeds (don't want to go
+    // in a curved path over the intersection)
+    left_motor.drive(-speed);
+    right_motor.drive(-speed);
+    return true;
+  }
+  return false
+}
+
 
 // TODO: Add '11' reading counter to be more certain of junctions
 void Line_Following::follow_line_until_intersection(float speed, float speed_delta) {
@@ -52,30 +102,10 @@ void Line_Following::follow_line_until_intersection(float speed, float speed_del
       last_reading = reading;
     }
     #endif
+    intersection_detected = adjust_speeds_from_reading(speed, reduced_speed, reading);
 
-    if ((reading.front_left == 1) and (reading.front_right == 0)) {
-      // Need to go more towards left
-      left_motor.drive(reduced_speed);
-      right_motor.drive(speed); // Right wheel going faster
-    } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
-      // Need to go more towards right
-      left_motor.drive(speed);
-      right_motor.drive(reduced_speed); // Left wheel going faster
-    } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
-      // Make both motors go at the same speed.
-      left_motor.drive(speed);
-      right_motor.drive(speed);
-    } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
-      intersection_detected = true;
-      #ifdef DEBUG2
-        std::cout << " + Junction detected. Motors moving and at equal speeds." << std::endl;
-      #endif
-      // Make motors go at equal speeds (don't want to go
-      // in a curved path over the intersection)
-      left_motor.drive(speed);
-      right_motor.drive(speed);
-    }
   }
+  std::cout << " + Intersection detected." << std::endl;
   return;
 }
 
@@ -119,8 +149,29 @@ void Line_Following::follow_line(float speed, float speed_delta, int num_interse
   return;
 }
 
+void Line_Following::follow_line_timed(float speed, float speed_delta, int time_duration) {
+  // Keep line-following for a prespecified amount of time
+
+  left_motor.drive(speed);
+  right_motor.drive(speed);
+
+  stopwatch watch;
+  watch.start();
+
+  float reduced_speed = speed - speed * speed_delta;
+
+  // Keep line-following until timer runs out.
+  while (watch.read() < time_duration) {
+    static Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+    adjust_speeds_from_reading(speed, reduced_speed, reading);
+
+  }
+  // Up to the caller to even out the speeds (he may wish to stop after calling this function)
+  return;
+}
+
 void Line_Following::align_with_intersection(float speed, float speed_delta) {
-// Keep driving for a pre-calibrated amount until wheel axis is over intersection
+  // Keep driving for a pre-calibrated amount until wheel axis is over intersection
 
   left_motor.drive(speed);
   right_motor.drive(speed);
@@ -132,28 +183,13 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
     std::cout << " + Aligning with intersection (line following and adjusting)." << std::endl;
   #endif
 
-  int time_duration = 1080; //TODO: make dependent on speed
+  float time_duration_constant = 1080; //TODO: Adjust for actual chassis
+
+  int time_duration = time_duration_constant / speed;
   float reduced_speed = speed - speed * speed_delta;
 
-
-  while (watch.read() < time_duration) {
-    static Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
-    if ((reading.front_left == 1) and (reading.front_right == 0)) {
-      // Need to go more towards left
-      left_motor.drive(reduced_speed);
-      right_motor.drive(speed); // Right wheel going faster
-    } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
-      // Need to go more towards right
-      left_motor.drive(speed);
-      right_motor.drive(reduced_speed); // Left wheel going faster
-    } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
-      // Make both motors go at the same speed.
-      left_motor.drive(speed);
-      right_motor.drive(speed);
-    } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
-      std::cout << "An unexpected detection of junction occured" << std::endl;
-    }
-  }
+  // Follow line for the time required to align with the junction.
+  follow_line_timed(speed, speed_delta, time_duration)
 
   // Stop the motors
   left_motor.drive(0);
@@ -166,13 +202,14 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
 
 void Line_Following::follow_line_blind_curve(float speed) {
 
-  float speed_delta = 0.7;
   left_motor.drive(speed);
   right_motor.drive(speed);
 
   float reduced_speed = speed - speed * speed_delta;
 
-  float slow_turn_speed = 0.94 * speed;
+  float speed_delta = 0.7; // A higher prespecified speed_delta for staying on the line
+  float reduced_speed = speed - speed * speed_delta;
+  float slow_turn_speed = 0.94 * speed; // A slower speed for the left motor so that the robot curves by itself.
   bool intersection_detected = false;
 
   Line_Sensor_Reading reading;
@@ -183,16 +220,6 @@ void Line_Following::follow_line_blind_curve(float speed) {
   // Keep correcting until an intersection is reached
   while (intersection_detected == false) {
     reading = line_sensors.get_sensor_reading();
-
-    #ifdef DEBUG3
-    Line_Sensor_Reading last_reading;
-    if ((last_reading.front_left != reading.front_left) or (last_reading.front_right != reading.front_right)) {
-      // If the reading changes, print it out.
-      std::cout << " + Current line sensor reading: " << reading.front_left << " "
-      << reading.front_right << std::endl;
-      last_reading = reading;
-    }
-    #endif
 
     if ((reading.front_left == 1) and (reading.front_right == 0)) {
       // Need to go more towards left
@@ -501,26 +528,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   microswitches.update_state();
   while (microswitches.rear_state == 0) {
 	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
-    if ((reading.back_left == 1) and (reading.back_right == 0)) {
-      // Need to go more towards left
-      left_motor.drive(-reduced_speed);
-      right_motor.drive(-speed); // Right wheel going faster
-    } else if ((reading.back_left == 0) and (reading.back_right == 1)) {
-      // Need to go more towards right
-      left_motor.drive(-speed);
-      right_motor.drive(-reduced_speed); // Left wheel going faster
-    } else if ((reading.back_left == 0) and (reading.back_right == 0)) {
-      // Make both motors go at the same speed.
-      left_motor.drive(-speed);
-      right_motor.drive(-speed);
-    } else if ((reading.back_left == 1) and (reading.back_right == 1)) {
-      #ifdef DEBUG
-      std::cout << "Junction detected" << std::endl;
-      #endif
-      // Just ignore any junction (if for some reason started reversing in front of one)
-      left_motor.drive(-speed);
-      right_motor.drive(-speed);
-    }
+    adjust_reverse_speeds_from_reading(speed, reduced_speed, reading);
     microswitches.update_state();
   }
 

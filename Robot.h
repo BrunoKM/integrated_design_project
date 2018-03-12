@@ -25,7 +25,7 @@ private:
 
   Components components;
   Line_Following line_following;
-  
+
   float speed;
   float turn_speed;
 
@@ -33,6 +33,7 @@ private:
   int sort_egg(bool large_egg);
   Egg classify_egg(bool large_egg);
   void update_onboard_eggs(Egg egg, int reservoir);
+  void _move(char destination);
 public:
   Robot();
   Robot(char starting_junction, int starting_direction);

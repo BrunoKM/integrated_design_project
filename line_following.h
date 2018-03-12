@@ -9,25 +9,30 @@
 
 class Line_Following {
 private:
-    float current_speed;
-    int current_ramp_time; // Init to a value out of range (default not known atm)
-    char direction; // either f or b
-    char back_last_to_the; // either l or r
-    char front_last_to_the; // either l or r
-    // Parameters for the motors:
-    Driving_Motor left_motor;
-    Driving_Motor right_motor;
+  static const int default_ramp_time = 50;
 
-    Line_Sensors line_sensors;
-    Microswitches microswitches;
+  float current_speed;
+  int current_ramp_time; // Init to a value out of range (default not known atm)
+  char direction; // either f or b
+  char back_last_to_the; // either l or r
+  char front_last_to_the; // either l or r
+  // Parameters for the motors:
+  Driving_Motor left_motor;
+  Driving_Motor right_motor;
 
-    // Methods
-    void align_after_turn(float alignment_speed);
-    void align_rear_after_turn(float alignment_speed);
-    // TODO: these need to be written
-    int is_on_the_line(); // return 1 if true, 0 if false, 2 if intersection encountered
-    int wiggle_to_line(); // return 1 if successful, 0 if failed
-    int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
+  Line_Sensors line_sensors;
+  Microswitches microswitches;
+
+  // Methods
+  void align_after_turn(float alignment_speed);
+  void align_rear_after_turn(float alignment_speed);
+  // TODO: these need to be written
+  int is_on_the_line(); // return 1 if true, 0 if false, 2 if intersection encountered
+  int wiggle_to_line(); // return 1 if successful, 0 if failed
+  int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
+
+  bool adjust_speeds_from_reading(float speed, float reduced_speed, Line_Sensor_Reading reading);
+  bool adjust_speeds_from_reading_reverse(float speed, float reduced_speed, Line_Sensor_Reading reading);
 
 public:
     Line_Following(Components &components);
@@ -36,6 +41,7 @@ public:
     void follow_line_until_intersection(float speed, float speed_delta);
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
+    void follow_line_timed(float speed, float speed_delta, int time_duration)
     void follow_line_blind_curve(float speed);
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed); // Degrees can only be = 0 mod 90
