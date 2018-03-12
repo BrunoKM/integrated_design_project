@@ -130,7 +130,7 @@ void Robot::invoke_move(char destination) {
     switch (destination) {
       case 'j':
         // Only one direction possible at "c"
-        line_following.follow_line_timed(1.0, 0.5, 1200)
+        line_following.follow_line_timed(1.0, 0.5, 900);
         delay(200); // TODO: Reduce when not debugging
         break;
     }
@@ -143,7 +143,7 @@ void Robot::invoke_move(char destination) {
         // Make sure the robot is facing the right direction
         turn(turn_by, turn_speed);
 
-        line_following.follow_line(speed, 0.5, 0, 1)
+        line_following.follow_line(speed, 0.5, 0, 1);
         line_following.align_with_intersection(1.0, 0.5);
         break;
     }
@@ -181,9 +181,6 @@ void Robot::move(char destination) {
       case 'l':
         invoke_move('l');
         break;
-      case 'k':
-        // TODO: Potentially different route
-        break;
       case 'd':
         break;
       case 'e':
@@ -195,6 +192,7 @@ void Robot::move(char destination) {
 		    invoke_move('i');
       case 'k':
       //  invoke_move('k');
+      break;
     }
     break;
   case 'c':
@@ -209,7 +207,7 @@ void Robot::move(char destination) {
       case 'k':
         invoke_move('j');
         invoke_move('l');
-        invoke_move('k')
+        invoke_move('k');
         break;
       case 'd':
         break;
@@ -250,10 +248,14 @@ std::cout << "<.> Aligning for pickup." << std::endl;
   std::cout << "Turning by " << turn_by << " to align to direction "
   << desired_direction << " from the current direction " << direction << std::endl;
   #endif
+  // Turn and align the front
+  turn(turn_by, turn_speed);
+  // Go forward a bit to align the rear
+  int time_to_align = 1500;
+  line_following.follow_line_timed(speed, 0.5, time_to_align);
+  line_following.stop_motors();
 
-  turn_rear_align(turn_by, turn_speed);
-
-  line_following.reverse_until_switch(0.5, 0.9); // Low speed and very high speed_delta
+  line_following.reverse_until_switch(0.5, 1.0); // Low speed and very high speed_delta
   current_junction = 'c';
 }
 

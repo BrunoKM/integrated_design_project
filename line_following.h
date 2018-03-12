@@ -9,7 +9,7 @@
 
 class Line_Following {
 private:
-  static const int default_ramp_time = 50;
+  static const int default_ramp_time = 30;
 
   float current_speed;
   int current_ramp_time; // Init to a value out of range (default not known atm)
@@ -32,7 +32,7 @@ private:
   int reiterate_in_reverse(float reiterate_for); // return 1 if successful, 0 if failed
 
   bool adjust_speeds_from_reading(float speed, float reduced_speed, Line_Sensor_Reading reading);
-  bool adjust_speeds_from_reading_reverse(float speed, float reduced_speed, Line_Sensor_Reading reading);
+  bool adjust_reverse_speeds_from_reading(float speed, float reduced_speed, Line_Sensor_Reading reading);
 
 public:
     Line_Following(Components &components);
@@ -41,7 +41,7 @@ public:
     void follow_line_until_intersection(float speed, float speed_delta);
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
-    void follow_line_timed(float speed, float speed_delta, int time_duration)
+    void follow_line_timed(float speed, float speed_delta, int time_duration);
     void follow_line_blind_curve(float speed);
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed); // Degrees can only be = 0 mod 90

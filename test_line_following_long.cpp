@@ -24,7 +24,7 @@ int main () {
   // Set parameters for the test
   float speed = 1.0; // Set speed of motors in range 0-1
   float turn_speed = 0.95;
-  float ramp =  50;// Set acceleration of motors in range 0-254
+  float ramp =  30;// Set acceleration of motors in range 0-254
   lf.set_ramp(ramp);
 
   float speed_delta = 0.5;

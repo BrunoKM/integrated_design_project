@@ -71,7 +71,7 @@ bool Line_Following::adjust_reverse_speeds_from_reading(float speed, float reduc
     right_motor.drive(-speed);
     return true;
   }
-  return false
+  return false;
 }
 
 
@@ -102,6 +102,28 @@ void Line_Following::follow_line_until_intersection(float speed, float speed_del
       last_reading = reading;
     }
     #endif
+    /*
+    // TODO : Change this
+    if ((reading.front_left == 1) and (reading.front_right == 0)) {
+    // Need to go more towards left
+    left_motor.drive(reduced_speed);
+    right_motor.drive(speed); // Right wheel going faster
+  } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
+    // Need to go more towards right
+    left_motor.drive(speed);
+    right_motor.drive(reduced_speed); // Left wheel going faster
+  } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
+    // Make both motors go at the same speed.
+    left_motor.drive(speed);
+    right_motor.drive(speed);
+  } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
+    // Make motors go at equal speeds (don't want to go
+    // in a curved path over the intersection)
+    left_motor.drive(speed);
+    right_motor.drive(speed);
+    intersection_detected = true;
+  }
+    // TODO: Change this */
     intersection_detected = adjust_speeds_from_reading(speed, reduced_speed, reading);
 
   }
@@ -157,12 +179,13 @@ void Line_Following::follow_line_timed(float speed, float speed_delta, int time_
 
   stopwatch watch;
   watch.start();
-
+	
   float reduced_speed = speed - speed * speed_delta;
+  Line_Sensor_Reading reading;
 
   // Keep line-following until timer runs out.
   while (watch.read() < time_duration) {
-    static Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+    reading = line_sensors.get_sensor_reading();
     adjust_speeds_from_reading(speed, reduced_speed, reading);
 
   }
@@ -186,10 +209,9 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
   float time_duration_constant = 1080; //TODO: Adjust for actual chassis
 
   int time_duration = time_duration_constant / speed;
-  float reduced_speed = speed - speed * speed_delta;
 
   // Follow line for the time required to align with the junction.
-  follow_line_timed(speed, speed_delta, time_duration)
+  follow_line_timed(speed, speed_delta, time_duration);
 
   // Stop the motors
   left_motor.drive(0);
@@ -205,11 +227,9 @@ void Line_Following::follow_line_blind_curve(float speed) {
   left_motor.drive(speed);
   right_motor.drive(speed);
 
-  float reduced_speed = speed - speed * speed_delta;
-
   float speed_delta = 0.7; // A higher prespecified speed_delta for staying on the line
   float reduced_speed = speed - speed * speed_delta;
-  float slow_turn_speed = 0.94 * speed; // A slower speed for the left motor so that the robot curves by itself.
+  float slow_turn_speed = 0.76 * speed; // A slower speed for the left motor so that the robot curves by itself.
   bool intersection_detected = false;
 
   Line_Sensor_Reading reading;
