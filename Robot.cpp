@@ -148,6 +148,34 @@ void Robot::invoke_move(char destination) {
         break;
     }
     break;
+  case 'k':
+    switch (destination) {
+      case 'j':
+        desired_direction = 90;
+        turn_by = (desired_direction - direction) % 360;
+        // Make sure the robot is facing the right direction
+        turn(turn_by, turn_speed);
+
+        // Follow line for a short period of time until the line (roughly) ends
+        int time_to_line_end = 2500;
+        line_following.follow_line_timed(speed, 0.5, time_to_line_end);
+
+        // Go blindly as to ignore the curved line (should go to the side of it anyways, just for safety)
+        line_following.motors_go(speed, speed);
+        int time_to_pass_curved = 4000;
+        delay(time_to_pass_curved);
+
+        // Start line-following, or in this case looking for an intersections
+        line_following.follow_line(speed, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+
+        // Turn left towards j
+        turn(-90, turn_speed);
+        line_following.follow_line(speed, 0.5, 0, 1);
+        line_following.align_with_intersection(1.0, 0.5);
+
+        break;
+    }
   }
   // Update current_junction
   current_junction = destination;
@@ -169,60 +197,78 @@ void Robot::move(char destination) {
           break;
       }
       break;
-  case 'i':
-    switch (destination) {
-      case 'j':
-        invoke_move('j');
-        break;
-    }
-    break;
-  case 'j':
-    switch (destination) {
-      case 'l':
-        invoke_move('l');
-        break;
-      case 'd':
-        break;
-      case 'e':
-        invoke_move('e');
-        break;
-      case 'f':
-        break;
-      case 'i':
-		    invoke_move('i');
-      case 'k':
-      //  invoke_move('k');
+    case 'i':
+      switch (destination) {
+        case 'j':
+          invoke_move('j');
+          break;
+      }
       break;
-    }
-    break;
-  case 'c':
-    switch (destination) {
-      case 'j':
-        invoke_move('j');
+    case 'j':
+      switch (destination) {
+        case 'l':
+          invoke_move('l');
+          break;
+        case 'd':
+          break;
+        case 'e':
+          invoke_move('e');
+          break;
+        case 'f':
+          break;
+        case 'i':
+  		    invoke_move('i');
+        case 'k':
+          invoke_move('l')
+          invoke_move('k');
         break;
-      case 'l':
-        invoke_move('j');
-        invoke_move('l');
+      }
+      break;
+    case 'c':
+      switch (destination) {
+        case 'j':
+          invoke_move('j');
+          break;
+        case 'l':
+          invoke_move('j');
+          invoke_move('l');
+          break;
+        case 'k':
+          invoke_move('j');
+          invoke_move('l');
+          invoke_move('k');
+          break;
+        case 'd':
+          break;
+        case 'e':
+          invoke_move('j');
+          invoke_move('l');
+          break;
+        case 'f':
+          break;
+        case 'i':
+      		invoke_move('j');
+      		invoke_move('i');
+          break;
+      }
+      break;
+    case 'k':
+      switch (destination) {
+        case 'j':
+          invoke_move('j');
+          break;
+        }
         break;
-      case 'k':
-        invoke_move('j');
-        invoke_move('l');
-        invoke_move('k');
-        break;
-      case 'd':
-        break;
-      case 'e':
-        invoke_move('j');
-        invoke_move('l');
-        break;
-      case 'f':
-        break;
-      case 'i':
-    		invoke_move('j');
-    		invoke_move('i');
-		break;
-    }
-    break;
+    case 'l':
+      switch (destination) {
+        case 'j':
+          invoke_move('k');
+          invoke_move('j');
+          break;
+      }
+      break;
+    default : //Optional
+      throw std::invalid_argument("Invalid current location");
   }
   // Update current_junction
   current_junction = destination;
@@ -233,7 +279,7 @@ void Robot::move(char destination) {
 }
 
 void Robot::align_for_pickup() {
-std::cout << "<.> Aligning for pickup." << std::endl;
+  std::cout << "<.> Aligning for pickup." << std::endl;
   if (current_junction != 'j') {
     std::cout << "Robot is at the wrong junction for alignment: junction "
     << current_junction << std::endl;

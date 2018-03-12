@@ -17,9 +17,13 @@ int main () {
   char starting_junction = 'j';
 
   Robot robot(starting_junction, starting_direction);
-  //int num_repeat = 20;
+  int num_repeat = 20;
   cout << "Running curve blind test." << endl;
 
-  robot.move('l');
-  
+  for (int i = 1; i <= num_repeat; i++) {
+    cout << "Repetition:  " << i << endl;
+    robot.move('l');
+    robot.move('j')
+  }
+  }
 }
