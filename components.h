@@ -11,7 +11,6 @@
 #include <robot_instr.h>
 #include "robot_initialise.h"
 
-
 class PCB {
 protected:
   int port;
@@ -33,7 +32,7 @@ private:
 public:
   PCB1(int &port);
   void read_initialise();
-  
+
   // Line following sensors (read only)
   static const int num_line_sensors = 4;
   static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
@@ -48,7 +47,7 @@ public:
 
 };
 
-// TODO: Change to the same format as PCB1
+
 class PCB2 : public PCB {
 private:
   void initialise_write_default();
@@ -57,7 +56,7 @@ public:
   PCB2(int port);
   // Wrapper for command_write_default:
   void read_initialise();
-  
+
   // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
   static const int num_persistent_microswitches = 2;
   static const int persistent_microswitch_bits = (1 << 0) + (1 << 1);
@@ -70,6 +69,18 @@ public:
   static const int led1_bit = (1 << 6);
   static const int led2_bit = (1 << 7);
 };
+
+
+class ADC {
+protected:
+  int port;
+  request_instruction read_instruction;
+public:
+  ADC(int port);
+  int read_state();
+}
+
+
 
 
 struct Line_Sensor_Reading {
@@ -134,6 +145,16 @@ public:
     void write_leds(int led1_val, int led2_val);
 };
 
+class Beacon_Reader : ADC {
+    // Class for communication with both the start beacon
+private:
+  static const int reading_threshold = 100;
+public:
+    // Public Methods
+    int get_beacon_code(); // Returns delivery point which is based on beacon code
+};
+
+
 
 // A master class to rule them all
 class Components {
@@ -144,12 +165,14 @@ private:
 public:
   Line_Sensors line_sensors;
   Microswitches microswitches;
+  Beacon_Reader beacon_reader;
 
-  Components(int pcb1_port, int pcb2_port):
+  Components(int pcb1_port, int pcb2_port, int input_ir_port):
   pcb1(PCB1(pcb1_port)),
   pcb2(PCB2(pcb2_port)),
   line_sensors(pcb1),
-  microswitches(pcb1){};
+  microswitches(pcb1),
+  beacon_reader(input_ir_port){};
 
 };
 
@@ -169,19 +192,6 @@ public:
 // void dispose_recycling() - Rotate to let out the recycling eggs and rotate back to starting position.
 // void return_to_starting(char which_side) - Returns to starting position either from left (which_side='l') or from the right (which_side='r').
 
-// TODO: FINISH IR_communications class when we understand whats going on...
-/*class IR_communication {
-    // Class for communication with both the start beacon and the turn table sensor
-private:
-    PCB1 pcb1;
-    static const int ir_led_bit = 1 << 4; //  IR LED for beacon communication (write only)
-    static const int ir_input_bit = 1 << 5;//  IR Phototransistor for beacon communication (read only)
-public:
-    IR_communication(PCB1 &pcb1) : pcb1(pcb1){};
-    // Public Methods
-    int get_delivery_point(); // Returns delivery point which is based on beacon code
-    void rotate_turntable_start_position(); // Rotates turntable to the starting position (e.g. fully clockwise)
-    void rotate_turntable(int degrees); // Rotates turntable the correct number of degrees
-};
-*/
+
+
 #endif

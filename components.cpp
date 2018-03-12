@@ -1,3 +1,4 @@
+#include <vector>
 #include "components.h"
 #include <delay.h>
 
@@ -120,6 +121,87 @@ void PCB2::initialise_write_default() {
 
 void PCB2::read_initialise() {
   command_write_default();
+}
+
+ADC::ADC(int port) : port(port) {
+
+  // Assign the right write, read instructions:
+  switch (port) {
+    case 0:
+      read_instruction = ADC0;
+      break;
+    case 1:
+      read_instruction = ADC1;
+      break;
+    case 2:
+      read_instruction = ADC2;
+      break;
+    case 3:
+      read_instruction = ADC3;
+      break;
+    case 4:
+      read_instruction = ADC4;
+      break;
+    case 5:
+      read_instruction = ADC5;
+      break;
+    case 6:
+      read_instruction = ADC6;
+      break;
+    case 7:
+      read_instruction = ADC7;
+      break;
+  }
+}
+
+int ADC::read_state() {
+  int state;
+  state = rlink.request(read_instruction);
+  return state;
+}
+
+Beacon_Reader::get_beacon_code() {
+  std::cout << " + Reading the beacon code." << std::endl;
+
+  stopwatch watch;
+  watch.start();
+
+  int current_state = 0; // Current state of the ADC
+  // Make sure that we don't start reading amid transmission
+  while (watch.read() < 250) {
+    current_state = read_state();
+    if (current_state > reading_threshold) {
+      // If a +ve voltage detected, restart the watch.
+      watch.start();
+    }
+  }
+
+  // Now use watch to read time between changes in readings:
+  watch.start() // Restart
+
+  int pulse_count = 0; // Keep count of positive pulses
+
+  bool reading = 0; // current reading
+  bool last_reading = 0; //
+  // If there hasn't been a reading for 200 ms, stop reading
+  while ((pulse_count = 0) or (watch.read() > 200)) {
+    current_state = read_state();
+    reading = (current_state >= threshold);
+    if (reading != last_reading) {
+      // Check that the duration of the last signal is of sufficient length
+      if (watch.read() < 50) {
+        // Try reading the code again if an error occurs (TODO: potentially less lazy solution?)
+        // Infinite recursion possibilities, yeeet
+        return get_beacon_code();
+      }
+      if (reading == 1) {
+        pulse_count += 1;
+
+      }
+      watch.start();
+    }
+  }
+  return pulse_count;
 }
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
