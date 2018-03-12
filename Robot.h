@@ -14,6 +14,7 @@
 
 const int PCB1_ADDRESS = 0;
 const int PCB2_ADDRESS = 1;
+const int INPUT_IR_PORT = 0;
 
 
 class Robot {

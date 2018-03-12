@@ -1,6 +1,9 @@
 #include <vector>
-#include "components.h"
+#include <iostream>
 #include <delay.h>
+#include <stopwatch.h>
+#include "components.h"
+
 
 
 
@@ -160,7 +163,7 @@ int ADC::read_state() {
   return state;
 }
 
-Beacon_Reader::get_beacon_code() {
+int Beacon_Reader::get_beacon_code() {
   std::cout << " + Reading the beacon code." << std::endl;
 
   stopwatch watch;
@@ -177,16 +180,16 @@ Beacon_Reader::get_beacon_code() {
   }
 
   // Now use watch to read time between changes in readings:
-  watch.start() // Restart
+  watch.start(); // Restart
 
   int pulse_count = 0; // Keep count of positive pulses
 
   bool reading = 0; // current reading
   bool last_reading = 0; //
   // If there hasn't been a reading for 200 ms, stop reading
-  while ((pulse_count = 0) or (watch.read() > 200)) {
+  while ((pulse_count == 0) or (watch.read() > 200)) {
     current_state = read_state();
-    reading = (current_state >= threshold);
+    reading = (current_state >= reading_threshold);
     if (reading != last_reading) {
       // Check that the duration of the last signal is of sufficient length
       if (watch.read() < 50) {

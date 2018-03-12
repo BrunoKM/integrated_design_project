@@ -78,7 +78,7 @@ protected:
 public:
   ADC(int port);
   int read_state();
-}
+};
 
 
 
@@ -145,11 +145,12 @@ public:
     void write_leds(int led1_val, int led2_val);
 };
 
-class Beacon_Reader : ADC {
+class Beacon_Reader : public ADC {
     // Class for communication with both the start beacon
 private:
   static const int reading_threshold = 100;
 public:
+	Beacon_Reader(int port): ADC(port) {};
     // Public Methods
     int get_beacon_code(); // Returns delivery point which is based on beacon code
 };

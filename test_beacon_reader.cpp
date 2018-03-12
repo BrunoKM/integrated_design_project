@@ -15,7 +15,7 @@ int main () {
 
   int pcb1_port = 0; // Port number for PCB 1
   int pcb2_port = 1; // Port number for PCB 1
-  int beacon_reader_port = 1;
+  int beacon_reader_port = 0;
 
   Components components(pcb1_port, pcb2_port, beacon_reader_port);
 
