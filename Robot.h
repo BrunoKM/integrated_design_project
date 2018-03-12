@@ -51,6 +51,7 @@ public:
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);
   void pick_up_all_eggs();
+  void read_beacon();
   void deliver_basket();
   void recycle_eggs();
 };

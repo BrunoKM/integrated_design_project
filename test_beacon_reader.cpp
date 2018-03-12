@@ -37,7 +37,8 @@ int main () {
   string usr_input;
   cin >> usr_input;
 
-  
+  int pulse_count = components.beacon_reader.get_beacon_code();
+  cout << "Number of pulses: " << pulse_count << endl;
 
   cout << "Finished" << endl;
 
