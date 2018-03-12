@@ -23,7 +23,6 @@ int main () {
   for (int i = 1; i <= num_repeat; i++) {
     cout << "Repetition:  " << i << endl;
     robot.move('l');
-    robot.move('j')
-  }
+    robot.move('j');
   }
 }
