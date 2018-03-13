@@ -13,11 +13,17 @@ int main () {
   cout << "Running the microswitch input test" << endl;
   initialise_robot();
 
+  // I2C addresses:
   int pcb1_port = 0; // Port number for PCB 1
   int pcb2_port = 1; // Port number for PCB 1
-  int beacon_reader_port = 0;
+  int turntable_comms_port = 2; // Port number
+  // ADC addresses:
+  int beacon_reader_port = 0; // Port number for the ADC beacon reader input
+  int colour_detection_1_port = 1; // Port number for first colour detection ADC
+  int colour_detection_2_port = 2; // Port number for second colour detection ADC
 
-  Components components(pcb1_port, pcb2_port, beacon_reader_port);
+  Components components(pcb1_port, pcb2_port, turntable_comms_port,
+    beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
   stopwatch watch;
   watch.start();

@@ -15,10 +15,17 @@ int main () {
   cout << "Running line_following_test between intersections ("
   << num_repetitions << " repetitions)." << endl;
 
+  // I2C addresses:
   int pcb1_port = 0; // Port number for PCB 1
-  int pcb2_port = 1;
+  int pcb2_port = 1; // Port number for PCB 1
+  int turntable_comms_port = 2; // Port number
+  // ADC addresses:
+  int beacon_reader_port = 0; // Port number for the ADC beacon reader input
+  int colour_detection_1_port = 1; // Port number for first colour detection ADC
+  int colour_detection_2_port = 2; // Port number for second colour detection ADC
 
-  Components components(pcb1_port, pcb2_port);
+  Components components(pcb1_port, pcb2_port, turntable_comms_port,
+    beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
   Line_Following lf(components);
 
   // Set parameters for the test

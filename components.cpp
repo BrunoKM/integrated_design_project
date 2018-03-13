@@ -71,10 +71,12 @@ void PCB1::initialise_write_default() {
   // The default for microswitch input is 1:
   write_default = write_default bitor inst_microswitch_bits;
   // The default value for IR LED is 0
-
-// TODO: See what's actually connected here
-  // The default for IR Input sensor i 1:
-  // write_default = write_default bitor ir_input_bit;
+  write_default = 0;
+  // The default for line_following input is 1.
+  // Have to alter write default:
+  write_default = write_default bitor line_sensor_bits;
+  // The default for actuator is 0
+  return;
 };
 
 PCB1::PCB1(int& port): PCB(port) {
@@ -82,28 +84,10 @@ PCB1::PCB1(int& port): PCB(port) {
   read_initialise();
 }
 
-// TODO: Put this into the IR class instead
-
-/*
-int PCB1::read_ir_input() {
-  int ir_reading = read_state();
-  if ((ir_reading bitand ir_input_bit) > 0) {
-    return 1;
-  } else {
-  return 0;
-  }
-}
-*/
 
 void PCB1::read_initialise() {
   command_write_default();
 }
-
-/* No longer necessary
-void PCB1::reset_microswitches() {
-  command_write_default();
-}
-*/
 
 
 
@@ -114,12 +98,12 @@ PCB2::PCB2(int port): PCB(port) {
 
 void PCB2::initialise_write_default() {
   write_default = 0;
-  // The default values for persistent microswitches are 0
-  // The default values for instantaneous microswitches have to be 1 (to allow for reading)
-  // Have to alter write default:
+  // The default value for contact flip-flops readings is 1:
+  write_default = write_default bitor contact_flops_bits;
+  // The default value for contact flip-flops reset is 0.
+  // The default value for instantaneous microswitches is 1:
   write_default = write_default bitor inst_microswitch_bits;
-  // The default value for scoop is 0
-  // The default value for leds is 0
+  // The default value for the egg display LEDS is 0.
 };
 
 void PCB2::read_initialise() {
@@ -162,6 +146,57 @@ int ADC::read_state() {
   state = rlink.request(read_instruction);
   return state;
 }
+
+Turntable_Comms::Turntable_Comms(int address) : port(address) {
+  switch (address) {
+    case 0:
+      write_instruction = WRITE_PORT_0;
+      read_instruction = READ_PORT_0;
+      break;
+    case 1:
+      write_instruction = WRITE_PORT_1;
+      read_instruction = READ_PORT_1;
+      break;
+    case 2:
+      write_instruction = WRITE_PORT_2;
+      read_instruction = READ_PORT_2;
+      break;
+    case 3:
+      write_instruction = WRITE_PORT_3;
+      read_instruction = READ_PORT_3;
+      break;
+    case 4:
+      write_instruction = WRITE_PORT_4;
+      read_instruction = READ_PORT_4;
+      break;
+    case 5:
+      write_instruction = WRITE_PORT_5;
+      read_instruction = READ_PORT_5;
+      break;
+    case 6:
+      write_instruction = WRITE_PORT_6;
+      read_instruction = READ_PORT_6;
+      break;
+    case 7:
+      write_instruction = WRITE_PORT_7;
+      read_instruction = READ_PORT_7;
+      break;
+  }
+}
+
+void Turntable_Comms::write(int write_byte) {
+  rlink.command(write_instruction, write_byte);
+  return;
+}
+
+void set_angle(int degrees) {
+  // Put some conversion code in here.
+  int write_byte = degrees;
+  
+  write(write_byte);
+};
+
+
 
 int Beacon_Reader::get_beacon_code() {
   std::cout << " + Reading the beacon code." << std::endl;
@@ -254,9 +289,6 @@ void Microswitches::update_state() {
 }
 
 
-// TODO: Finish LEDs once the pin allocation is known
-
-
 
 void LEDs::off() {
   // Set all the LEDs to 0
@@ -311,6 +343,15 @@ void LEDs::display_egg(Egg egg) {
 }
 
 
+void Scoop::contract() {
+  pcb.write(scoop_bit);
+}
+
+void Scoop:release() {
+    pcb.write(0);
+};
+
+
 Eggs::Eggs() {}
 
 void Eggs::add_egg(Egg egg) {
@@ -320,6 +361,11 @@ void Eggs::add_egg(Egg egg) {
 void Eggs::clear() {
   // Clears all the eggs, i.e. no eggs in the eggs vector after this
   // function is called.
+}
+
+Rotating_Compartment::Rotating_Compartment() :
+motor(Motor(3, 1.0, 1.0)) {
+
 }
 
 // TODO: FINISH IR_communications class when we understand whats going on...
