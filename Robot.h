@@ -12,8 +12,11 @@
 #include "components.h"
 #include "line_following.h"
 
+// I2C ports
 const int PCB1_ADDRESS = 0;
 const int PCB2_ADDRESS = 1;
+const int TURNTABLE_COMMS_ADDRESS = 2;
+// ADC ports
 const int INPUT_IR_PORT = 0;
 const int COLOUR_DETECTION_1_PORT = 1;
 const int COLOUR_DETECTION_2_PORT = 2;
