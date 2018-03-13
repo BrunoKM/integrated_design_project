@@ -185,7 +185,7 @@ void Turntable_Comms::write(int write_byte) {
 void Turntable_Comms::set_angle(int degrees) {
   // Put some conversion code in here.
   int write_byte = degrees;
-  
+
   write(write_byte);
 };
 
@@ -354,6 +354,13 @@ void Eggs::add_egg(Egg egg) {
 void Eggs::clear() {
   // Clears all the eggs, i.e. no eggs in the eggs vector after this
   // function is called.
+}
+
+int Colour_Detector::read_red_sensor() {
+  return red_sensor.read_state();
+}
+int Colour_Detector::read_blue_sensor() {
+  return blue_sensor.read_state();
 }
 
 //Rotating_Compartment::Rotating_Compartment() :

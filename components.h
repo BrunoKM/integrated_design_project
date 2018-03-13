@@ -192,6 +192,24 @@ public:
 //
 // }
 
+
+class Colour_Detector {
+public:
+  ADC red_sensor;
+  ADC blue_sensor;
+
+  // Constructor
+  Colour_Detector(int colour_sensor1_port, int colour_sensor2_port) :
+  colour_sensor_red(colour_sensor1_port),
+  colour_sensor_blue(colour_sensor2_port) {};
+
+  int read_red_sensor();
+  int read_blue_sensor();
+
+  Egg classify_egg(int size);
+}
+
+
 // A master class to rule them all
 class Components {
 private:
@@ -206,7 +224,7 @@ public:
   Scoop scoop; // TODO: Add the right PCB in the constructor
 
   Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
-    int input_ir_port, int colour_detection_1_port, int colour_detection_2_port):
+    int input_ir_port, int colour_sensor_1_port, int colour_sensor_2_port):
   pcb1(PCB1(pcb1_port)),
   pcb2(PCB2(pcb2_port)),
   turntable_comms(Turntable_Comms(turntable_comms_port)),
@@ -217,6 +235,7 @@ public:
   {};
 
 };
+
 
 
 // TODO: Finish classes below.
