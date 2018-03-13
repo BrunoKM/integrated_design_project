@@ -18,7 +18,7 @@
 
 // The Robot class methods
 Robot::Robot() :
-components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_DETECTION_1_PORT, COLOUR_DETECTION_2_PORT),
+components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_DETECTION_1_PORT, COLOUR_DETECTION_2_PORT, TURNTABLE_COMMS_ADDRESS),
 line_following(components),
 speed(1),
 turn_speed(0.93),
@@ -28,7 +28,7 @@ direction(0) {
 }
 
 Robot::Robot(char starting_junction, int starting_direction) :
-components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_DETECTION_1_PORT, COLOUR_DETECTION_2_PORT),
+components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_DETECTION_1_PORT, COLOUR_DETECTION_2_PORT, TURNTABLE_COMMS_ADDRESS),
 line_following(components),
 speed(1),
 turn_speed(0.93),
