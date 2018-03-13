@@ -322,8 +322,6 @@ void Eggs::clear() {
   // function is called.
 }
 
-
-
 // TODO: FINISH IR_communications class when we understand whats going on...
 /*IR_communication::IR_communication(PCB1 &pcb1) {
 }

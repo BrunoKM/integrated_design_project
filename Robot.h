@@ -19,10 +19,21 @@ const int INPUT_IR_PORT = 0;
 
 class Robot {
 private:
-  Eggs recycling_eggs;
-  Eggs delivery_eggs;
+  // Eggs recycling_eggs;
+  // Eggs delivery_eggs; // Eggs stored in the delivery conpartment
+
+  // The types of eggs to be delivered
+  Egg basket_egg1;
+  Egg basket_egg2;
+  char delivery_zone;
+
+  // Counters for contents of the containers.
+  int eggs1_onboard;
+  int eggs2_onboard;
+  int num_recycling_eggs;
+
+  // Number of baskets delivered.
   int baskets_delivered;
-  std::string delivery_zone;
 
   Components components;
   Line_Following line_following;
@@ -31,8 +42,8 @@ private:
   float turn_speed;
 
   void scoop();
-  int sort_egg(bool large_egg);
-  Egg classify_egg(bool large_egg);
+  int sort_egg(bool is_large);
+  Egg classify_egg(bool is_large);
   void update_onboard_eggs(Egg egg, int reservoir);
   void invoke_move(char destination);
 public:
@@ -51,7 +62,7 @@ public:
   void align_for_pickup();
   void pick_up_eggs(int num_to_recycle);
   void pick_up_all_eggs();
-  void read_beacon();
+  void read_beacon(); // Read the instructions from the starting beacon.
   void deliver_basket();
   void recycle_eggs();
 };

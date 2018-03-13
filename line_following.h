@@ -3,7 +3,7 @@
 // Also, change the parameters for the motors here.
 #ifndef LINE_FOLLOWING_H
 #define LINE_FOLLOWING_H
-#include "Driving_Motor.h"
+#include "Motor.h"
 #include "components.h"
 #include "robot_initialise.h"
 
@@ -17,8 +17,8 @@ private:
   char back_last_to_the; // either l or r
   char front_last_to_the; // either l or r
   // Parameters for the motors:
-  Driving_Motor left_motor;
-  Driving_Motor right_motor;
+  Motor left_motor;
+  Motor right_motor;
 
   Line_Sensors line_sensors;
   Microswitches microswitches;

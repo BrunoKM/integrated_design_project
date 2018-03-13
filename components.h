@@ -10,6 +10,7 @@
 #include <robot_link.h>
 #include <robot_instr.h>
 #include "robot_initialise.h"
+#include "Motor.h"
 
 class PCB {
 protected:
@@ -38,8 +39,7 @@ public:
   static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
 
   // Instantaneous microswitches; do not have to be reset in software (read only).
-  static const int num_inst_microswitches = 2;
-  static const int inst_microswitch_bits = (1 << 4) + (1 << 5);
+
   //  IR LED for beacon communication (write only)
   static const int ir_led_bit = 1 << 6;
   //  IR Phototransistor for beacon communication (read only)
@@ -81,8 +81,6 @@ public:
 };
 
 
-
-
 struct Line_Sensor_Reading {
   bool front_left;
   bool front_right;
@@ -121,20 +119,30 @@ public:
 struct Egg {
   const int size;
   const char colour;
+  Egg(int size, char colour) : size(size), colour(colour) {};
+  bool operator==(const Egg& egg2){
+    if ((size == egg2.size) and (colour == egg2.colour)) {
+      return true;
+    }
+    return false;
+    }
+  }
 };
 
 class Eggs {
+// Class used for storing the information about eggs
 public:
   Eggs();
   std::vector<Egg> eggs;
   void add_egg(Egg egg);
+  bool check_if_in(Egg egg);
   void clear();
 };
 
 
 // TODO: Finish class LEDs
 class LEDs {
-private:
+private: //TODO: What pcb and what bit?
   PCB2 pcb;
   static const int led1_bit = 1 << 4;
 	static const int led2_bit = 1 << 5;
@@ -144,6 +152,16 @@ public:
     void display_egg(Egg egg);
     void write_leds(int led1_val, int led2_val);
 };
+
+class Scoop {
+private: //TODO: What pcb and what bit?
+  PCB2 pcb;
+  static const int scooop_bit = 1 << 1;
+public:
+  Scoop(PCB2 &pcb2) : pcb(pcb2){};
+  void contract();
+  void release();
+}
 
 class Beacon_Reader : public ADC {
     // Class for communication with both the start beacon
@@ -155,7 +173,15 @@ public:
     int get_beacon_code(); // Returns delivery point which is based on beacon code
 };
 
-
+// class Rotating_Compartment {
+// private:
+//   // TODO: PCBx pcb; // for the microswitches
+//   static const int switch_bit; //TODO: or bits
+//   Motor motor;
+// public:
+//   Rotating_Compartment(PCBx pcb);
+//
+// }
 
 // A master class to rule them all
 class Components {
@@ -167,6 +193,7 @@ public:
   Line_Sensors line_sensors;
   Microswitches microswitches;
   Beacon_Reader beacon_reader;
+  Scoop scoop; // TODO: Add the right PCB in the constructor
 
   Components(int pcb1_port, int pcb2_port, int input_ir_port):
   pcb1(PCB1(pcb1_port)),
@@ -177,12 +204,8 @@ public:
 
 };
 
+
 // TODO: Finish classes below.
-// class Scoop {
-// const int address - the pin address of the scoop actuator
-// Public Methods
-// void scoop()
-// }
 // class Reservoir:
 // const int left_switch_address
 // const int right_switch_address

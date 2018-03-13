@@ -18,8 +18,8 @@ const int NUM_TO_CONFIRM_ALIGNMENT = 4; // Number of iterations to confirm that 
 
 Line_Following::Line_Following(Components &components) : current_speed(0),
 current_ramp_time(-1),
-left_motor(Driving_Motor(1, 1.0, 1.0)),
-right_motor(Driving_Motor(2, 1.0, -1.0)),
+left_motor(Motor(1, 1.0, 1.0)),
+right_motor(Motor(2, 1.0, -1.0)),
 line_sensors(components.line_sensors),
 microswitches(components.microswitches) {
   set_ramp(default_ramp_time);
@@ -179,7 +179,7 @@ void Line_Following::follow_line_timed(float speed, float speed_delta, int time_
 
   stopwatch watch;
   watch.start();
-	
+
   float reduced_speed = speed - speed * speed_delta;
   Line_Sensor_Reading reading;
 
