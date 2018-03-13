@@ -68,14 +68,7 @@ void PCB1::initialise_write_default() {
 
   // The default values for line sensors are 1:
   write_default = write_default bitor line_sensor_bits;
-  // The default for microswitch input is 1:
-  write_default = write_default bitor inst_microswitch_bits;
-  // The default value for IR LED is 0
-  write_default = 0;
-  // The default for line_following input is 1.
-  // Have to alter write default:
-  write_default = write_default bitor line_sensor_bits;
-  // The default for actuator is 0
+  // The default value for scoop actuator is 0
   return;
 };
 
@@ -147,7 +140,7 @@ int ADC::read_state() {
   return state;
 }
 
-Turntable_Comms::Turntable_Comms(int address) : port(address) {
+Turntable_Comms::Turntable_Comms(int address) : address(address) {
   switch (address) {
     case 0:
       write_instruction = WRITE_PORT_0;
@@ -189,7 +182,7 @@ void Turntable_Comms::write(int write_byte) {
   return;
 }
 
-void set_angle(int degrees) {
+void Turntable_Comms::set_angle(int degrees) {
   // Put some conversion code in here.
   int write_byte = degrees;
   
@@ -347,7 +340,7 @@ void Scoop::contract() {
   pcb.write(scoop_bit);
 }
 
-void Scoop:release() {
+void Scoop::release() {
     pcb.write(0);
 };
 
@@ -363,10 +356,10 @@ void Eggs::clear() {
   // function is called.
 }
 
-Rotating_Compartment::Rotating_Compartment() :
-motor(Motor(3, 1.0, 1.0)) {
+//Rotating_Compartment::Rotating_Compartment() :
+//motor(Motor(3, 1.0, 1.0)) {
 
-}
+//}
 
 // TODO: FINISH IR_communications class when we understand whats going on...
 /*IR_communication::IR_communication(PCB1 &pcb1) {
