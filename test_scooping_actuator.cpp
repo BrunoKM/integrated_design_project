@@ -1,16 +1,16 @@
-// Go until second intersection and align with it (axis over intersection), turn around, repeat
+// Very simple test for the scoop
 
 #include <iostream>
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
 #include <stopwatch.h>
-#include <delay.h>
 #include "robot_initialise.h"
+#include "line_following.h"
 #include "components.h"
 
 int main () {
-  cout << "Running the microswitch input test" << endl;
+  cout << "Running the actuator test." << endl;
   initialise_robot();
 
   // I2C addresses:
@@ -27,13 +27,12 @@ int main () {
 
   stopwatch watch;
   watch.start();
-  int rear_state_reading;
-  while (watch.read() < 10000) {
-    components.microswitches.update_state();
-    rear_state_reading = components.microswitches.rear_state;
-    cout << "Reading is: "
-    << rear_state_reading << endl;
-    delay(100);
+  while (watch.read() < 15000) {
+    Line_Sensor_Reading reading;
+    reading = components.line_sensors.get_sensor_reading();
+    cout << "Reading is: Front: " << reading.front_left << " "
+    << reading.front_right
+    << " Back: " << reading.back_left << " " << reading.back_right << endl;
   }
 
   cout << "Finished" << endl;

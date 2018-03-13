@@ -38,13 +38,10 @@ public:
   static const int num_line_sensors = 4;
   static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
 
+  // Scoop actuator control (write only)
+  static const int scoop_actuator_bit = 1 << 4;
+
   // Instantaneous microswitches; do not have to be reset in software (read only).
-
-  //  IR LED for beacon communication (write only)
-  static const int ir_led_bit = 1 << 6;
-  //  IR Phototransistor for beacon communication (read only)
-  static const int ir_input_bit = 1 << 7;
-
 };
 
 
@@ -57,14 +54,17 @@ public:
   // Wrapper for command_write_default:
   void read_initialise();
 
-  // Persistent microswitches; stay ON after microswitch triggered, have to be reset by software (read and write).
-  static const int num_persistent_microswitches = 2;
-  static const int persistent_microswitch_bits = (1 << 0) + (1 << 1);
-  // Instantaneous microswitches; do not have to be reset in software (read only).
-  static const int num_inst_microswitches = 3;
-  static const int inst_microswitch_bits = (1 << 2) + (1 << 3) + (1 << 4);
-  // Scoop actuator control (write only)
-  static const int scoop_actuator_bit = 1 << 5;
+  // Persistent flip-flops; stay ON after contact triggered, have to be reset in software.
+  // Flips flops read bits (READ only)
+  static const int num_contact_flops = 2;
+  static const int contact_flops_bits = (1 << 0) + (1 << 1); // Bits for the contact flops
+  // Flip flops reset (WRITE only)
+  static const int contact_flops_reset_bits = (1 << 2) + (1 << 3);
+
+  // Instantaneous microswitches; do not have to be reset in software (READ only).
+  static const int num_inst_microswitches = 2;
+  static const int inst_microswitch_bits = (1 << 4) + (1 << 5);
+
   // LEDs to signal colour detection (write only)
   static const int led1_bit = (1 << 6);
   static const int led2_bit = (1 << 7);
@@ -80,6 +80,16 @@ public:
   int read_state();
 };
 
+class Turntable_Comms {
+private:
+  int address;
+  command_instruction write_instruction;
+  request_instruction read_instruction;
+public:
+  Turntable_Comms(int address);
+  void write(int write_byte);
+  void set_angle(int degrees);
+}
 
 struct Line_Sensor_Reading {
   bool front_left;
@@ -97,13 +107,13 @@ private:
   static const int back_left_bit = 1 << 2;
   static const int back_right_bit = 1 << 3;
 public:
-  Line_Sensors(PCB1 &pcb1) : pcb(pcb1){};
+  Line_Sensors(PCB1 &pcb) : pcb(pcb){};
   Line_Sensor_Reading get_sensor_reading();
 };
 
 class Microswitches {
 private:
-  PCB1 pcb;
+  PCB2 pcb;
   // Define the order of microswitch bits:
   static const int front_switch_bit = 1 << 5;
   static const int rear_switch_bit = 1 << 4;
@@ -112,7 +122,7 @@ public:
   bool rear_state;
   bool front_state;
 
-  Microswitches(PCB1 &pcb1) : pcb(pcb1){};
+  Microswitches(PCB2 &pcb) : pcb(pcb){};
   void update_state();
 };
 
@@ -142,12 +152,11 @@ public:
 
 // TODO: Finish class LEDs
 class LEDs {
-private: //TODO: What pcb and what bit?
   PCB2 pcb;
-  static const int led1_bit = 1 << 4;
-	static const int led2_bit = 1 << 5;
+  static const int led1_bit = 1 << 6;
+	static const int led2_bit = 1 << 7;
 public:
-    LEDs(PCB2 &pcb2) : pcb(pcb2){};
+    LEDs(PCB2 &pcb) : pcb(pcb){};
     void off();
     void display_egg(Egg egg);
     void write_leds(int led1_val, int led2_val);
@@ -155,10 +164,10 @@ public:
 
 class Scoop {
 private: //TODO: What pcb and what bit?
-  PCB2 pcb;
-  static const int scooop_bit = 1 << 1;
+  PCB1 pcb;
+  static const int scoop_bit = 1 << 4;
 public:
-  Scoop(PCB2 &pcb2) : pcb(pcb2){};
+  Scoop(PCB1 &pcb) : pcb(pcb){};
   void contract();
   void release();
 }
@@ -166,7 +175,7 @@ public:
 class Beacon_Reader : public ADC {
     // Class for communication with both the start beacon
 private:
-  static const int reading_threshold = 100;
+  static const int reading_threshold = 120;
 public:
 	Beacon_Reader(int port): ADC(port) {};
     // Public Methods
@@ -190,16 +199,20 @@ private:
   PCB1 pcb1;
   PCB2 pcb2;
 public:
+  Turntable_Comms turntable_comms
   Line_Sensors line_sensors;
   Microswitches microswitches;
   Beacon_Reader beacon_reader;
   Scoop scoop; // TODO: Add the right PCB in the constructor
 
-  Components(int pcb1_port, int pcb2_port, int input_ir_port):
+  Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
+    int input_ir_port, int colour_detection_1_port, int colour_detection_2_port):
   pcb1(PCB1(pcb1_port)),
   pcb2(PCB2(pcb2_port)),
+  turntable_comms(Turntable_Comms(turntable_comms_port)),
   line_sensors(pcb1),
   microswitches(pcb1),
+  scoop(pcb1),
   beacon_reader(input_ir_port){};
 
 };

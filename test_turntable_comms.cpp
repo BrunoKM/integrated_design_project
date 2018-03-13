@@ -8,9 +8,10 @@ using namespace std;
 #include <delay.h>
 #include "robot_initialise.h"
 #include "components.h"
+#include "Robot.h"
 
 int main () {
-  cout << "Running the microswitch input test" << endl;
+  cout << "Running the turntable angle control test." << endl;
   initialise_robot();
 
   // I2C addresses:
@@ -25,15 +26,17 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  stopwatch watch;
-  watch.start();
-  int rear_state_reading;
-  while (watch.read() < 10000) {
-    components.microswitches.update_state();
-    rear_state_reading = components.microswitches.rear_state;
-    cout << "Reading is: "
-    << rear_state_reading << endl;
-    delay(100);
+  // stopwatch watch;
+  // watch.start();
+  cout << "Set the angle to 0 to begin with." << endl;
+  components.turntable_comms.set_angle(0);
+
+  int delay_time = 2000;
+
+  for (int i = 0; i <= 255; i+=10) {
+    components.turntable_comms.set_angle(0);
+    cout << "Value sent to PIC: " << i << endl;
+    delay(delay_time);
   }
 
   cout << "Finished" << endl;
