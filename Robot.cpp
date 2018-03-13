@@ -23,10 +23,7 @@ line_following(components),
 speed(1),
 turn_speed(0.93),
 current_junction('s'),
-direction(0),
-eggs1_onboard(0),
-eggs2_onboard(0),
-num_recycling_eggs(0) {
+direction(0) {
   initialise_robot();
 }
 
@@ -36,10 +33,7 @@ line_following(components),
 speed(1),
 turn_speed(0.93),
 current_junction(starting_junction),
-direction(starting_direction),
-eggs1_onboard(0),
-eggs2_onboard(0),
-num_recycling_eggs(0) {
+direction(starting_direction) {
   initialise_robot();
 }
 
@@ -225,7 +219,7 @@ void Robot::move(char destination) {
         case 'i':
   		    invoke_move('i');
         case 'k':
-          invoke_move('l')
+          invoke_move('l');
           invoke_move('k');
         break;
       }
@@ -351,7 +345,7 @@ void Robot::read_beacon() {
       delivery_zone = 'e'; // i.e. d2
       break;
     default:
-      std::cout << "Wrong beacone code " << pulse_count << ". Reading again."
+      std::cout << "Wrong beacone code " << pulse_count << ". Reading again.";
       read_beacon();
       return;
   }

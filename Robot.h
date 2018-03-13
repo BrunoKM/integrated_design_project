@@ -23,7 +23,10 @@ class Robot {
 private:
   // Eggs recycling_eggs;
   // Eggs delivery_eggs; // Eggs stored in the delivery conpartment
-
+  
+  Components components;
+  Line_Following line_following;
+  
   // The types of eggs to be delivered
   Egg basket_egg1;
   Egg basket_egg2;
@@ -37,8 +40,7 @@ private:
   // Number of baskets delivered.
   int baskets_delivered;
 
-  Components components;
-  Line_Following line_following;
+
 
   float speed;
   float turn_speed;
@@ -52,7 +54,7 @@ public:
   Robot();
   Robot(char starting_junction, int starting_direction);
 
-  std::string position;
+  // std::string position;
   char current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
 

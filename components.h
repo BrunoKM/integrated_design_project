@@ -89,7 +89,7 @@ public:
   Turntable_Comms(int address);
   void write(int write_byte);
   void set_angle(int degrees);
-}
+};
 
 struct Line_Sensor_Reading {
   bool front_left;
@@ -127,16 +127,16 @@ public:
 };
 
 struct Egg {
-  const int size;
-  const char colour;
+  int size;
+  char colour;
   Egg(int size, char colour) : size(size), colour(colour) {};
+  Egg() {};
   bool operator==(const Egg& egg2){
     if ((size == egg2.size) and (colour == egg2.colour)) {
       return true;
     }
     return false;
-    }
-  }
+  };
 };
 
 class Eggs {
@@ -170,7 +170,7 @@ public:
   Scoop(PCB1 &pcb) : pcb(pcb){};
   void contract();
   void release();
-}
+};
 
 class Beacon_Reader : public ADC {
     // Class for communication with both the start beacon
@@ -199,10 +199,10 @@ private:
   PCB1 pcb1;
   PCB2 pcb2;
 public:
-  Turntable_Comms turntable_comms
+  Turntable_Comms turntable_comms;
+  Beacon_Reader beacon_reader;
   Line_Sensors line_sensors;
   Microswitches microswitches;
-  Beacon_Reader beacon_reader;
   Scoop scoop; // TODO: Add the right PCB in the constructor
 
   Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
@@ -210,10 +210,11 @@ public:
   pcb1(PCB1(pcb1_port)),
   pcb2(PCB2(pcb2_port)),
   turntable_comms(Turntable_Comms(turntable_comms_port)),
+  beacon_reader(input_ir_port),
   line_sensors(pcb1),
-  microswitches(pcb1),
-  scoop(pcb1),
-  beacon_reader(input_ir_port){};
+  microswitches(pcb2),
+  scoop(pcb1)
+  {};
 
 };
 
