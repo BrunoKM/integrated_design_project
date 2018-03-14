@@ -25,14 +25,14 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
+  int delay_time = 1000;
   stopwatch watch;
   watch.start();
   while (watch.read() < 15000) {
-    Line_Sensor_Reading reading;
-    reading = components.line_sensors.get_sensor_reading();
-    cout << "Reading is: Front: " << reading.front_left << " "
-    << reading.front_right
-    << " Back: " << reading.back_left << " " << reading.back_right << endl;
+    components.scoop.contract();
+    delay(delay_time);
+    components.scoop.release();
+    delay(delay_time);
   }
 
   cout << "Finished" << endl;
