@@ -31,8 +31,9 @@ int main () {
   while (watch.read() < 10000) {
     components.microswitches.update_state();
     rear_state_reading = components.microswitches.rear_state;
-    cout << "Reading is: "
-    << rear_state_reading << endl;
+    front_state_reading = components.microswitches.front_state;
+    cout << "Reading is:\n" << "Rear: "
+    << rear_state_reading << "  ; Front: " << front_state_reading << endl;
     delay(100);
   }
 
