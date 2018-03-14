@@ -18,18 +18,18 @@ const int PCB2_ADDRESS = 1;
 const int TURNTABLE_COMMS_ADDRESS = 2;
 // ADC ports
 const int INPUT_IR_PORT = 0;
-const int COLOUR_DETECTION_1_PORT = 1;
-const int COLOUR_DETECTION_2_PORT = 2;
+const int COLOUR_SENSOR_1_PORT = 1;
+const int COLOUR_SENSOR_2_PORT = 2;
 
 
 class Robot {
 private:
   // Eggs recycling_eggs;
   // Eggs delivery_eggs; // Eggs stored in the delivery conpartment
-  
+
   Components components;
   Line_Following line_following;
-  
+
   // The types of eggs to be delivered
   Egg basket_egg1;
   Egg basket_egg2;

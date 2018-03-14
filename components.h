@@ -89,6 +89,7 @@ public:
   Turntable_Comms(int address);
   void write(int write_byte);
   void set_angle(int degrees);
+  void set_position(int position); // Turn the turntable to n-th egg position
 };
 
 struct Line_Sensor_Reading {

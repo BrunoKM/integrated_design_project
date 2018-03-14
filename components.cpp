@@ -189,6 +189,43 @@ void Turntable_Comms::set_angle(int degrees) {
   write(write_byte);
 };
 
+void Turntable_Comms::set_position(int position) {
+  // Position 1 - 8 for eggs. Odd for small, even for large ones.
+  int write_byte;
+  switch (position) {
+    case 0:
+      // Position 0 is empty, choose for when first coming in
+      write_byte = 0;
+      break;
+    case 1:
+      write_byte = 30; // TODO: Figure out write_bytes for each position
+      break;
+    case 2:
+      write_byte = 55;
+      break;
+    case 3:
+      write_byte = 90;
+      break;
+    case 4:
+      write_byte = 120;
+      break;
+    case 5:
+      write_byte = 150;
+      break;
+    case 6:
+      write_byte = 180;
+      break;
+    case 7:
+      write_byte = 225;
+      break;
+    case 8:
+      write_byte = 255;
+      break;
+  }
+  write(write_byte);
+  return;
+}
+
 
 
 int Beacon_Reader::get_beacon_code() {
@@ -359,8 +396,22 @@ void Eggs::clear() {
 int Colour_Detector::read_red_sensor() {
   return red_sensor.read_state();
 }
+
 int Colour_Detector::read_blue_sensor() {
   return blue_sensor.read_state();
+}
+
+Egg Colour_Detector::classify_egg(int size) {
+  // Some decision logic for colour:
+  char colour;
+  switch (size) {
+    case 0:
+      // Decide between pink and yellow
+    case 1:
+      // Decide between yellow and blue
+  }
+  colour = 'y'; // Remove
+  return Egg(size, colour);
 }
 
 //Rotating_Compartment::Rotating_Compartment() :
