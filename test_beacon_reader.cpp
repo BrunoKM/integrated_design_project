@@ -30,14 +30,14 @@ int main () {
   int state;
   bool reading;
 
-  int threshold = 100;
+  // int threshold = 100;
 
-  while (watch.read() < 3000) {
-    state = components.beacon_reader.read_state();
-    reading = (state >= threshold);
-    cout << "Reading is: " << state << "   Classified as: " << reading << endl;
-    delay(50);
-  }
+  // while (watch.read() < 3000) {
+  //   state = components.beacon_reader.read_state();
+  //   reading = (state >= threshold);
+  //   cout << "Reading is: " << state << "   Classified as: " << reading << endl;
+  //   delay(50);
+  // }
 
   cout << "Continue with pulse count testing" << endl;
 
