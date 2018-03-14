@@ -17,18 +17,18 @@ int main () {
   int colour_sensor_1_port = 1; // Port number for first colour detection ADC
   int colour_sensor_2_port = 2; // Port number for second colour detection ADC
 
-  detector = Colour_Detector(colour_sensor_1_port, colour_sensor_2_port);
+  Colour_Detector detector(colour_sensor_1_port, colour_sensor_2_port);
 
-  int delay_time = 3000;
+  int delay_time = 400;
   int counter = 0;
 
 	while (true) {
 		int red_reading = detector.read_red_sensor();
-    int blue_reading = detector.read_blue_sensor();
+		int blue_reading = detector.read_blue_sensor();
 		counter ++;
     cout << counter << " - Reading is: BLUE: " << blue_reading << "   RED: "
     << red_reading << endl;
-		delay(1000);
+		delay(delay_time);
 	}
 
   cout << "Finished" << endl;

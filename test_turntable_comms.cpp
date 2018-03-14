@@ -25,18 +25,23 @@ int main () {
 
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
-
+	cout << "components initialised" << endl;
   // stopwatch watch;
   // watch.start();
-  //cout << "Set the angle to 0 to begin with." << endl;
-  //components.turntable_comms.set_angle(0);
+  // cout << "Set the angle to 0 to begin with." << endl;
+  // components.turntable_comms.set_angle(0);
 
-  int delay_time = 5000;
+  int delay_time = 3000;
   int counter = 0;
 	
 	while (true) {
+		//rlink.command(WRITE_PORT_1, (1<<6));
+	  //delay(100);
+	  //rlink.command(WRITE_PORT_1, (1<<7));
+	  
 		//components.turntable_comms.set_angle(255);
 		rlink.command(WRITE_PORT_2, (counter * 10 )% 256);
+		// rlink.request(READ_PORT_0);
 		cout << counter << ": Sent signal " << ((counter*10)% 256) << endl;
 		counter ++;
 		delay(delay_time);

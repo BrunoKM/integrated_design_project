@@ -200,14 +200,14 @@ public:
 
   // Constructor
   Colour_Detector(int colour_sensor1_port, int colour_sensor2_port) :
-  colour_sensor_red(colour_sensor1_port),
-  colour_sensor_blue(colour_sensor2_port) {};
+  red_sensor(colour_sensor1_port),
+  blue_sensor(colour_sensor2_port) {};
 
   int read_red_sensor();
   int read_blue_sensor();
 
   Egg classify_egg(int size);
-}
+};
 
 
 // A master class to rule them all
