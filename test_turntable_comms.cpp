@@ -47,7 +47,7 @@ int main () {
     cout << "Input the desired control signal (between 0 and 255)" << endl;
     cin >> write_byte;
 
-		components.turntable_comms.write(255);
+		components.turntable_comms.write(write_byte);
     cout << counter << "- Sent signal is: " << write_byte << endl;
 		// rlink.command(WRITE_PORT_2, write_byte);
 
