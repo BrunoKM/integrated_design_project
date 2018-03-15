@@ -602,7 +602,7 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
   float rotate_time_360 = 5700; // TODO: Recalibrate for proper chasis.
 
   int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
-#ifdef DEBUG3
+  #ifdef DEBUG3
     std::cout << " + Turning blindly by " << degrees << " degrees for "
     << rotate_for << "ms. Turning speed: " << speed << std::endl;
   #endif

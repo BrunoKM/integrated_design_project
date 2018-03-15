@@ -438,7 +438,9 @@ void Robot::deliver_basket() {
 }
 
 void Robot::recycle_eggs() {
-
+  components.compartment.turn_to_position(5);
+  components.compartment.violent_shock();
+  components.compartment.return_to_default();
 }
 
 void Robot::read_beacon() {

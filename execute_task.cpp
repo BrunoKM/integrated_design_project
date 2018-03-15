@@ -1,15 +1,32 @@
-// The overall strategy for the execution sequence is laid out here by interacting
-// with the high level interface of the Robot class.
+// Go until second intersection and align with it (axis over intersection), turn around, repeat
 
+#include <iostream>
+#include <string>
+using namespace std;
+#include <robot_instr.h>
+#include <robot_link.h>
+#include <delay.h>
+#include "robot_initialise.h"
+#include "line_following.h"
+#include "components.h"
+#include "Robot.h"
 
+int main () {
 
+  Robot robot;
+  cout << "--- Execution ---" << endl;
+  robot.read_beacon();
+  robot.move('j');
 
-int main() {
-  // initialise_robot
+  for (int i = 0; i <= 4; ++i) {
+    robot.align_for_pickup();
+    robot.pick_up_all_eggs();
+    robot.move(robot.delivery_zone);
+    robot.deliver_basket();
 
-  // Drive to the start-zone IR receiver
+    robot.move('f');
+    robot.recycle_eggs();
 
-  
-
-  return 0;
+    robot.move('j');
+  }
 }
