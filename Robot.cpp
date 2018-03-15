@@ -356,15 +356,16 @@ void Robot::read_beacon() {
 
 // Private Methods:
 
-int Robot::sort_egg(bool large_egg) {
-  // Returns 1 for egg sorted into delivery reservoir and 0 for egg sorted into recycling.
-  return 1;
+void Robot::sort_egg(bool large_egg) {
+  // Pull the egg in, classify the colour, and put it in the right compartment.
+  return;
 }
 
-//Egg Robot::classify_egg(bool large_egg) {
-  // Use the IR sensor and diode to classify the egg
-//  return;
-//}
+Egg Robot::classify_egg(bool is_large) {
+  //Use the IR sensors and diode to classify the egg
+
+  return;
+}
 
 void Robot::update_onboard_eggs(Egg egg, int reservoir) {
   // Updates the delivery_eggs and recycling_eggs parameters of the object.

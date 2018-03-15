@@ -171,6 +171,9 @@ public:
   Scoop(PCB1 &pcb) : pcb(pcb){};
   void contract();
   void release();
+
+  // I know, the word violent is redundant, but it sounds soo cool
+  void violent_shock();
 };
 
 class Beacon_Reader : public ADC {
@@ -192,7 +195,7 @@ private:
   static const int  reset_flops_bit= (1 << 2) + (1 << 3);
 
   static const int speed = 1.0;
-  
+
   Motor motor;
 
   // Position is:
@@ -202,7 +205,7 @@ private:
   // 4 - for basket classification
   // 5 - for recycling delivery
   int current_position;
-  
+
 public:
   Rotating_Compartment(PCB2 pcb);
   void turn_exactly(int degrees, bool stop_after);

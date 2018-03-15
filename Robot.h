@@ -49,8 +49,6 @@ private:
   float turn_speed;
 
   void scoop();
-  int sort_egg(bool is_large);
-  Egg classify_egg(bool is_large);
   void update_onboard_eggs(Egg egg, int reservoir);
   void invoke_move(char destination);
 public:
@@ -72,6 +70,7 @@ public:
   void read_beacon(); // Read the instructions from the starting beacon.
   void deliver_basket();
   void recycle_eggs();
+  void sort_egg(bool is_large);
 };
 
 #endif

@@ -379,7 +379,23 @@ void Scoop::contract() {
 }
 
 void Scoop::release() {
+  pcb.write(0);
+};
+
+void Scoop::violent_shock() {
+  int impulse_delay = 10;
+  int num_shocks = 1;
+
+  for (int i=1; i <= num_shocks; i++) {
+    pcb.write(scoop_bit);
+    delay(impulse_delay);
     pcb.write(0);
+    if (i != num_shocks) {
+      // Do not delay on last iter.
+      delay(impulse_delay);
+    }
+  }
+  return;
 };
 
 
@@ -471,7 +487,7 @@ void Rotating_Compartment::turn_to_position(int position) {
 
       turn_exactly(-10, false);
       reset_flops();
-      
+
       while (read_right_flop() == 0) {
       }
       motor.drive(0);
@@ -479,7 +495,7 @@ void Rotating_Compartment::turn_to_position(int position) {
     case 2:
       turn_exactly(-10, false);
       reset_flops();
-      
+
       while (read_right_flop() == 0) {
       }
       motor.drive(0);
@@ -515,7 +531,7 @@ void Rotating_Compartment::return_to_default() {
       reset_flops();
       // Turn until the rotor makes first contact
       while (read_right_flop() == 0) {}
-      
+
       // Turn until the rotor makes second contact and stop
       turn_exactly(10, false);
       reset_flops();
