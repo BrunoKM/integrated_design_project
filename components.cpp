@@ -9,9 +9,8 @@
 
 
 
-PCB::PCB(int port) : port(port) {
-  write_state = ~0;
-  read_state = 0;
+PCB::PCB(int port) :
+port(port), write_state(~0), read_state(0) {
   // Assign the right write, read instructions:
   switch (port) {
     case 0:
@@ -47,22 +46,28 @@ PCB::PCB(int port) : port(port) {
       read_instruction = READ_PORT_7;
       break;
   }
+  // Send write state to initialise the read inputs
+  write();
 }
 
 void PCB::read() {
+  // Update the read state
   read_state = rlink.request(read_instruction);
 }
 
 void PCB::write() {
+  // Write the write state to the PCB
   rlink.command(write_instruction, write_state);
 }
 
 bool PCB::get(int bit) {
+  // Return the value of the requested bit from the read state
 	int mask = 1 << bit;
 	return (read_state & mask) == mask;
 }
 
 void PCB::set(int bit, bool value) {
+  // Alter the value of bit on the write state
 	if (value) {
 		write_state |= 1 << bit;
 	} else {
@@ -70,14 +75,6 @@ void PCB::set(int bit, bool value) {
 	}
 }
 
-PCB1::PCB1(int& port): PCB(port) {
-  initialise_write_default();
-  read_initialise();
-}
-
-
-PCB2::PCB2(int port): PCB(port) {
-}
 
 ADC::ADC(int port) : port(port) {
 
@@ -251,6 +248,7 @@ int Beacon_Reader::get_beacon_code() {
 }
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
+  // Update the read state with current values
   pcb.read_state();
 
   Line_Sensor_Reading reading;
@@ -263,8 +261,9 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 
 
 void Microswitches::update_state() {
+  // Update the read state with current values
   pcb.read_state();
-  
+
   front_state = pcb.get(front_switch_bit);
   rear_state = pcb.get(rear_switch_bit);
 }
@@ -273,14 +272,15 @@ void Microswitches::update_state() {
 
 void LEDs::off() {
   // Set all the LEDs to 0
-  write_leds(false, false); 
-  return;
+  write_leds(false, false);
 }
 
 void LEDs::write_leds(bool led1_val, bool led2_val) {
+  // Change the write_state to the desired values
   pcb.set(led1_bit, led1_val);
   pcb.set(led2_bit, led2_val);
-  pcb.write_state();
+  // Send the write command
+  pcb.write();
 }
 
 void LEDs::display_egg(Egg egg) {
@@ -322,21 +322,25 @@ void LEDs::display_egg(Egg egg) {
 
 
 void Scoop::contract() {
+  pcb.set(scoop_bit, 1);
+  // Send the write command
   pcb.write(scoop_bit);
 }
 
 void Scoop::release() {
-  pcb.write(0);
+  pcb.set(scoop_bit, 0);
+  // Send the write command
+  pcb.write(scoop_bit);
 };
 
 void Scoop::violent_shock() {
   int impulse_delay = 10;
-  int num_shocks = 1;
+  int num_shocks = 2;
 
   for (int i=1; i <= num_shocks; i++) {
-    pcb.write(scoop_bit);
+    contract();
     delay(impulse_delay);
-    pcb.write(0);
+    release();
     if (i != num_shocks) {
       // Do not delay on last iter.
       delay(impulse_delay);
@@ -380,10 +384,11 @@ Egg Colour_Detector::classify_egg(int size) {
   return Egg(size, colour);
 }
 
-Rotating_Compartment::Rotating_Compartment(PCB2 pcb) :
+Rotating_Compartment::Rotating_Compartment(PCB pcb) :
 pcb(pcb),
 motor(Motor(3, 1.0, 1.0)),
 current_position(3) {
+  reset_flops();
 }
 
 void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
@@ -413,20 +418,20 @@ bool Rotating_Compartment::read_right_flop() {
   return pcb.get(right_flop_bit);
 }
 void Rotating_Compartment::reset_flops() {
-	// Need to send a zero pulse to reset them.
+	// Need to send a zero pulse to reset the flops
 	pcb.set(reset_left_flop_bit, false);
 	pcb.set(reset_right_flop_bit, false);
-	
+
 	pcb.write_state();
-	
+
 	pcb.set(reset_left_flop_bit, true);
 	pcb.set(reset_right_flop_bit, true);
-	
+
 	pcb.write_state();
 }
 
 void Rotating_Compartment::turn_to_position(int position) {
-  // Assumes starting at position 3 (the centre), and turns to one of the desired positions.
+  // Assumes starting at position 3 (the centre), and turns to one of the desired positions
   switch (position) {
     case 1:
       turn_to_position(2);

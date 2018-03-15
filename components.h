@@ -17,61 +17,17 @@ protected:
   int port;
   request_instruction read_instruction;
   command_instruction write_instruction;
-  
+
   int read_state;
   int write_state;
 public:
-  PCB(int port);  
-  
+  PCB(int port);
+
   void read();
   void write();
-  
+
   void set(int bit, bool value);
   bool get(int bit);
-};
-
-
-class PCB1 : public PCB {
-private:
-  void initialise_write_default();
-public:
-  PCB1(int &port);
-  void read_initialise();
-
-  // Line following sensors (read only)
-  static const int num_line_sensors = 4;
-  static const int line_sensor_bits = (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3);
-
-  // Scoop actuator control (write only)
-  static const int scoop_actuator_bit = 1 << 4;
-
-  // Instantaneous microswitches; do not have to be reset in software (read only).
-};
-
-
-class PCB2 : public PCB {
-private:
-  void initialise_write_default();
-
-public:
-  PCB2(int port);
-  // Wrapper for command_write_default:
-  void read_initialise();
-
-  // Persistent flip-flops; stay ON after contact triggered, have to be reset in software.
-  // Flips flops read bits (READ only)
-  static const int num_contact_flops = 2;
-  static const int contact_flops_bits = (1 << 0) + (1 << 1); // Bits for the contact flops
-  // Flip flops reset (WRITE only)
-  static const int contact_flops_reset_bits = (1 << 2) + (1 << 3);
-
-  // Instantaneous microswitches; do not have to be reset in software (READ only).
-  static const int num_inst_microswitches = 2;
-  static const int inst_microswitch_bits = (1 << 4) + (1 << 5);
-
-  // LEDs to signal colour detection (write only)
-  static const int led1_bit = (1 << 6);
-  static const int led2_bit = (1 << 7);
 };
 
 
@@ -105,29 +61,29 @@ struct Line_Sensor_Reading {
 
 class Line_Sensors {
 private:
-  PCB1 pcb;
+  PCB pcb;
   // Define the order of line sensors connections:
   static const int front_left_bit = 0;
   static const int front_right_bit = 1;
   static const int back_left_bit = 2;
   static const int back_right_bit = 3;
 public:
-  Line_Sensors(PCB1 &pcb) : pcb(pcb){};
+  Line_Sensors(PCB &pcb) : pcb(pcb){};
   Line_Sensor_Reading get_sensor_reading();
 };
 
 class Microswitches {
 private:
-  PCB2 pcb;
+  PCB pcb;
   // Define the order of microswitch bits:
-  static const int front_switch_bit = 5;
   static const int rear_switch_bit = 4;
+  static const int front_switch_bit = 5;
 
 public:
   bool rear_state;
   bool front_state;
 
-  Microswitches(PCB2 &pcb) : pcb(pcb){};
+  Microswitches(PCB &pcb) : pcb(pcb){};
   void update_state();
 };
 
@@ -145,7 +101,7 @@ struct Egg {
 };
 
 class Eggs {
-// Class used for storing the information about eggs
+// Class used for storing information about eggs
 public:
   Eggs();
   std::vector<Egg> eggs;
@@ -157,26 +113,26 @@ public:
 
 // TODO: Finish class LEDs
 class LEDs {
-  PCB2 pcb;
+  PCB pcb;
   static const int led1_bit = 6;
   static const int led2_bit = 7;
 public:
-    LEDs(PCB2 &pcb) : pcb(pcb){};
+    LEDs(PCB &pcb) : pcb(pcb){};
     void off();
     void display_egg(Egg egg);
     void write_leds(bool led1_val, bool led2_val);
 };
 
 class Scoop {
-private: //TODO: What pcb and what bit?
-  PCB1 pcb;
-  static const int scoop_bit = 1 << 4;
+private:
+  PCB pcb;
+  static const int scoop_bit = 4;
 public:
-  Scoop(PCB1 &pcb) : pcb(pcb){};
+  Scoop(PCB &pcb) : pcb(pcb){};
   void contract();
   void release();
 
-  // I know, the word violent is redundant, but it sounds soo cool
+  // The word violent is redundant, but it sounds soo cool
   void violent_shock();
 };
 
@@ -192,7 +148,7 @@ public:
 
 class Rotating_Compartment {
 private:
-  PCB2 pcb; // for the microswitches
+  PCB pcb; // for the microswitches
   static const int left_flop_bit = 0;
   static const int right_flop_bit = 1;
 
@@ -212,7 +168,7 @@ private:
   int current_position;
 
 public:
-  Rotating_Compartment(PCB2 pcb);
+  Rotating_Compartment(PCB pcb);
   void turn_exactly(int degrees, bool stop_after);
   void turn_to_position(int position);
   void return_to_default();
@@ -245,8 +201,8 @@ public:
 class Components {
 private:
   // TODO: Add the rest of the necessary classes
-  PCB1 pcb1;
-  PCB2 pcb2;
+  PCB pcb1;
+  PCB pcb2;
 public:
   Turntable_Comms turntable_comms;
   Beacon_Reader beacon_reader;
@@ -258,8 +214,8 @@ public:
 
   Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
     int input_ir_port, int colour_sensor_1_port, int colour_sensor_2_port):
-  pcb1(PCB1(pcb1_port)),
-  pcb2(PCB2(pcb2_port)),
+  pcb1(PCB(pcb1_port)),
+  pcb2(PCB(pcb2_port)),
   turntable_comms(Turntable_Comms(turntable_comms_port)),
   beacon_reader(input_ir_port),
   line_sensors(pcb1),
