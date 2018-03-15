@@ -10,7 +10,8 @@
 
 
 PCB::PCB(int port) : port(port) {
-	state = -1;
+  write_state = ~0;
+  read_state = 0;
   // Assign the right write, read instructions:
   switch (port) {
     case 0:
@@ -48,45 +49,26 @@ PCB::PCB(int port) : port(port) {
   }
 }
 
-void PCB::command_write_default() {
-  rlink.command(write_instruction, write_default);
+void PCB::read() {
+  read_state = rlink.request(read_instruction);
 }
 
-int PCB::read_state() {
-  state = rlink.request(read_instruction);
-  return state;
-}
-
-void PCB::write(int byte) {
-  int write_byte = write_default bitor byte;
-  rlink.command(write_instruction, write_byte);
+void PCB::write() {
+  rlink.command(write_instruction, write_state);
 }
 
 bool PCB::get(int bit) {
 	int mask = 1 << bit;
-	return (state & mask) == mask;
+	return (read_state & mask) == mask;
 }
 
 void PCB::set(int bit, bool value) {
 	if (value) {
-		state |= 1 << bit;
+		write_state |= 1 << bit;
 	} else {
-		state &= ~(1 << bit);
+		write_state &= ~(1 << bit);
 	}
 }
-
-void PCB::write_state() {
-  rlink.command(write_instruction, state);
-}
-
-void PCB1::initialise_write_default() {
-  write_default = 0;
-
-  // The default values for line sensors are 1:
-  write_default = write_default bitor line_sensor_bits;
-  // The default value for scoop actuator is 0
-  return;
-};
 
 PCB1::PCB1(int& port): PCB(port) {
   initialise_write_default();
@@ -94,30 +76,7 @@ PCB1::PCB1(int& port): PCB(port) {
 }
 
 
-void PCB1::read_initialise() {
-  command_write_default();
-}
-
-
-
 PCB2::PCB2(int port): PCB(port) {
-  initialise_write_default();
-  read_initialise();
-}
-
-void PCB2::initialise_write_default() {
-  write_default = 0;
-  // The default value for contact flip-flops readings is 1:
-  write_default = write_default bitor contact_flops_bits;
-  // The default value for contact flip-flops reset is 1.
-  write_default = write_default bitor contact_flops_reset_bits;
-  // The default value for instantaneous microswitches is 1:
-  write_default = write_default bitor inst_microswitch_bits;
-  // The default value for the egg display LEDS is 0.
-};
-
-void PCB2::read_initialise() {
-  command_write_default();
 }
 
 ADC::ADC(int port) : port(port) {

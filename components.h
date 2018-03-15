@@ -17,16 +17,15 @@ protected:
   int port;
   request_instruction read_instruction;
   command_instruction write_instruction;
-  int write_default; // used for and'ing with the values to be sent to write'able bits.
-  int state;
-  void initialise_write_default();
-  void command_write_default();
-public:
-  PCB(int port);
-  int read_state();
-  void write(int byte);
   
-  void write_state();
+  int read_state;
+  int write_state;
+public:
+  PCB(int port);  
+  
+  void read();
+  void write();
+  
   void set(int bit, bool value);
   bool get(int bit);
 };
