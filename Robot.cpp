@@ -249,12 +249,12 @@ void Robot::move_s_to_j() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::c_to_j() {
+void Robot::move_c_to_j() {
   line_following.follow_line_timed(1.0, 0.5, 900);
   delay(200); // TODO: Reduce when not debugging
 }
 
-void Robot::j_to_l() {
+void Robot::move_j_to_l() {
   desired_direction = 270;
   turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
@@ -270,7 +270,7 @@ void Robot::j_to_l() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::l_to_delivery() {
+void Robot::move_l_to_delivery() {
   switch (delivery_zone) {
     case 'd':
     //l to k
@@ -301,7 +301,7 @@ void Robot::l_to_delivery() {
   }
 }
 
-void Robot::delivery_to_l() {
+void Robot::move_delivery_to_l() {
   //TODO: does turning work?
   line_following.reverse_timed(speed, 0.5, 400);
   switch (delivery_zone) {
@@ -313,7 +313,7 @@ void Robot::delivery_to_l() {
   }
 }
 
-void Robot::l_to_f() {
+void Robot::move_l_to_f() {
   // TODO: turning differently
   //l to m
   desired_direction = 270;
@@ -325,7 +325,7 @@ void Robot::l_to_f() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::f_to_j() {
+void Robot::move_f_to_j() {
   // f to m
   line_following.reverse_timed(speed, 0.5, 400);
 
@@ -636,7 +636,7 @@ void Robot::sort_egg(bool is_large) {
 
 void Robot::put_into_delivery() {
   // Turn to the delivery position
-  components.compartment.turn_to_position(4);
+  components.compartment. (4);
   // Shake the egg down violently
   components.scoop.violent_shock();
   components.compartment.return_to_default();
