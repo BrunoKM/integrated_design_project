@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
 #include <delay.h>
 #include <stopwatch.h>
 #include "components.h"
@@ -416,7 +417,8 @@ Egg Colour_Detector::classify_egg(int size) {
   return Egg(size, colour);
 }
 
-Rotating_Compartment::Rotating_Compartment() :
+Rotating_Compartment::Rotating_Compartment(PCB2 pcb) :
+pcb(pcb),
 motor(Motor(3, 1.0, 1.0)),
 current_position(3) {
 }
@@ -469,20 +471,16 @@ void Rotating_Compartment::turn_to_position(int position) {
 
       turn_exactly(-10, false);
       reset_flops();
-
-      bool right_reading = read_right_flop();
-      while (right_reading == 0) {
-        right_reading = read_right_flop();
+      
+      while (read_right_flop() == 0) {
       }
       motor.drive(0);
       break;
     case 2:
       turn_exactly(-10, false);
       reset_flops();
-
-      bool right_reading = read_right_flop();
-      while (right_reading == 0) {
-        right_reading = read_right_flop();
+      
+      while (read_right_flop() == 0) {
       }
       motor.drive(0);
       break;
@@ -490,9 +488,7 @@ void Rotating_Compartment::turn_to_position(int position) {
       turn_exactly(10, false);
       reset_flops();
 
-      bool left_reading = read_left_flop();
-      while (left_reading == 0) {
-        left_reading = read_left_flop();
+      while (read_left_flop() == 0) {
       }
       motor.drive(0);
       break;
@@ -502,9 +498,7 @@ void Rotating_Compartment::turn_to_position(int position) {
       turn_exactly(10, false);
       reset_flops();
 
-      bool left_reading = read_left_flop();
-      while (left_reading == 0) {
-        left_reading = read_left_flop();
+      while (read_left_flop() == 0) {
       }
       motor.drive(0);
       break;
@@ -520,16 +514,12 @@ void Rotating_Compartment::return_to_default() {
       turn_exactly(10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      bool right_reading = read_right_flop();
-      while (right_reading == 0) {
-        right_reading = read_right_flop();
-      }
+      while (read_right_flop() == 0) {}
+      
       // Turn until the rotor makes second contact and stop
       turn_exactly(10, false);
       reset_flops();
-      while (right_reading == 0) {
-        right_reading = read_right_flop();
-      }
+      while (read_right_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
@@ -537,10 +527,7 @@ void Rotating_Compartment::return_to_default() {
       turn_exactly(10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      bool right_reading = read_right_flop();
-      while (right_reading == 0) {
-        right_reading = read_right_flop();
-      }
+      while (read_right_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
@@ -548,10 +535,7 @@ void Rotating_Compartment::return_to_default() {
       turn_exactly(-10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      bool left_reading = read_left_flop();
-      while (left_reading == 0) {
-        left_reading = read_left_flop();
-      }
+      while (read_left_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
@@ -559,16 +543,11 @@ void Rotating_Compartment::return_to_default() {
       turn_exactly(-10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      bool left_reading = read_left_flop();
-      while (left_reading == 0) {
-        left_reading = read_left_flop();
-      }
+      while (read_left_flop() == 0) {}
       // Turn until the rotor makes second contact and stop
       turn_exactly(-10, false);
       reset_flops();
-      while (left_reading == 0) {
-        left_reading = read_left_flop();
-      }
+      while (read_left_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;

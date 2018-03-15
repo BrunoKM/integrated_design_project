@@ -192,6 +192,8 @@ private:
   static const int  reset_flops_bit= (1 << 2) + (1 << 3);
 
   static const int speed = 1.0;
+  
+  Motor motor;
 
   // Position is:
   // 1 - for basket delivery
@@ -200,10 +202,9 @@ private:
   // 4 - for basket classification
   // 5 - for recycling delivery
   int current_position;
-
-  Motor motor;
+  
 public:
-  Rotating_Compartment(PCB2 pcb) : pcb(pcb){};
+  Rotating_Compartment(PCB2 pcb);
   void turn_exactly(int degrees, bool stop_after);
   void turn_to_position(int position);
   void return_to_default();
@@ -212,7 +213,7 @@ public:
   bool read_left_flop();
   bool read_right_flop();
   void reset_flops();
-}
+};
 
 
 class Colour_Detector {

@@ -26,12 +26,12 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  int delay_time = 2500;
+  int delay_time = 1500;
   stopwatch watch;
   watch.start();
   while (watch.read() < 60000) {
     //components.scoop.contract();
-    rlink.command(WRITE_PORT_0, (1 <<4));
+    rlink.command(WRITE_PORT_0, 255);
     cout << "contracted" << endl;
     delay(delay_time);
     //components.scoop.release();
