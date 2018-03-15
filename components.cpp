@@ -416,12 +416,167 @@ Egg Colour_Detector::classify_egg(int size) {
   return Egg(size, colour);
 }
 
-//Rotating_Compartment::Rotating_Compartment() :
-//motor(Motor(3, 1.0, 1.0)) {
+Rotating_Compartment::Rotating_Compartment() :
+motor(Motor(3, 1.0, 1.0)),
+current_position(3) {
+}
 
-//}
+void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
+  float rotate_time_360 = 6001; // TODO: Recalibrate
 
-// TODO: FINISH IR_communications class when we understand whats going on...
+  int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
+  // Start rotating
+  if (degrees < 0) {
+    motor.drive(-speed);
+  } else if (degrees > 0) {
+    motor.drive(speed);
+  }
+  delay(rotate_for);
+  // Stop the motors
+  if (stop_after) {
+    motor.drive(0);
+  }
+  return;
+}
+
+bool Rotating_Compartment::read_left_flop() {
+  int reading = pcb.read_state();
+  reading = reading bitor left_flop_bit;
+  if (reading > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+bool Rotating_Compartment::read_right_flop() {
+  int reading = pcb.read_state();
+  reading = reading bitor right_flop_bit;
+  if (reading > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+void Rotating_Compartment::reset_flops() {
+  pcb.write(reset_flops_bit);
+}
+
+void Rotating_Compartment::turn_to_position(int position) {
+  // Assumes starting at position 3 (the centre), and turns to one of the desired positions.
+  switch (position) {
+    case 1:
+      turn_to_position(2);
+
+      turn_exactly(-10, false);
+      reset_flops();
+
+      bool right_reading = read_right_flop();
+      while (right_reading == 0) {
+        right_reading = read_right_flop();
+      }
+      motor.drive(0);
+      break;
+    case 2:
+      turn_exactly(-10, false);
+      reset_flops();
+
+      bool right_reading = read_right_flop();
+      while (right_reading == 0) {
+        right_reading = read_right_flop();
+      }
+      motor.drive(0);
+      break;
+    case 4:
+      turn_exactly(10, false);
+      reset_flops();
+
+      bool left_reading = read_left_flop();
+      while (left_reading == 0) {
+        left_reading = read_left_flop();
+      }
+      motor.drive(0);
+      break;
+    case 5:
+      turn_to_position(4);
+
+      turn_exactly(10, false);
+      reset_flops();
+
+      bool left_reading = read_left_flop();
+      while (left_reading == 0) {
+        left_reading = read_left_flop();
+      }
+      motor.drive(0);
+      break;
+    default:
+      std::cout << "Wrong input " << position << " to function turn_to_position" << std::endl;
+  }
+  current_position = position;
+}
+
+void Rotating_Compartment::return_to_default() {
+  switch (current_position) {
+    case 1:
+      turn_exactly(10, false);
+      reset_flops();
+      // Turn until the rotor makes first contact
+      bool right_reading = read_right_flop();
+      while (right_reading == 0) {
+        right_reading = read_right_flop();
+      }
+      // Turn until the rotor makes second contact and stop
+      turn_exactly(10, false);
+      reset_flops();
+      while (right_reading == 0) {
+        right_reading = read_right_flop();
+      }
+      // Stop the motor
+      motor.drive(0);
+      break;
+    case 2:
+      turn_exactly(10, false);
+      reset_flops();
+      // Turn until the rotor makes first contact
+      bool right_reading = read_right_flop();
+      while (right_reading == 0) {
+        right_reading = read_right_flop();
+      }
+      // Stop the motor
+      motor.drive(0);
+      break;
+    case 4:
+      turn_exactly(-10, false);
+      reset_flops();
+      // Turn until the rotor makes first contact
+      bool left_reading = read_left_flop();
+      while (left_reading == 0) {
+        left_reading = read_left_flop();
+      }
+      // Stop the motor
+      motor.drive(0);
+      break;
+    case 5:
+      turn_exactly(-10, false);
+      reset_flops();
+      // Turn until the rotor makes first contact
+      bool left_reading = read_left_flop();
+      while (left_reading == 0) {
+        left_reading = read_left_flop();
+      }
+      // Turn until the rotor makes second contact and stop
+      turn_exactly(-10, false);
+      reset_flops();
+      while (left_reading == 0) {
+        left_reading = read_left_flop();
+      }
+      // Stop the motor
+      motor.drive(0);
+      break;
+  }
+  current_position = 3;
+}
+
+// TODO: Delete this I think
 /*IR_communication::IR_communication(PCB1 &pcb1) {
 }
 
