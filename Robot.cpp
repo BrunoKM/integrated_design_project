@@ -166,12 +166,12 @@ void Robot::invoke_move(char destination) {
           turn(turn_by, turn_speed);
 
           // Follow line for a short period of time until the line (roughly) ends
-          int time_to_line_end = 2500;
+          static int time_to_line_end = 2500;
           line_following.follow_line_timed(speed, 0.5, time_to_line_end);
 
           // Go blindly as to ignore the curved line (should go to the side of it anyways, just for safety)
           line_following.motors_go(speed, speed);
-          int time_to_pass_curved = 4000;
+          static int time_to_pass_curved = 4000;
           delay(time_to_pass_curved);
 
           // Start line-following, or in this case looking for an intersections
@@ -355,14 +355,14 @@ void Robot::align_for_pickup() {
   // Turn and align the front
   turn(turn_by, turn_speed);
   // Go forward a bit to align the rear
-  int time_to_align = 1500;
+  int time_to_align = 2500;
   line_following.follow_line_timed(speed, 0.5, time_to_align);
   line_following.stop_motors();
 
   // Contract the actuator before approaching the turntable.
   components.scoop.contract();
 
-  line_following.reverse_until_switch(0.5, 1.0); // Low speed and very high speed_delta
+  line_following.reverse_until_switch(0.62, 1.0); // Low speed and very high speed_delta
   current_junction = 'c';
 }
 

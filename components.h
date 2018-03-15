@@ -155,9 +155,9 @@ private:
   static const int  reset_left_flop_bit = 3;
   static const int  reset_right_flop_bit = 2;
 
-  static const int speed = 1.0;
+  static const float speed = 1.0;
+  static const float slow_speed = 0.7;
 
-  Motor motor;
 
   // Position is:
   // 1 - for basket delivery
@@ -165,9 +165,10 @@ private:
   // 3 - default (everything closed)
   // 4 - for basket classification
   // 5 - for recycling delivery
-  int current_position;
 
 public:
+  Motor motor;
+  int current_position;
   Rotating_Compartment(PCB pcb);
   void turn_exactly(int degrees, bool stop_after);
   void turn_to_position(int position);

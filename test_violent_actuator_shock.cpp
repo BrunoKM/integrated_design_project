@@ -27,13 +27,14 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  int usr_input;
+  string usr_input;
 
   while (true) {
     cout << "Type anything when ready to VIOLENTLY SHAKE THE ACTUATOR." << endl;
     cin >> usr_input;
 
     components.scoop.violent_shock();
+    
     cout << "Shocked violently." << endl;
   }
 

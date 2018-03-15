@@ -42,6 +42,7 @@ public:
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
     void follow_line_timed(float speed, float speed_delta, int time_duration);
+    void reverse_timed(float speed, float speed_delta, int time_duration);
     void follow_line_until_switch(float speed, float speed_delta);
     void follow_line_blind_curve(float speed);
     void align_with_intersection(float speed, float speed_delta);
@@ -52,7 +53,7 @@ public:
     void set_ramp(int ramp_time);
     void motors_go(float left_speed, float right_speed);
     void stop_motors();
-
+	void one_wheel_pivot(int degrees); // Either left or right (90 or -90)
 };
 
 

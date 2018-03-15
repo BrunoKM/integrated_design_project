@@ -28,7 +28,7 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  int turn_by = 180;
+  int turn_by = -120;
   bool stop_after = true;
 
   components.compartment.turn_exactly(turn_by, stop_after);

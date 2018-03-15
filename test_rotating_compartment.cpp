@@ -12,7 +12,6 @@ using namespace std;
 #include "components.h"
 
 int main () {
-  initialise_robot();
   cout << "Testing movement of the compartment." << endl;
 
   // Initialise an instance of objet to set the motor ramps
@@ -39,7 +38,7 @@ int main () {
     cout << "Compartment at position " << position << endl;
     delay(1000);
     cout << "Turning to the default position" << endl;
-    components.return_to_default();
+    components.compartment.return_to_default();
   }
 
   cout << "Finished" << endl;

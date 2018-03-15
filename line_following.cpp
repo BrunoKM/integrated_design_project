@@ -75,7 +75,6 @@ bool Line_Following::adjust_reverse_speeds_from_reading(float speed, float reduc
 }
 
 
-// TODO: Add '11' reading counter to be more certain of junctions
 void Line_Following::follow_line_until_intersection(float speed, float speed_delta) {
 
   left_motor.drive(speed);
@@ -102,28 +101,6 @@ void Line_Following::follow_line_until_intersection(float speed, float speed_del
       last_reading = reading;
     }
     #endif
-    /*
-    // TODO : Change this
-    if ((reading.front_left == 1) and (reading.front_right == 0)) {
-    // Need to go more towards left
-    left_motor.drive(reduced_speed);
-    right_motor.drive(speed); // Right wheel going faster
-  } else if ((reading.front_left == 0) and (reading.front_right == 1)) {
-    // Need to go more towards right
-    left_motor.drive(speed);
-    right_motor.drive(reduced_speed); // Left wheel going faster
-  } else if ((reading.front_left == 0) and (reading.front_right == 0)) {
-    // Make both motors go at the same speed.
-    left_motor.drive(speed);
-    right_motor.drive(speed);
-  } else if ((reading.front_left == 1) and (reading.front_right == 1)) {
-    // Make motors go at equal speeds (don't want to go
-    // in a curved path over the intersection)
-    left_motor.drive(speed);
-    right_motor.drive(speed);
-    intersection_detected = true;
-  }
-    // TODO: Change this */
     intersection_detected = adjust_speeds_from_reading(speed, reduced_speed, reading);
 
   }
@@ -227,7 +204,7 @@ void Line_Following::align_with_intersection(float speed, float speed_delta) {
     std::cout << " + Aligning with intersection (line following and adjusting)." << std::endl;
   #endif
 
-  float time_duration_constant = 1080; //TODO: Adjust for actual chassis
+  float time_duration_constant = 1450; //TODO: Adjust for actual chassis
 
   int time_duration = time_duration_constant / speed;
 
@@ -642,6 +619,23 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 
   #endif
   return;
+}
+
+void Line_Following::one_wheel_pivot(int degrees) {
+	// Either left or right (90 or -90)
+	// Assumes robot driving and passed overthe intersection already.
+	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+	while ((reading.front_left == 1) and (reading.front_right == 1)) {
+		reading = line_sensors.get_sensor_reading();
+	}
+	while ((reading.back_left == 0) or (reading.back_right == 0)) {
+		adjust_speeds_from_reading(1.0, 0.5 ,reading);
+		reading = line_sensors.get_sensor_reading();
+	}
+	stop_motors();
+	if (degrees == 90) {
+		right_motor.drive(-1);
+	}
 }
 
 int Line_Following::is_on_the_line() {

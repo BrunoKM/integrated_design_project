@@ -334,8 +334,8 @@ void Scoop::release() {
 };
 
 void Scoop::violent_shock() {
-  int impulse_delay = 10;
-  int num_shocks = 2;
+  int impulse_delay = 40;
+  int num_shocks = 15;
 
   for (int i=1; i <= num_shocks; i++) {
     contract();
@@ -371,16 +371,28 @@ int Colour_Detector::read_blue_sensor() {
 
 Egg Colour_Detector::classify_egg(int size) {
   // Some decision logic for colour:
+  int red_reading = read_red_sensor();
+  int blue_reading = read_blue_sensor();
+  
   char colour;
   switch (size) {
     case 0:
-      // Decide between pink and yellow
+      // Decide between blue and yellow
+      if ((blue_reading < 187) or (red_reading < 187)) {
+		  colour = 'b';
+	  } else {
+		  colour = 'y';
+	  }
       break;
     case 1:
-      // Decide between yellow and blue
+      // Decide between yellow and pink
+      if ((blue_reading < 187) or (red_reading < 187)) {
+		  colour = 'p';
+	  } else {
+		  colour = 'y';
+	  }
       break;
   }
-  colour = 'y'; // Remove
   return Egg(size, colour);
 }
 
@@ -392,9 +404,9 @@ current_position(3) {
 }
 
 void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
-  float rotate_time_360 = 2700; // TODO: Recalibrate
+  float rotate_time_360 = 2900; // TODO: Recalibrate
 
-  int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
+  int rotate_for = rotate_time_360 * float(abs(degrees)) / (speed * 360.0);
   // Start rotating
   if (degrees < 0) {
     motor.drive(-speed);
@@ -437,10 +449,10 @@ void Rotating_Compartment::turn_to_position(int position) {
       turn_exactly(-120, true);
       break;
     case 2:
-      turn_exactly(-60, true);
+      turn_exactly(-80, true);
       break;
     case 4:
-      turn_exactly(60, true);
+      turn_exactly(80, true);
       break;
     case 5:
       turn_exactly(120, true);
@@ -454,29 +466,21 @@ void Rotating_Compartment::turn_to_position(int position) {
 void Rotating_Compartment::return_to_default() {
   switch (current_position) {
     case 1:
-      turn_exactly(10, false);
-      reset_flops();
-      // Turn until the rotor makes first contact
-      while (read_left_flop() == 0) {}
+      motor.drive(slow_speed);
       break;
     case 2:
-      turn_exactly(10, false);
-      reset_flops();
-      // Turn until the rotor makes first contact
-      while (read_left_flop() == 0) {}
+      motor.drive(slow_speed);
       break;
     case 4:
-      turn_exactly(-10, false);
-      reset_flops();
-      // Turn until the rotor makes first contact
-      while (read_right_flop() == 0) {}
+      motor.drive(-slow_speed);
       break;
     case 5:
-      turn_exactly(-10, false);
-      reset_flops();
-      // Turn until the rotor makes first contact
-      while (read_right_flop() == 0) {}
+      motor.drive(-slow_speed);
       break;
   }
+  reset_flops();
+  // Turn until the rotor makes first contact
+  while (read_right_flop() == 0) {}
+  motor.drive(0);
   current_position = 3;
 }

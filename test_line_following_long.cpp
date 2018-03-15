@@ -43,12 +43,12 @@ int main () {
     lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
     lf.align_with_intersection(speed, speed_delta);
-    lf.turn(180, turn_speed);
+    lf.turn(-180, turn_speed);
     cout << " --- Going towards start. Iter: " << i << endl;
     lf.follow_line(speed, speed_delta,
                 num_intersections_to_ignore, keep_driving_after_last);
     lf.align_with_intersection(speed, speed_delta);
-    lf.turn(-180, turn_speed);
+    lf.turn(180, turn_speed);
   }
 
 
