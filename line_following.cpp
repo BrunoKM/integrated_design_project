@@ -131,8 +131,7 @@ void Line_Following::follow_line_until_intersection(float speed, float speed_del
   return;
 }
 
-void Line_Following::follow_line(float speed, float speed_delta, int num_intersections_to_ignore,
-                                 bool keep_driving_after_last) {
+void Line_Following::follow_line(float speed, float speed_delta, int num_intersections_to_ignore, bool keep_driving_after_last) {
   #ifdef DEBUG2
     std::cout << " + Call to follow_line(), starting motors at equal speeds." << std::endl;
   #endif
@@ -187,6 +186,28 @@ void Line_Following::follow_line_timed(float speed, float speed_delta, int time_
   while (watch.read() < time_duration) {
     reading = line_sensors.get_sensor_reading();
     adjust_speeds_from_reading(speed, reduced_speed, reading);
+
+  }
+  // Up to the caller to even out the speeds (he may wish to stop after calling this function)
+  return;
+}
+
+void Line_Following::reverse_timed(float speed, float speed_delta, int time_duration) {
+  // Keep line-following for a prespecified amount of time
+
+  left_motor.drive(-speed);
+  right_motor.drive(-speed);
+
+  stopwatch watch;
+  watch.start();
+
+  float reduced_speed = speed - speed * speed_delta;
+  Line_Sensor_Reading reading;
+
+  // Keep line-following until timer runs out.
+  while (watch.read() < time_duration) {
+    reading = line_sensors.get_sensor_reading();
+    adjust_reverse_speeds_from_reading(speed, reduced_speed, reading);
 
   }
   // Up to the caller to even out the speeds (he may wish to stop after calling this function)

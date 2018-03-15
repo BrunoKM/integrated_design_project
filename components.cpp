@@ -457,62 +457,26 @@ void Rotating_Compartment::return_to_default() {
       turn_exactly(10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      while (read_right_flop() == 0) {}
-
-      // Turn until the rotor makes second contact and stop
-      turn_exactly(10, false);
-      reset_flops();
-      while (read_right_flop() == 0) {}
-      // Stop the motor
-      motor.drive(0);
+      while (read_left_flop() == 0) {}
       break;
     case 2:
       turn_exactly(10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      while (read_right_flop() == 0) {}
-      // Stop the motor
-      motor.drive(0);
+      while (read_left_flop() == 0) {}
       break;
     case 4:
       turn_exactly(-10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      while (read_left_flop() == 0) {}
-      // Stop the motor
-      motor.drive(0);
+      while (read_right_flop() == 0) {}
       break;
     case 5:
       turn_exactly(-10, false);
       reset_flops();
       // Turn until the rotor makes first contact
-      while (read_left_flop() == 0) {}
-      // Turn until the rotor makes second contact and stop
-      turn_exactly(-10, false);
-      reset_flops();
-      while (read_left_flop() == 0) {}
-      // Stop the motor
-      motor.drive(0);
+      while (read_right_flop() == 0) {}
       break;
   }
   current_position = 3;
 }
-
-// TODO: Delete this I think
-/*IR_communication::IR_communication(PCB1 &pcb1) {
-}
-
-int IR_communication::get_delivery_point() {
-  // Gets start sensor reading from the IR beacon
-  int IR_state = pcb1.read_IR_input(); // returns a 1 or 0 from the infrared sensor
-
-
-}
-
-void IR_communication::rotate_turntable(int degrees) {
-  // Rotates turn table by a fixed number of degrees (degrees will be fixed to the set interval between eggs)
-}
-
-void IR_communication::rotate_turntable_start_position() {
-  // Rotates turn table all the way to one side (e.g all the way clockwise in order to start tracking eggs)
-}*/
