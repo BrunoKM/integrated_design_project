@@ -183,15 +183,36 @@ public:
     int get_beacon_code(); // Returns delivery point which is based on beacon code
 };
 
-// class Rotating_Compartment {
-// private:
-//   // TODO: PCBx pcb; // for the microswitches
-//   static const int switch_bit; //TODO: or bits
-//   Motor motor;
-// public:
-//   Rotating_Compartment(PCBx pcb);
-//
-// }
+class Rotating_Compartment {
+private:
+  PCB2 pcb; // for the microswitches
+  static const int left_flop_bit = (1 << 0);
+  static const int right_flop_bit = (1 << 1);
+
+  static const int  reset_flops_bit= (1 << 2) + (1 << 3);
+
+  static const int speed = 1.0;
+
+  // Position is:
+  // 1 - for basket delivery
+  // 2 - for recycling classification
+  // 3 - default (everything closed)
+  // 4 - for basket classification
+  // 5 - for recycling delivery
+  int current_position;
+
+  Motor motor;
+public:
+  Rotating_Compartment(PCB2 pcb) : pcb(pcb){};
+  void turn_exactly(int degrees, bool stop_after);
+  void turn_to_position(int position);
+  void return_to_default();
+
+  // Helper functions for getting info from the flops.
+  bool read_left_flop();
+  bool read_right_flop();
+  void reset_flops();
+}
 
 
 class Colour_Detector {
@@ -222,7 +243,8 @@ public:
   Beacon_Reader beacon_reader;
   Line_Sensors line_sensors;
   Microswitches microswitches;
-  Scoop scoop; // TODO: Add the right PCB in the constructor
+  Scoop scoop;
+  Rotating_Compartment compartment;
 
   Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
     int input_ir_port, int colour_sensor_1_port, int colour_sensor_2_port):
@@ -232,7 +254,8 @@ public:
   beacon_reader(input_ir_port),
   line_sensors(pcb1),
   microswitches(pcb2),
-  scoop(pcb1)
+  scoop(pcb1),
+  compartment(pcb2)
   {};
 
 };
