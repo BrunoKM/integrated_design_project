@@ -16,17 +16,23 @@ int main () {
   Robot robot;
   cout << "--- Execution ---" << endl;
   robot.read_beacon();
-  robot.move('j');
+
+  robot.move_s_to_j();
 
   for (int i = 0; i <= 4; ++i) {
     robot.align_for_pickup();
     robot.pick_up_all_eggs();
-    robot.move(robot.delivery_zone);
+
+    robot.move_c_to_j();
+    robot.move_j_to_l();
+
+    robot.move_l_to_delivery();
     robot.deliver_basket();
 
-    robot.move('f');
-    robot.recycle_eggs();
+    robot.move_delivery_to_l();
+    robot.move_l_to_f();
 
-    robot.move('j');
+    robot.recycle_eggs();
+    robot.move_f_to_j();
   }
 }
