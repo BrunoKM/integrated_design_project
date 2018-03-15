@@ -13,12 +13,19 @@ using namespace std;
 
 int main () {
   cout << "Running the turntable angle control test." << endl;
-  initialise_robot();
+	initialise_robot();
 
-  int colour_sensor_1_port = 1; // Port number for first colour detection ADC
-  int colour_sensor_2_port = 2; // Port number for second colour detection ADC
+  // I2C addresses:
+  int pcb1_port = 0; // Port number for PCB 1
+  int pcb2_port = 1; // Port number for PCB 1
+  int turntable_comms_port = 2; // Port number
+  // ADC addresses:
+  int beacon_reader_port = 0; // Port number for the ADC beacon reader input
+  int colour_detection_1_port = 1; // Port number for first colour detection ADC
+  int colour_detection_2_port = 2; // Port number for second colour detection ADC
 
-  Colour_Detector detector(colour_sensor_1_port, colour_sensor_2_port);
+  Components components(pcb1_port, pcb2_port, turntable_comms_port,
+    beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
   int delay_time = 400;
   int num_reps = 5;
@@ -32,8 +39,8 @@ int main () {
     cout << "Type 'yes' and press 'enter' when egg is ready." << endl;
     cin >> usr_response;
     for (int i = 0; i < num_reps; i++) {
-  		red_reading += detector.read_red_sensor();
-  		blue_reading += detector.read_blue_sensor();
+  		red_reading += components.colour_detector.read_red_sensor();
+  		blue_reading += components.colour_detector.read_blue_sensor();
     }
 
     red_reading /= num_reps;

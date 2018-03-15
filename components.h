@@ -229,17 +229,5 @@ public:
 
 
 
-// TODO: Finish classes below.
-// class Reservoir:
-// const int left_switch_address
-// const int right_switch_address
-// Public Methods:
-// void put_egg_into_delivery() - Rotate the reservoir to put the egg into delivery sub-reservoir and return to starting position.
-// void put_egg_into_recycling()- Rotate the reservoir to put the egg into recycling sub-reservoir and return to starting position.
-// void dispose_delivery() - Rotate to let out the delivery eggs and rotate back to starting position.
-// void dispose_recycling() - Rotate to let out the recycling eggs and rotate back to starting position.
-// void return_to_starting(char which_side) - Returns to starting position either from left (which_side='l') or from the right (which_side='r').
-
-
 
 #endif
