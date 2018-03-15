@@ -271,7 +271,6 @@ void Robot::j_to_l() {
 }
 
 void Robot::l_to_delivery() {
-  //TODO: change direction differently.
   switch (delivery_zone) {
     case 'd':
     //l to k
@@ -286,11 +285,13 @@ void Robot::l_to_delivery() {
     desired_direction = 270;
     turn_by = (desired_direction - direction) % 360;
     // Make sure the robot is facing the right direction
+
+    // TODO: fix turning...
     turn(turn_by, turn_speed);
     line_following.follow_line_until_switch(speed, 0.5);
     break;
     case 'e':
-    //TODO
+    //TODO fix turning...
     desired_direction = 270;
     turn_by = (desired_direction - direction) % 360;
     // Make sure the robot is facing the right direction
@@ -301,19 +302,19 @@ void Robot::l_to_delivery() {
 }
 
 void Robot::delivery_to_l() {
-  //TODO: turn somehow..
+  //TODO: does turning work?
   line_following.reverse_timed(speed, 0.5, 400);
   switch (delivery_zone) {
       case 'd':
-       // Turn somehow..
+      turn(-90, turn_speed);
       break;
       case 'e':
-        //Turn somehow...
       break;
   }
 }
 
 void Robot::l_to_f() {
+  // TODO: turning differently
   //l to m
   desired_direction = 270;
   turn_by = (desired_direction - direction) % 360;
@@ -328,13 +329,10 @@ void Robot::f_to_j() {
   // f to m
   line_following.reverse_timed(speed, 0.5, 400);
 
-  //TODO: turn
+  //TODO: does turning work?
+  turn_by(90, turn_speed);
 
   // m to l
-  desired_direction = 0;
-  turn_by = (desired_direction - direction) % 360;
-  // Make sure the robot is facing the right direction
-  turn(turn_by, turn_speed);
   line_following.follow_line(speed, 0.5, 0, 1);
   line_following.align_with_intersection(speed, 0.5);
 
