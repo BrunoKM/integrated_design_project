@@ -184,7 +184,7 @@ void Turntable_Comms::write(int write_byte) {
 }
 
 void Turntable_Comms::set_angle(int degrees) {
-  // Put some conversion code in here.
+  // TODO: Put some conversion code in here.
   int write_byte = degrees;
 
   write(write_byte);

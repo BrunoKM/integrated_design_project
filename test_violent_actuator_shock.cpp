@@ -34,7 +34,7 @@ int main () {
     cin >> usr_input;
 
     components.scoop.violent_shock();
-    cout << "Shocked violently."
+    cout << "Shocked violently." << endl;
   }
 
   cout << "Finished" << endl;

@@ -38,7 +38,7 @@ private:
   // Counters for contents of the containers.
   int eggs1_onboard;
   int eggs2_onboard;
-  int num_recycling_eggs;
+  int recycling_eggs_onboard;
 
   // Number of baskets delivered.
   int baskets_delivered;
@@ -65,12 +65,13 @@ public:
   void turn(int degrees, float speed); // Wrapper for line_following.turn() that also updates this->direction
   void turn_rear_align(int degrees, float speed);
   void align_for_pickup();
-  void pick_up_eggs(int num_to_recycle);
   void pick_up_all_eggs();
   void read_beacon(); // Read the instructions from the starting beacon.
   void deliver_basket();
   void recycle_eggs();
   void sort_egg(bool is_large);
+  void put_into_recycling();
+  void put_into_delivery();
 };
 
 #endif

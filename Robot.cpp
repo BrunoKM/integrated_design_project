@@ -301,17 +301,35 @@ void Robot::align_for_pickup() {
   line_following.follow_line_timed(speed, 0.5, time_to_align);
   line_following.stop_motors();
 
+  // Contract the actuator before approaching the turntable.
+  components.scoop.contract();
+
   line_following.reverse_until_switch(0.5, 1.0); // Low speed and very high speed_delta
   current_junction = 'c';
 }
 
-void Robot::pick_up_eggs(int num_to_recycle) {
-
-}
-
 void Robot::pick_up_all_eggs() {
+  components.scoop.release();
 
+  int delay_time = 800; // Time to wait for the table to turn.
+  int is_large;
+
+  for (int position=1; position <= 8; position++) {
+    components.turntable_comms.set_position(position);
+    delay(delay_time);
+    // Odd eggs are small, even are large
+    is_large = (position + 1) % 2;
+    sort_egg(is_large);
+  }
+  components.turntable_comms.set_position(0); // Return the table to default
+  delay(400); // Make sure that the turntable position command was sent.
+
+  return;
 }
+// void Robot::set_up_turntable() {
+//
+// }
+
 void Robot::deliver_basket() {
 
 }
@@ -356,16 +374,48 @@ void Robot::read_beacon() {
 
 // Private Methods:
 
-void Robot::sort_egg(bool large_egg) {
+void Robot::sort_egg(bool is_large) {
   // Pull the egg in, classify the colour, and put it in the right compartment.
+  components.scoop.contract();
+  //TODO: See if delay needed
+  components.scoop.release();
+
+  // TODO: Maybe a shake here?
+  Egg egg = components.colour_detector.classify_egg(is_large);
+  if ((eggs1_onboard < 2)) and (basket_egg1 == egg)) {
+    // Put into the delivery compartment
+    put_into_delivery();
+    eggs1_onboard++;
+  }
+  else if ((eggs2_onboard < 2)) and (basket_egg2 == egg)) {
+    // Put into the delivery compartment
+    put_into_delivery();
+    eggs2_onboard++;
+  } else {
+    put_into_recycling();
+    recycling_eggs_onboard++;
+  }
   return;
 }
 
-Egg Robot::classify_egg(bool is_large) {
-  //Use the IR sensors and diode to classify the egg
-
+void Robot::put_into_delivery() {
+  // Turn to the delivery position
+  components.compartment.turn_to_position(4);
+  // Shake the egg down violently
+  components.scoop.violent_shock();
+  components.compartment.return_to_default();
   return;
 }
+
+void Robot::put_into_recycling() {
+  // Turn to the delivery position
+  components.compartment.turn_to_position(2);
+  // Shake the egg down violently
+  components.scoop.violent_shock();
+  components.compartment.return_to_default();
+  return;
+}
+
 
 void Robot::update_onboard_eggs(Egg egg, int reservoir) {
   // Updates the delivery_eggs and recycling_eggs parameters of the object.

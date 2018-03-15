@@ -249,6 +249,7 @@ public:
   Microswitches microswitches;
   Scoop scoop;
   Rotating_Compartment compartment;
+  Colour_Detector colour_detector;
 
   Components(int pcb1_port, int pcb2_port, int turntable_comms_port,
     int input_ir_port, int colour_sensor_1_port, int colour_sensor_2_port):
@@ -259,7 +260,8 @@ public:
   line_sensors(pcb1),
   microswitches(pcb2),
   scoop(pcb1),
-  compartment(pcb2)
+  compartment(pcb2),
+  colour_detector(colour_sensor_1_port, colour_sensor_2_port)
   {};
 
 };
