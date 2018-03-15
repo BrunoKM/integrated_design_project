@@ -108,10 +108,10 @@ class Line_Sensors {
 private:
   PCB1 pcb;
   // Define the order of line sensors connections:
-  static const int front_left_bit = 1 << 0;
-  static const int front_right_bit = 1 << 1;
-  static const int back_left_bit = 1 << 2;
-  static const int back_right_bit = 1 << 3;
+  static const int front_left_bit = 0;
+  static const int front_right_bit = 1;
+  static const int back_left_bit = 2;
+  static const int back_right_bit = 3;
 public:
   Line_Sensors(PCB1 &pcb) : pcb(pcb){};
   Line_Sensor_Reading get_sensor_reading();
@@ -121,8 +121,8 @@ class Microswitches {
 private:
   PCB2 pcb;
   // Define the order of microswitch bits:
-  static const int front_switch_bit = 1 << 5;
-  static const int rear_switch_bit = 1 << 4;
+  static const int front_switch_bit = 5;
+  static const int rear_switch_bit = 4;
 
 public:
   bool rear_state;
@@ -159,13 +159,13 @@ public:
 // TODO: Finish class LEDs
 class LEDs {
   PCB2 pcb;
-  static const int led1_bit = 1 << 6;
-	static const int led2_bit = 1 << 7;
+  static const int led1_bit = 6;
+  static const int led2_bit = 7;
 public:
     LEDs(PCB2 &pcb) : pcb(pcb){};
     void off();
     void display_egg(Egg egg);
-    void write_leds(int led1_val, int led2_val);
+    void write_leds(bool led1_val, bool led2_val);
 };
 
 class Scoop {

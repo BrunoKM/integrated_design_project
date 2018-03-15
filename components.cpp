@@ -292,64 +292,36 @@ int Beacon_Reader::get_beacon_code() {
 }
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
-  int sensor_state = pcb.read_state() bitand pcb.line_sensor_bits;
+  pcb.read_state();
 
   Line_Sensor_Reading reading;
-  // Assign to each value of the reading:
-  if (sensor_state bitand front_left_bit) {
-    reading.front_left = true;
-  } else {
-    reading.front_left = false;
-  }
-  if (sensor_state bitand front_right_bit) {
-    reading.front_right = true;
-  } else {
-    reading.front_right = false;
-  }
-  if (sensor_state bitand back_left_bit) {
-    reading.back_left = true;
-  } else {
-    reading.back_left = false;
-  }
-  if (sensor_state bitand back_right_bit) {
-    reading.back_right = true;
-  } else {
-    reading.back_right = false;
-  }
+  reading.front_left = pcb.get(front_left_bit);
+  reading.front_right = pcb.get(front_right_bit);
+  reading.back_left = pcb.get(back_left_bit);
+  reading.back_right = pcb.get(back_right_bit);
   return reading;
 }
 
 
 void Microswitches::update_state() {
-  int state = pcb.read_state() bitand (pcb.inst_microswitch_bits);
-  if (state bitand front_switch_bit) {
-    front_state = true;
-  } else {
-    front_state = false;
-  }
-  if (state bitand rear_switch_bit) {
-    rear_state = true;
-  } else {
-    rear_state = false;
-  }
-  return;
+  pcb.read_state();
+  
+  front_state = pcb.get(front_switch_bit);
+  rear_state = pcb.get(rear_switch_bit);
 }
 
 
 
 void LEDs::off() {
   // Set all the LEDs to 0
-  int out_byte = 0;
-  pcb.write(out_byte);
+  write_leds(false, false); 
   return;
 }
 
-void LEDs::write_leds(int led1_val, int led2_val) {
-  int led1_byte_val = led1_bit * led1_val;
-  int led2_byte_val = led2_bit * led2_val;
-  int out_byte = led1_byte_val bitor led2_byte_val;
-  pcb.write(out_byte);
-  return;
+void LEDs::write_leds(bool led1_val, bool led2_val) {
+  pcb.set(led1_bit, led1_val);
+  pcb.set(led2_bit, led2_val);
+  pcb.write_state();
 }
 
 void LEDs::display_egg(Egg egg) {
