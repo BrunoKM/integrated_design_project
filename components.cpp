@@ -306,14 +306,14 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 void Microswitches::update_state() {
   int state = pcb.read_state() bitand (pcb.inst_microswitch_bits);
   if (state bitand front_switch_bit) {
-    front_state = false; // Microswitch on when unpressed for some reason
-  } else {
     front_state = true;
+  } else {
+    front_state = false;
   }
   if (state bitand rear_switch_bit) {
-    rear_state = false;
-  } else {
     rear_state = true;
+  } else {
+    rear_state = false;
   }
   return;
 }
@@ -407,8 +407,10 @@ Egg Colour_Detector::classify_egg(int size) {
   switch (size) {
     case 0:
       // Decide between pink and yellow
+      break;
     case 1:
       // Decide between yellow and blue
+      break;
   }
   colour = 'y'; // Remove
   return Egg(size, colour);

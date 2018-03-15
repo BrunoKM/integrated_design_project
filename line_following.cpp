@@ -564,7 +564,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
 
 void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 	// TODO: calculate rotate_for by using a constant
-  float rotate_time_360 = 6001; // TODO: Recalibrate for proper chasis.
+  float rotate_time_360 = 5700; // TODO: Recalibrate for proper chasis.
 
   int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
 #ifdef DEBUG3

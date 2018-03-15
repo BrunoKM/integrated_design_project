@@ -10,7 +10,7 @@ using namespace std;
 #include "components.h"
 
 int main () {
-  cout << "Running the microswitch input test" << endl;
+  cout << "Running the beacon reader test." << endl;
   initialise_robot();
 
   // I2C addresses:
@@ -27,8 +27,8 @@ int main () {
 
   stopwatch watch;
   watch.start();
-  int state;
-  bool reading;
+  // int state;
+  // bool reading;
 
   // int threshold = 100;
 
@@ -39,7 +39,7 @@ int main () {
   //   delay(50);
   // }
 
-  cout << "Continue with pulse count testing" << endl;
+  // cout << "Continue with pulse count testing" << endl;
 
   int pulse_count = components.beacon_reader.get_beacon_code();
   cout << "Number of pulses: " << pulse_count << endl;

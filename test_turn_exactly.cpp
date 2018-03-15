@@ -4,6 +4,7 @@
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
 #include "robot_initialise.h"
 #include "line_following.h"
 #include "components.h"
@@ -32,7 +33,12 @@ int main () {
   int turn_by = -180;
   bool stop_after = true;
 
-  lf.turn_exactly(turn_by, speed, stop_after);
+  
+  while (true) {lf.turn_exactly(turn_by, speed, stop_after);
+	delay(1200);
+	lf.turn_exactly(-turn_by, speed, stop_after);
+	delay(1200);
+  }
 
   cout << "Finished" << endl;
 

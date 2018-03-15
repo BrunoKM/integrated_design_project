@@ -43,22 +43,20 @@ int main () {
 
   int delay_time = 1500;
   int counter = 0;
-	
-	blink_leds();
+  int write_byte = 0;
+	blink_leds(); // Just to know there is a connection
 	while (true) {
-		components.turntable_comms.write(0);
-		cout << "Reset back to 0" << endl;
-		delay(5000);
-		for (int write_byte = 0; write_byte < 256; write_byte += 12) {
+    
+    // Ask user for the angle:
+    cout << "Input the desired control signal (between 0 and 255)" << endl;
+    cin >> write_byte;
 
 		components.turntable_comms.write(write_byte);
-		cout << counter << "- Sent signal is: " << write_byte << endl;
+    cout << counter << "- Sent signal is: " << write_byte << endl;
 		// rlink.command(WRITE_PORT_2, write_byte);
 
 		counter ++;
 		delay(delay_time);
-		}
-		
 	}
 
   cout << "Finished" << endl;

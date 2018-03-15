@@ -28,6 +28,7 @@ int main () {
   stopwatch watch;
   watch.start();
   int rear_state_reading;
+  int front_state_reading;
   while (watch.read() < 10000) {
     components.microswitches.update_state();
     rear_state_reading = components.microswitches.rear_state;

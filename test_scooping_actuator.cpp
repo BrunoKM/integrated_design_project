@@ -5,6 +5,7 @@ using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
 #include <stopwatch.h>
+#include <delay.h>
 #include "robot_initialise.h"
 #include "line_following.h"
 #include "components.h"
@@ -25,14 +26,19 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  int delay_time = 1000;
+  int delay_time = 2500;
   stopwatch watch;
   watch.start();
-  while (watch.read() < 15000) {
-    components.scoop.contract();
+  while (watch.read() < 60000) {
+    //components.scoop.contract();
+    rlink.command(WRITE_PORT_0, (1 <<4));
+    cout << "contracted" << endl;
     delay(delay_time);
-    components.scoop.release();
+    //components.scoop.release();
+    rlink.command(WRITE_PORT_0, 0 );
+    cout << "released" << endl;
     delay(delay_time);
+    
   }
 
   cout << "Finished" << endl;

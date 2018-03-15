@@ -9,7 +9,7 @@
 
 class Line_Following {
 private:
-  static const int default_ramp_time = 30;
+  static const int default_ramp_time = 30; //TODO: Adjust
 
   float current_speed;
   int current_ramp_time; // Init to a value out of range (default not known atm)
