@@ -18,12 +18,17 @@ protected:
   request_instruction read_instruction;
   command_instruction write_instruction;
   int write_default; // used for and'ing with the values to be sent to write'able bits.
+  int state;
   void initialise_write_default();
   void command_write_default();
 public:
   PCB(int port);
   int read_state();
   void write(int byte);
+  
+  void write_state();
+  void set(int bit, bool value);
+  bool get(int bit);
 };
 
 
@@ -189,10 +194,11 @@ public:
 class Rotating_Compartment {
 private:
   PCB2 pcb; // for the microswitches
-  static const int left_flop_bit = (1 << 0);
-  static const int right_flop_bit = (1 << 1);
+  static const int left_flop_bit = 0;
+  static const int right_flop_bit = 1;
 
-  static const int  reset_flops_bit= (1 << 2) + (1 << 3);
+  static const int  reset_left_flop_bit = 2;
+  static const int  reset_right_flop_bit = 3;
 
   static const int speed = 1.0;
 

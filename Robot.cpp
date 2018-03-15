@@ -336,44 +336,44 @@ void Robot::deliver_basket() {
   int degrees = 10; // TODO: Change to match the actual setup.
   switch (baskets_delivered) {
     case 0:
-      line_following.turn_exactly(-3 * degrees);
+      line_following.turn_exactly(-3 * degrees, turn_speed, true);
       // Turn the compartment to delivery position.
       components.compartment.turn_to_position(1);
       // Shake the eggs out
       components.scoop.violent_shock();
       components.compartment.return_to_default();
       // Turn back to the position parallel with line
-      line_following.turn_exactly(3 * degrees);
+      line_following.turn_exactly(3 * degrees, turn_speed, true);
       break;
     case 1:
-      line_following.turn_exactly(-1 * degrees);
+      line_following.turn_exactly(-1 * degrees, turn_speed, true);
       // Turn the compartment to delivery position.
       components.compartment.turn_to_position(1);
       // Shake the eggs out
       components.scoop.violent_shock();
       components.compartment.return_to_default();
       // Turn back to the position parallel with line
-      line_following.turn_exactly(1 * degrees);
+      line_following.turn_exactly(1 * degrees, turn_speed, true);
       break;
     case 2:
-      line_following.turn_exactly(1 * degrees);
+      line_following.turn_exactly(1 * degrees, turn_speed, true);
       // Turn the compartment to delivery position.
       components.compartment.turn_to_position(1);
       // Shake the eggs out
       components.scoop.violent_shock();
       components.compartment.return_to_default();
       // Turn back to the position parallel with line
-      line_following.turn_exactly(-1 * degrees);
+      line_following.turn_exactly(-1 * degrees, turn_speed, true);
       break;
     case 3:
-      line_following.turn_exactly(3 * degrees);
+      line_following.turn_exactly(3 * degrees, turn_speed, true);
       // Turn the compartment to delivery position.
       components.compartment.turn_to_position(1);
       // Shake the eggs out
       components.scoop.violent_shock();
       components.compartment.return_to_default();
       // Turn back to the position parallel with line
-      line_following.turn_exactly(-3 * degrees);
+      line_following.turn_exactly(-3 * degrees, turn_speed, true);
       break;
   }
   return;
@@ -427,12 +427,12 @@ void Robot::sort_egg(bool is_large) {
 
   // TODO: Maybe a shake here?
   Egg egg = components.colour_detector.classify_egg(is_large);
-  if ((eggs1_onboard < 2)) and (basket_egg1 == egg)) {
+  if ((eggs1_onboard < 2) and (basket_egg1 == egg)) {
     // Put into the delivery compartment
     put_into_delivery();
     eggs1_onboard++;
   }
-  else if ((eggs2_onboard < 2)) and (basket_egg2 == egg)) {
+  else if ((eggs2_onboard < 2) and (basket_egg2 == egg)) {
     // Put into the delivery compartment
     put_into_delivery();
     eggs2_onboard++;

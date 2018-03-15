@@ -565,7 +565,7 @@ void Line_Following::follow_line_until_switch(float speed, float speed_delta) {
   float reduced_speed = speed - speed * speed_delta;
 
   microswitches.update_state();
-  while (microswitches.fromt_state == 0) {
+  while (microswitches.front_state == 0) {
 	  Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
     adjust_speeds_from_reading(speed, reduced_speed, reading);
     microswitches.update_state();

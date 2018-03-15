@@ -1,6 +1,8 @@
 // Go until first intersection and align with it (axis over intersection)
 
 #include <iostream>
+#include <bitset>
+#include <string>
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
@@ -12,6 +14,7 @@ using namespace std;
 int main () {
   initialise_robot();
   cout << "Running test for turn exactly" << endl;
+
 
   // I2C addresses:
   int pcb1_port = 0; // Port number for PCB 1
@@ -29,11 +32,33 @@ int main () {
 
   stopwatch watch;
   watch.start();
+	
+	bool left_reading;
+	bool right_reading;
+	
+	  string usr_input;
+  while (true) {
+	  	  cout << "Send reset command? " << endl;
+	  cin >> usr_input;
+	components.compartment.reset_flops();
+    	  cout << "Measure?" << endl;
+	  cin >> usr_input;
+    left_reading = components.compartment.read_left_flop();
+    right_reading = components.compartment.read_right_flop();
+    cout << "The readings are: Left: " << left_reading << "   Right: " << right_reading << endl;
+  }
+  rlink.command(WRITE_PORT_1, 255);
 
-  while (watch.read() < 10000) {
-    bool left_reading = components.compartment.read_left_flop();
-    bool right_reading = components.compartment.read_right_flop();
-    cout << "The readings are: Left: " << left_reading << "Right: " << right_reading << endl;
+  while (true) {
+	  cout << "Send reset command? " << endl;
+	  cin >> usr_input;
+	  rlink.command(WRITE_PORT_1, 3);
+	  rlink.command(WRITE_PORT_1, 3 + (3 << 2));
+	  cout << "Measure?" << endl;
+	  cin >> usr_input;
+	int reading = rlink.request(READ_PORT_1);
+	bitset<8> bit_reading(reading);
+	cout << bit_reading << "   as number: " << reading << endl;
   }
 
   cout << "Finished" << endl;

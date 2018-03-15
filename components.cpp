@@ -10,7 +10,7 @@
 
 
 PCB::PCB(int port) : port(port) {
-
+	state = -1;
   // Assign the right write, read instructions:
   switch (port) {
     case 0:
@@ -53,7 +53,6 @@ void PCB::command_write_default() {
 }
 
 int PCB::read_state() {
-  int state;
   state = rlink.request(read_instruction);
   return state;
 }
@@ -61,7 +60,23 @@ int PCB::read_state() {
 void PCB::write(int byte) {
   int write_byte = write_default bitor byte;
   rlink.command(write_instruction, write_byte);
-  return;
+}
+
+bool PCB::get(int bit) {
+	int mask = 1 << bit;
+	return (state & mask) == mask;
+}
+
+void PCB::set(int bit, bool value) {
+	if (value) {
+		state |= 1 << bit;
+	} else {
+		state &= ~(1 << bit);
+	}
+}
+
+void PCB::write_state() {
+  rlink.command(write_instruction, state);
 }
 
 void PCB1::initialise_write_default() {
@@ -94,7 +109,8 @@ void PCB2::initialise_write_default() {
   write_default = 0;
   // The default value for contact flip-flops readings is 1:
   write_default = write_default bitor contact_flops_bits;
-  // The default value for contact flip-flops reset is 0.
+  // The default value for contact flip-flops reset is 1.
+  write_default = write_default bitor contact_flops_reset_bits;
   // The default value for instantaneous microswitches is 1:
   write_default = write_default bitor inst_microswitch_bits;
   // The default value for the egg display LEDS is 0.
@@ -458,25 +474,24 @@ void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
 }
 
 bool Rotating_Compartment::read_left_flop() {
-  int reading = pcb.read_state();
-  reading = reading bitor left_flop_bit;
-  if (reading > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  pcb.read_state();
+  return pcb.get(left_flop_bit);
 }
 bool Rotating_Compartment::read_right_flop() {
-  int reading = pcb.read_state();
-  reading = reading bitor right_flop_bit;
-  if (reading > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  pcb.read_state();
+  return pcb.get(right_flop_bit);
 }
 void Rotating_Compartment::reset_flops() {
-  pcb.write(reset_flops_bit);
+	// Need to send a zero pulse to reset them.
+	pcb.set(reset_left_flop_bit, false);
+	pcb.set(reset_right_flop_bit, false);
+	
+	pcb.write_state();
+	
+	pcb.set(reset_left_flop_bit, true);
+	pcb.set(reset_right_flop_bit, true);
+	
+	pcb.write_state();
 }
 
 void Rotating_Compartment::turn_to_position(int position) {

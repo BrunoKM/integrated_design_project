@@ -4,6 +4,7 @@
 using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
 #include "Robot.h"
 #include "robot_initialise.h"
 #include "line_following.h"
@@ -28,10 +29,12 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  int turn_by = 180;
-  bool stop_after = true;
+  //int turn_by = 180;
+  //bool stop_after = true;
 
-  components.compartment.turn_exactly(turn_by, stop_after);
+  //components.compartment.turn_exactly(turn_by, stop_after);
+  rlink.command(MOTOR_1_GO, 255);
+  delay(3000);
 
   cout << "Finished" << endl;
 
