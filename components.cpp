@@ -6,8 +6,11 @@
 #include "components.h"
 
 
+
+
+
 PCB::PCB(int port) :
-port(port), write_state(~0), read_state(0) {
+port(port), read_state(0), write_state(~0) {
   // Assign the right write, read instructions:
   switch (port) {
     case 0:
@@ -246,7 +249,7 @@ int Beacon_Reader::get_beacon_code() {
 
 Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
   // Update the read state with current values
-  pcb.read_state();
+  pcb.read();
 
   Line_Sensor_Reading reading;
   reading.front_left = pcb.get(front_left_bit);
@@ -259,7 +262,7 @@ Line_Sensor_Reading Line_Sensors::get_sensor_reading() {
 
 void Microswitches::update_state() {
   // Update the read state with current values
-  pcb.read_state();
+  pcb.read();
 
   front_state = pcb.get(front_switch_bit);
   rear_state = pcb.get(rear_switch_bit);
@@ -321,13 +324,13 @@ void LEDs::display_egg(Egg egg) {
 void Scoop::contract() {
   pcb.set(scoop_bit, 1);
   // Send the write command
-  pcb.write(scoop_bit);
+  pcb.write();
 }
 
 void Scoop::release() {
   pcb.set(scoop_bit, 0);
   // Send the write command
-  pcb.write(scoop_bit);
+  pcb.write();
 };
 
 void Scoop::violent_shock() {
@@ -389,7 +392,7 @@ current_position(3) {
 }
 
 void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
-  float rotate_time_360 = 6001; // TODO: Recalibrate
+  float rotate_time_360 = 2700; // TODO: Recalibrate
 
   int rotate_for = rotate_time_360 * float(abs(degrees)) / 360.0;
   // Start rotating
@@ -407,11 +410,11 @@ void Rotating_Compartment::turn_exactly(int degrees, bool stop_after) {
 }
 
 bool Rotating_Compartment::read_left_flop() {
-  pcb.read_state();
+  pcb.read();
   return pcb.get(left_flop_bit);
 }
 bool Rotating_Compartment::read_right_flop() {
-  pcb.read_state();
+  pcb.read();
   return pcb.get(right_flop_bit);
 }
 void Rotating_Compartment::reset_flops() {
@@ -419,12 +422,12 @@ void Rotating_Compartment::reset_flops() {
 	pcb.set(reset_left_flop_bit, false);
 	pcb.set(reset_right_flop_bit, false);
 
-	pcb.write_state();
+	pcb.write();
 
 	pcb.set(reset_left_flop_bit, true);
 	pcb.set(reset_right_flop_bit, true);
 
-	pcb.write_state();
+	pcb.write();
 }
 
 void Rotating_Compartment::turn_to_position(int position) {
@@ -453,35 +456,63 @@ void Rotating_Compartment::return_to_default() {
     case 1:
       turn_exactly(10, false);
       reset_flops();
-      // Wait until contact
-      while (read_left_flop() == 0) {}
+      // Turn until the rotor makes first contact
+      while (read_right_flop() == 0) {}
+
+      // Turn until the rotor makes second contact and stop
+      turn_exactly(10, false);
+      reset_flops();
+      while (read_right_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
     case 2:
       turn_exactly(10, false);
       reset_flops();
-      // Wait until contact
-      while (read_left_flop() == 0) {}
+      // Turn until the rotor makes first contact
+      while (read_right_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
     case 4:
       turn_exactly(-10, false);
       reset_flops();
-      // Wait until contact
-      while (read_right_flop() == 0) {}
+      // Turn until the rotor makes first contact
+      while (read_left_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
     case 5:
       turn_exactly(-10, false);
       reset_flops();
-      // Wait until contact
-      while (read_right_flop() == 0) {}
+      // Turn until the rotor makes first contact
+      while (read_left_flop() == 0) {}
+      // Turn until the rotor makes second contact and stop
+      turn_exactly(-10, false);
+      reset_flops();
+      while (read_left_flop() == 0) {}
       // Stop the motor
       motor.drive(0);
       break;
   }
   current_position = 3;
 }
+
+// TODO: Delete this I think
+/*IR_communication::IR_communication(PCB1 &pcb1) {
+}
+
+int IR_communication::get_delivery_point() {
+  // Gets start sensor reading from the IR beacon
+  int IR_state = pcb1.read_IR_input(); // returns a 1 or 0 from the infrared sensor
+
+
+}
+
+void IR_communication::rotate_turntable(int degrees) {
+  // Rotates turn table by a fixed number of degrees (degrees will be fixed to the set interval between eggs)
+}
+
+void IR_communication::rotate_turntable_start_position() {
+  // Rotates turn table all the way to one side (e.g all the way clockwise in order to start tracking eggs)
+}*/
