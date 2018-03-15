@@ -149,11 +149,11 @@ public:
 class Rotating_Compartment {
 private:
   PCB pcb; // for the microswitches
-  static const int left_flop_bit = 0;
-  static const int right_flop_bit = 1;
+  static const int left_flop_bit = 1;
+  static const int right_flop_bit = 0;
 
-  static const int  reset_left_flop_bit = 2;
-  static const int  reset_right_flop_bit = 3;
+  static const int  reset_left_flop_bit = 3;
+  static const int  reset_right_flop_bit = 2;
 
   static const int speed = 1.0;
 

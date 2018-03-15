@@ -11,7 +11,6 @@ using namespace std;
 #include "components.h"
 
 int main () {
-  initialise_robot();
   cout << "Running test for turn exactly for the compartment" << endl;
 
   // Initialise an instance of objet to set the motor ramps
@@ -29,12 +28,13 @@ int main () {
   Components components(pcb1_port, pcb2_port, turntable_comms_port,
     beacon_reader_port, colour_detection_1_port, colour_detection_2_port);
 
-  //int turn_by = 180;
-  //bool stop_after = true;
+  int turn_by = 180;
+  bool stop_after = true;
 
-  //components.compartment.turn_exactly(turn_by, stop_after);
-  rlink.command(MOTOR_1_GO, 255);
-  delay(3000);
+  components.compartment.turn_exactly(turn_by, stop_after);
+  //rlink.command(MOTOR_1_GO, 250);
+  delay(1500);
+  components.compartment.turn_exactly(-turn_by, stop_after);
 
   cout << "Finished" << endl;
 
