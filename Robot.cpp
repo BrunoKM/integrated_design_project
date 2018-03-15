@@ -162,7 +162,7 @@ void Robot::invoke_move(char destination) {
         case 'j':
           desired_direction = 90;
           turn_by = (desired_direction - direction) % 360;
-          // Make sure the robot is facing the right direction
+          // Make sure the ro bot is facing the right direction
           turn(turn_by, turn_speed);
 
           // Follow line for a short period of time until the line (roughly) ends
@@ -229,6 +229,139 @@ void Robot::invoke_move(char destination) {
   }
   // Update current_junction
   current_junction = destination;
+}
+
+void Robot::move_s_to_j() {
+  // s to i
+  desired_direction = 0;
+  turn_by = (desired_direction - direction) % 360;
+  // Make sure the robot is facing the right direction
+  turn(turn_by, turn_speed);
+  line_following.follow_line(speed, 0.5, 3, 1);
+  line_following.align_with_intersection(1.0, 0.5);
+
+  // i to j
+  desired_direction = 270;
+  turn_by = (desired_direction - direction) % 360;
+  // Make sure the robot is facing the right direction
+  turn(turn_by, turn_speed);
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(1.0, 0.5);
+}
+
+void Robot::c_to_j() {
+  line_following.follow_line_timed(1.0, 0.5, 900);
+  delay(200); // TODO: Reduce when not debugging
+}
+
+void Robot::j_to_l() {
+  desired_direction = 270;
+  turn_by = (desired_direction - direction) % 360;
+  // Make sure the robot is facing the right direction
+  turn(turn_by, turn_speed);
+
+  line_following.follow_line_blind_curve(speed); // Increased speed_delta
+  line_following.align_with_intersection(1.0, 0.5);
+
+  direction = 180; // Direction changed due to curved path.
+
+  turn(90, turn_speed);
+  line_following.follow_line(speed, 0.5, 0, 1); // TODO: Replace name speed with line_speed
+  line_following.align_with_intersection(1.0, 0.5);
+}
+
+void Robot::l_to_delivery() {
+  //TODO: change direction differently.
+  switch (delivery_zone) {
+    case 'd':
+    //l to k
+    desired_direction = 0;
+    turn_by = (desired_direction - direction) % 360;
+    // Make sure the robot is facing the right direction
+    turn(turn_by, turn_speed);
+
+    line_following.follow_line(speed, 0.5, 0, 1);
+    line_following.align_with_intersection(1.0, 0.5);
+    //k to d
+    desired_direction = 270;
+    turn_by = (desired_direction - direction) % 360;
+    // Make sure the robot is facing the right direction
+    turn(turn_by, turn_speed);
+    line_following.follow_line_until_switch(speed, 0.5);
+    break;
+    case 'e':
+    //TODO
+    desired_direction = 270;
+    turn_by = (desired_direction - direction) % 360;
+    // Make sure the robot is facing the right direction
+    turn(turn_by, turn_speed);
+    line_following.follow_line_until_switch(speed, 0.5);
+    break;
+  }
+}
+
+void Robot::delivery_to_l() {
+  //TODO: turn somehow..
+  line_following.reverse_timed(speed, 0.5, 400);
+  switch (delivery_zone) {
+      case 'd':
+       // Turn somehow..
+      break;
+      case 'e':
+        //Turn somehow...
+      break;
+  }
+}
+
+void Robot::l_to_f() {
+  //l to m
+  desired_direction = 270;
+  turn_by = (desired_direction - direction) % 360;
+  // Make sure the robot is facing the right direction
+  turn(turn_by, turn_speed);
+
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(1.0, 0.5);
+}
+
+void Robot::f_to_j() {
+  // f to m
+  line_following.reverse_timed(speed, 0.5, 400);
+
+  //TODO: turn
+
+  // m to l
+  desired_direction = 0;
+  turn_by = (desired_direction - direction) % 360;
+  // Make sure the robot is facing the right direction
+  turn(turn_by, turn_speed);
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(speed, 0.5);
+
+  // m to k
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(1.0, 0.5);
+
+  // k to j
+  turn_rear_align(90, turn_speed);
+
+  // Follow line for a short period of time until the line (roughly) ends
+  int time_to_line_end = 2500;
+  line_following.follow_line_timed(speed, 0.5, time_to_line_end);
+
+  // Go blindly as to ignore the curved line (should go to the side of it anyways, just for safety)
+  line_following.motors_go(speed, speed);
+  int time_to_pass_curved = 4000;
+  delay(time_to_pass_curved);
+
+  // Start line-following, or in this case looking for an intersections
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(1.0, 0.5);
+
+  // Turn left towards j
+  turn(-90, turn_speed);
+  line_following.follow_line(speed, 0.5, 0, 1);
+  line_following.align_with_intersection(1.0, 0.5);
 }
 
 void Robot::move(char destination) {
@@ -438,7 +571,9 @@ void Robot::deliver_basket() {
 }
 
 void Robot::recycle_eggs() {
-
+  components.compartment.turn_to_position(5);
+  components.compartment.violent_shock();
+  components.compartment.return_to_default();
 }
 
 void Robot::read_beacon() {
