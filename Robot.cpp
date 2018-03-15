@@ -331,7 +331,52 @@ void Robot::pick_up_all_eggs() {
 // }
 
 void Robot::deliver_basket() {
-
+  // Assumes at the correct delivery zone with front switch pressed in.
+  // Turn by a set number of degrees and release the eggs.
+  int degrees = 10; // TODO: Change to match the actual setup.
+  switch (baskets_delivered) {
+    case 0:
+      line_following.turn_exactly(-3 * degrees);
+      // Turn the compartment to delivery position.
+      components.compartment.turn_to_position(1);
+      // Shake the eggs out
+      components.scoop.violent_shock();
+      components.compartment.return_to_default();
+      // Turn back to the position parallel with line
+      line_following.turn_exactly(3 * degrees);
+      break;
+    case 1:
+      line_following.turn_exactly(-1 * degrees);
+      // Turn the compartment to delivery position.
+      components.compartment.turn_to_position(1);
+      // Shake the eggs out
+      components.scoop.violent_shock();
+      components.compartment.return_to_default();
+      // Turn back to the position parallel with line
+      line_following.turn_exactly(1 * degrees);
+      break;
+    case 2:
+      line_following.turn_exactly(1 * degrees);
+      // Turn the compartment to delivery position.
+      components.compartment.turn_to_position(1);
+      // Shake the eggs out
+      components.scoop.violent_shock();
+      components.compartment.return_to_default();
+      // Turn back to the position parallel with line
+      line_following.turn_exactly(-1 * degrees);
+      break;
+    case 3:
+      line_following.turn_exactly(3 * degrees);
+      // Turn the compartment to delivery position.
+      components.compartment.turn_to_position(1);
+      // Shake the eggs out
+      components.scoop.violent_shock();
+      components.compartment.return_to_default();
+      // Turn back to the position parallel with line
+      line_following.turn_exactly(-3 * degrees);
+      break;
+  }
+  return;
 }
 
 void Robot::recycle_eggs() {

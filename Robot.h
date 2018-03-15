@@ -40,11 +40,6 @@ private:
   int eggs2_onboard;
   int recycling_eggs_onboard;
 
-  // Number of baskets delivered.
-  int baskets_delivered;
-
-
-
   float speed;
   float turn_speed;
 
@@ -58,6 +53,9 @@ public:
   // std::string position;
   char current_junction; // Only update when on intersections.
   int direction; // Either 0, 90, 180 or 270
+
+  // Number of baskets already delivered.
+  int baskets_delivered;
 
   // Methods
   void input_restart_parameters(int baskets_delivered, std::string delivery_zone);

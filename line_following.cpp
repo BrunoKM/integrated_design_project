@@ -538,9 +538,7 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   std::cout << " + Making motors go in reverse. Current speed sent to .drive(): "
   << -speed << std::endl;
   #endif
-  std::cout << "left motor" << std::endl;
   left_motor.drive(-speed);
-  std::cout << "right motor" << std::endl;
   right_motor.drive(-speed);
 
   float reduced_speed = speed - speed * speed_delta;
@@ -560,7 +558,23 @@ void Line_Following::reverse_until_switch(float speed, float speed_delta) {
   return;
 }
 
+void Line_Following::follow_line_until_switch(float speed, float speed_delta) {
+  left_motor.drive(speed);
+  right_motor.drive(speed);
 
+  float reduced_speed = speed - speed * speed_delta;
+
+  microswitches.update_state();
+  while (microswitches.fromt_state == 0) {
+	  Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+    adjust_speeds_from_reading(speed, reduced_speed, reading);
+    microswitches.update_state();
+  }
+
+  left_motor.drive(0);
+  right_motor.drive(0);
+  return;
+}
 
 void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 	// TODO: calculate rotate_for by using a constant

@@ -42,6 +42,7 @@ public:
     void follow_line(float speed, float speed_delta,
       int num_intersections_to_ignore, bool keep_driving_after_last);
     void follow_line_timed(float speed, float speed_delta, int time_duration);
+    void follow_line_until_switch(float speed, float speed_delta);
     void follow_line_blind_curve(float speed);
     void align_with_intersection(float speed, float speed_delta);
     void turn(int degrees, float speed); // Degrees can only be = 0 mod 90
