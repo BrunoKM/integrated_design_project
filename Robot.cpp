@@ -15,7 +15,7 @@
 
 // The Robot class methods
 Robot::Robot() :
-components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_SENSOR_1_PORT, COLOUR_SENSOR_2_PORT, TURNTABLE_COMMS_ADDRESS),
+components(PCB1_ADDRESS, PCB2_ADDRESS, TURNTABLE_COMMS_ADDRESS, INPUT_IR_PORT, COLOUR_SENSOR_1_PORT, COLOUR_SENSOR_2_PORT),
 line_following(components),
 speed(1),
 turn_speed(0.93),
@@ -25,7 +25,7 @@ direction(0) {
 }
 
 Robot::Robot(char starting_junction, int starting_direction) :
-components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_SENSOR_1_PORT, COLOUR_SENSOR_2_PORT, TURNTABLE_COMMS_ADDRESS),
+components(PCB1_ADDRESS, PCB2_ADDRESS, TURNTABLE_COMMS_ADDRESS, INPUT_IR_PORT, COLOUR_SENSOR_1_PORT, COLOUR_SENSOR_2_PORT),
 line_following(components),
 speed(1),
 turn_speed(0.93),
@@ -499,7 +499,6 @@ void Robot::align_for_pickup() {
   components.scoop.contract();
 
   line_following.reverse_until_switch(0.62, 1.0); // Low speed and very high speed_delta
-  line_following.follow_line_timed(speed, 0.5, 50);
   current_junction = 'c';
 }
 
@@ -508,7 +507,7 @@ void Robot::pick_up_all_eggs() {
 
   int delay_time = 2000; // Time to wait for the table to turn.
   int is_large;
-  if (baskets_delivered = 0) {
+  if (baskets_delivered == 0) {
     // If this is the first time, set the turntable to where we want it:
     components.turntable_comms.set_position(0);
     delay(4);
@@ -527,7 +526,7 @@ void Robot::pick_up_all_eggs() {
   delay(400); // Make sure that the turntable position command was sent.
 
   return;
-
+}
 
 void Robot::deliver_basket() {
   // Assumes at the correct delivery zone with front switch pressed in.
@@ -587,6 +586,7 @@ void Robot::recycle_eggs() {
 void Robot::read_beacon() {
   // Read the instructions from the starting beacon.
   int pulse_count = components.beacon_reader.get_beacon_code();
+  std::cout << "Beacon code received: " << pulse_count << std::endl;
   switch (pulse_count) {
     case 1:
       basket_egg1 = Egg(0, 'b');
@@ -621,9 +621,9 @@ void Robot::read_beacon() {
 
 void Robot::sort_egg(bool is_large) {
   // Pull the egg in, classify the colour, and put it in the right compartment.
-  components.scoop.contract();
-  delay(50);
   components.scoop.release();
+  delay(50);
+  components.scoop.contract();
 
   Egg egg = components.colour_detector.classify_egg(is_large);
   if ((eggs1_onboard < 2) and (basket_egg1 == egg)) {

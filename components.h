@@ -156,7 +156,7 @@ private:
   static const int  reset_right_flop_bit = 2;
 
   static const float speed = 1.0;
-  static const float slow_speed = 0.7;
+  static const float slow_speed = 0.6;
 
 
   // Position is:
