@@ -231,10 +231,10 @@ void Robot::invoke_move(char destination) {
   current_junction = destination;
 }
 
-void Robot::move_s_to_j() {
+void Robot::s_to_j() {
   // s to i
-  desired_direction = 0;
-  turn_by = (desired_direction - direction) % 360;
+  int desired_direction = 0;
+  int turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
   turn(turn_by, turn_speed);
   line_following.follow_line(speed, 0.5, 3, 1);
@@ -255,8 +255,8 @@ void Robot::c_to_j() {
 }
 
 void Robot::j_to_l() {
-  desired_direction = 270;
-  turn_by = (desired_direction - direction) % 360;
+  int desired_direction = 270;
+  int turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
   turn(turn_by, turn_speed);
 
@@ -272,6 +272,8 @@ void Robot::j_to_l() {
 
 void Robot::l_to_delivery() {
   //TODO: change direction differently.
+  int desired_direction;
+  int turn_by;
   switch (delivery_zone) {
     case 'd':
     //l to k
@@ -315,8 +317,8 @@ void Robot::delivery_to_l() {
 
 void Robot::l_to_f() {
   //l to m
-  desired_direction = 270;
-  turn_by = (desired_direction - direction) % 360;
+  int desired_direction = 270;
+  int turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
   turn(turn_by, turn_speed);
 
@@ -331,8 +333,8 @@ void Robot::f_to_j() {
   //TODO: turn
 
   // m to l
-  desired_direction = 0;
-  turn_by = (desired_direction - direction) % 360;
+  int desired_direction = 0;
+  int turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
   turn(turn_by, turn_speed);
   line_following.follow_line(speed, 0.5, 0, 1);
@@ -496,13 +498,14 @@ void Robot::align_for_pickup() {
   components.scoop.contract();
 
   line_following.reverse_until_switch(0.62, 1.0); // Low speed and very high speed_delta
+  line_following.follow_line_timed(speed, 0.5, 50);
   current_junction = 'c';
 }
 
 void Robot::pick_up_all_eggs() {
   components.scoop.release();
 
-  int delay_time = 800; // Time to wait for the table to turn.
+  int delay_time = 2000; // Time to wait for the table to turn.
   int is_large;
 
   for (int position=1; position <= 8; position++) {
@@ -572,7 +575,7 @@ void Robot::deliver_basket() {
 
 void Robot::recycle_eggs() {
   components.compartment.turn_to_position(5);
-  components.compartment.violent_shock();
+  components.scoop.violent_shock();
   components.compartment.return_to_default();
 }
 

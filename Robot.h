@@ -70,6 +70,15 @@ public:
   void sort_egg(bool is_large);
   void put_into_recycling();
   void put_into_delivery();
+  
+  void s_to_j();
+  void c_to_j();
+  void j_to_l();
+  void l_to_delivery();
+  void delivery_to_l();
+ 
+  void l_to_f();
+  void f_to_j();
 };
 
 #endif

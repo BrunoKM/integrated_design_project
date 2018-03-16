@@ -43,21 +43,22 @@ int main () {
 
   int delay_time = 1500;
   int counter = 0;
+  int position;
+  
+	components.turntable_comms.write(0);
+	cout << "Reset back to 0" << endl;
+	delay(5000);
 	
 	blink_leds();
 	while (true) {
-		components.turntable_comms.write(0);
-		cout << "Reset back to 0" << endl;
-		delay(5000);
-		for (int write_byte = 0; write_byte < 256; write_byte += 12) {
+		cout << "Input the position" << endl;
+		cin >> position;
 
-		components.turntable_comms.write(write_byte);
-		cout << counter << "- Sent signal is: " << write_byte << endl;
-		// rlink.command(WRITE_PORT_2, write_byte);
+		components.turntable_comms.set_position(position);
+		cout << counter << "- Sent position is: " << position << endl;
 
 		counter ++;
 		delay(delay_time);
-		}
 		
 	}
 

@@ -165,37 +165,12 @@ void Turntable_Comms::set_angle(int degrees) {
 void Turntable_Comms::set_position(int position) {
   // Position 1 - 8 for eggs. Odd for small, even for large ones.
   int write_byte;
-  switch (position) {
-    case 0:
-      // Position 0 is empty, choose for when first coming in
-      write_byte = 0;
-      break;
-    case 1:
-      write_byte = 30; // TODO: Figure out write_bytes for each position
-      break;
-    case 2:
-      write_byte = 55;
-      break;
-    case 3:
-      write_byte = 90;
-      break;
-    case 4:
-      write_byte = 120;
-      break;
-    case 5:
-      write_byte = 150;
-      break;
-    case 6:
-      write_byte = 180;
-      break;
-    case 7:
-      write_byte = 225;
-      break;
-    case 8:
-      write_byte = 255;
-      break;
-  }
-  write(write_byte);
+  int divide_by = 8;
+  write_byte = ((220.0 * position) / divide_by) + 15;
+  for (int i; i < 5; i++) {
+		write(write_byte);
+		delay(1000);
+	}
   return;
 }
 

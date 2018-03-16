@@ -12,9 +12,10 @@ using namespace std;
 
 int main () {
 
-  Robot robot;
+  Robot robot('j', 90);
   cout << "--- Subsystems Demo ---" << endl;
   cout << "Running Task 1:" << endl;
+  robot.align_for_pickup();
   robot.pick_up_all_eggs();
 
 
