@@ -62,6 +62,7 @@ public:
   void move(char destination);
   void turn(int degrees, float speed); // Wrapper for line_following.turn() that also updates this->direction
   void turn_rear_align(int degrees, float speed);
+  void pivot(int degrees);
   void align_for_pickup();
   void pick_up_all_eggs();
   void read_beacon(); // Read the instructions from the starting beacon.
@@ -78,7 +79,7 @@ public:
   void move_delivery_to_l();
   void move_l_to_f();
   void move_f_to_j();
-  
+
 };
 
 #endif

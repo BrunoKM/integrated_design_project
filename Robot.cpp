@@ -13,9 +13,6 @@
 #include "Robot.h"
 #include "robot_initialise.h"
 
-#define DEBUG
-#define DEBUG2
-
 // The Robot class methods
 Robot::Robot() :
 components(PCB1_ADDRESS, PCB2_ADDRESS, INPUT_IR_PORT, COLOUR_SENSOR_1_PORT, COLOUR_SENSOR_2_PORT, TURNTABLE_COMMS_ADDRESS),
@@ -49,6 +46,12 @@ void Robot::turn(int degrees, float speed) {
 
 void Robot::turn_rear_align(int degrees, float speed) {
   line_following.turn_rear_align(degrees, speed);
+  direction = (direction + degrees) % 360;
+  return;
+}
+
+void Robot::pivot(int degrees) {
+  line_following.one_wheel_pivot(degrees);
   direction = (direction + degrees) % 360;
   return;
 }
@@ -239,6 +242,7 @@ void Robot::move_s_to_j() {
   turn(turn_by, turn_speed);
   line_following.follow_line(speed, 0.5, 3, 1);
   line_following.align_with_intersection(1.0, 0.5);
+  current_junction = 'i';
 
   // i to j
   desired_direction = 270;
@@ -247,11 +251,12 @@ void Robot::move_s_to_j() {
   turn(turn_by, turn_speed);
   line_following.follow_line(speed, 0.5, 0, 1);
   line_following.align_with_intersection(1.0, 0.5);
+  current_junction = 'j';
 }
 
 void Robot::move_c_to_j() {
   line_following.follow_line_timed(1.0, 0.5, 900);
-  delay(200); // TODO: Reduce when not debugging
+  current_junction = 'j';
 }
 
 void Robot::move_j_to_l() {
@@ -268,6 +273,7 @@ void Robot::move_j_to_l() {
   turn(90, turn_speed);
   line_following.follow_line(speed, 0.5, 0, 1); // TODO: Replace name speed with line_speed
   line_following.align_with_intersection(1.0, 0.5);
+  current_junction = 'l';
 }
 
 
@@ -277,30 +283,24 @@ void Robot::move_l_to_delivery() {
   int turn_by;
   switch (delivery_zone) {
     case 'd':
-    //l to k
-    desired_direction = 0;
-    turn_by = (desired_direction - direction) % 360;
-    // Make sure the robot is facing the right direction
-    turn(turn_by, turn_speed);
+      //l to k
+      desired_direction = 0;
+      turn_by = (desired_direction - direction) % 360;
+      // Make sure the robot is facing the right direction
+      turn(turn_by, turn_speed);
 
-    line_following.follow_line(speed, 0.5, 0, 1);
-    line_following.align_with_intersection(1.0, 0.5);
-    //k to d
-    desired_direction = 270;
-    turn_by = (desired_direction - direction) % 360;
-    // Make sure the robot is facing the right direction
-
-    // TODO: fix turning...
-    turn(turn_by, turn_speed);
-    line_following.follow_line_until_switch(speed, 0.5);
+      line_following.follow_line(speed, 0.5, 0, 1);
+      // k to d
+      // Pivot on one wheel to not scrape the wall
+      pivot(-90);
+      line_following.follow_line_until_switch(speed, 0.5);
     break;
     case 'e':
-    //TODO fix turning...
-    desired_direction = 270;
-    turn_by = (desired_direction - direction) % 360;
-    // Make sure the robot is facing the right direction
-    turn(turn_by, turn_speed);
-    line_following.follow_line_until_switch(speed, 0.5);
+      // desired_direction = 270;
+      // turn_by = (desired_direction - direction) % 360;
+      // // Make sure the robot is facing the right direction
+      // turn(turn_by, turn_speed);
+      line_following.follow_line_until_switch(speed, 0.5);
     break;
   }
 }
@@ -467,7 +467,7 @@ void Robot::move(char destination) {
   // Update current_junction
   current_junction = destination;
   #ifdef DEBUG
-  std::cout << "Current position is: " << current_junction << std::endl;
+    std::cout << "Current position is: " << current_junction << std::endl;
   #endif
   return;
 }
@@ -485,8 +485,8 @@ void Robot::align_for_pickup() {
   int turn_by = desired_direction - direction;
 
   #ifdef DEBUG2
-  std::cout << "Turning by " << turn_by << " to align to direction "
-  << desired_direction << " from the current direction " << direction << std::endl;
+    std::cout << "Turning by " << turn_by << " to align to direction "
+    << desired_direction << " from the current direction " << direction << std::endl;
   #endif
   // Turn and align the front
   turn(turn_by, turn_speed);
@@ -504,10 +504,17 @@ void Robot::align_for_pickup() {
 }
 
 void Robot::pick_up_all_eggs() {
-  components.scoop.release();
+
 
   int delay_time = 2000; // Time to wait for the table to turn.
   int is_large;
+  if (baskets_delivered = 0) {
+    // If this is the first time, set the turntable to where we want it:
+    components.turntable_comms.set_position(0);
+    delay(4);
+  }
+
+  components.scoop.release();
 
   for (int position=1; position <= 8; position++) {
     components.turntable_comms.set_position(position);
@@ -520,15 +527,12 @@ void Robot::pick_up_all_eggs() {
   delay(400); // Make sure that the turntable position command was sent.
 
   return;
-}
-// void Robot::set_up_turntable() {
-//
-// }
+
 
 void Robot::deliver_basket() {
   // Assumes at the correct delivery zone with front switch pressed in.
   // Turn by a set number of degrees and release the eggs.
-  int degrees = 10; // TODO: Change to match the actual setup.
+  int degrees = 7; // TODO: Change to match the actual setup.
   switch (baskets_delivered) {
     case 0:
       line_following.turn_exactly(-3 * degrees, turn_speed, true);
@@ -614,15 +618,13 @@ void Robot::read_beacon() {
   return;
 }
 
-// Private Methods:
 
 void Robot::sort_egg(bool is_large) {
   // Pull the egg in, classify the colour, and put it in the right compartment.
   components.scoop.contract();
-  //TODO: See if delay needed
+  delay(50);
   components.scoop.release();
 
-  // TODO: Maybe a shake here?
   Egg egg = components.colour_detector.classify_egg(is_large);
   if ((eggs1_onboard < 2) and (basket_egg1 == egg)) {
     // Put into the delivery compartment
@@ -645,6 +647,7 @@ void Robot::put_into_delivery() {
   components.compartment.turn_to_position(4);
   // Shake the egg down violently
   components.scoop.violent_shock();
+  delay(100);
   components.compartment.return_to_default();
   return;
 }
@@ -654,6 +657,7 @@ void Robot::put_into_recycling() {
   components.compartment.turn_to_position(2);
   // Shake the egg down violently
   components.scoop.violent_shock();
+  delay(100);
   components.compartment.return_to_default();
   return;
 }

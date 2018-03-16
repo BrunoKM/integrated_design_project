@@ -623,8 +623,13 @@ void Line_Following::turn_exactly(int degrees, float speed, bool stop_after) {
 
 void Line_Following::one_wheel_pivot(int degrees) {
 	// Either left or right (90 or -90)
-	// Assumes robot driving and passed overthe intersection already.
+	// Assumes robot driving and reached the intersection already.
+
+
 	Line_Sensor_Reading reading = line_sensors.get_sensor_reading();
+
+  // Continue forward while over intersection.
+  motors_go(1.0, 1.0);
 	while ((reading.front_left == 1) and (reading.front_right == 1)) {
 		reading = line_sensors.get_sensor_reading();
 	}
@@ -635,7 +640,29 @@ void Line_Following::one_wheel_pivot(int degrees) {
 	stop_motors();
 	if (degrees == 90) {
 		right_motor.drive(-1);
-	}
+	} else if (degrees == -90) {
+    left_motor.drive(-1);
+  }
+
+  // Wait
+  float rotate_time_360 = 7000; // TODO: Recalibrate for proper chasis.
+  int rotate_for = (rotate_time_360 * 45) / 360.0;
+  delay(rotate_for);
+
+  // Start looking for the line
+  reading = line_sensors.get_sensor_reading();
+  if (degrees == 90) {
+		while (!((reading.front_left == 0) and (reading.front_right == 1))) {
+      reading = line_sensors.get_sensor_reading();
+    }
+	} else if (degrees == -90) {
+    while (!((reading.front_left == 1) and (reading.front_right == 0))) {
+      reading = line_sensors.get_sensor_reading();
+    }
+  }
+  align_after_turn(TURN_ALIGN_SPEED_FRAC * 1.0);
+
+  return;
 }
 
 int Line_Following::is_on_the_line() {

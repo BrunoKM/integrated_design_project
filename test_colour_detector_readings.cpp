@@ -52,6 +52,10 @@ int main () {
 
     red_reading = 0;
     blue_reading = 0;
+
+    components.compartment.turn_to_position(2);
+    delay(300);
+    components.compartment.return_to_default();
     counter ++;
 	}
 

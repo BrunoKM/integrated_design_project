@@ -167,9 +167,9 @@ void Turntable_Comms::set_position(int position) {
   int write_byte;
   int divide_by = 8;
   write_byte = ((220.0 * position) / divide_by) + 15;
-  for (int i; i < 5; i++) {
+  for (int i; i < 4; i++) {
 		write(write_byte);
-		delay(1000);
+		delay(400);
 	}
   return;
 }
@@ -348,7 +348,7 @@ Egg Colour_Detector::classify_egg(int size) {
   // Some decision logic for colour:
   int red_reading = read_red_sensor();
   int blue_reading = read_blue_sensor();
-  
+
   char colour;
   switch (size) {
     case 0:
