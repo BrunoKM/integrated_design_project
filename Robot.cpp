@@ -231,7 +231,7 @@ void Robot::invoke_move(char destination) {
   current_junction = destination;
 }
 
-void Robot::s_to_j() {
+void Robot::move_s_to_j() {
   // s to i
   int desired_direction = 0;
   int turn_by = (desired_direction - direction) % 360;
@@ -249,12 +249,12 @@ void Robot::s_to_j() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::c_to_j() {
+void Robot::move_c_to_j() {
   line_following.follow_line_timed(1.0, 0.5, 900);
   delay(200); // TODO: Reduce when not debugging
 }
 
-void Robot::j_to_l() {
+void Robot::move_j_to_l() {
   int desired_direction = 270;
   int turn_by = (desired_direction - direction) % 360;
   // Make sure the robot is facing the right direction
@@ -270,7 +270,8 @@ void Robot::j_to_l() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::l_to_delivery() {
+
+void Robot::move_l_to_delivery() {
   //TODO: change direction differently.
   int desired_direction;
   int turn_by;
@@ -288,11 +289,13 @@ void Robot::l_to_delivery() {
     desired_direction = 270;
     turn_by = (desired_direction - direction) % 360;
     // Make sure the robot is facing the right direction
+
+    // TODO: fix turning...
     turn(turn_by, turn_speed);
     line_following.follow_line_until_switch(speed, 0.5);
     break;
     case 'e':
-    //TODO
+    //TODO fix turning...
     desired_direction = 270;
     turn_by = (desired_direction - direction) % 360;
     // Make sure the robot is facing the right direction
@@ -302,20 +305,20 @@ void Robot::l_to_delivery() {
   }
 }
 
-void Robot::delivery_to_l() {
-  //TODO: turn somehow..
+void Robot::move_delivery_to_l() {
+  //TODO: does turning work?
   line_following.reverse_timed(speed, 0.5, 400);
   switch (delivery_zone) {
       case 'd':
-       // Turn somehow..
+      turn(-90, turn_speed);
       break;
       case 'e':
-        //Turn somehow...
       break;
   }
 }
 
-void Robot::l_to_f() {
+void Robot::move_l_to_f() {
+  // TODO: turning differently
   //l to m
   int desired_direction = 270;
   int turn_by = (desired_direction - direction) % 360;
@@ -326,11 +329,9 @@ void Robot::l_to_f() {
   line_following.align_with_intersection(1.0, 0.5);
 }
 
-void Robot::f_to_j() {
+void Robot::move_f_to_j() {
   // f to m
   line_following.reverse_timed(speed, 0.5, 400);
-
-  //TODO: turn
 
   // m to l
   int desired_direction = 0;
